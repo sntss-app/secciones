@@ -1,23 +1,17 @@
 <?php
 /*
   Login del sistema.
-  Recibe matricula y contraseña desde React, valida contra usuarios
-  y devuelve los datos publicos del usuario junto con sus roles.
+  Recibe matrícula y contraseña desde React, valida contra usuarios
+  y devuelve los datos públicos del usuario junto con sus roles.
 */
-
-// Conectar a la base de datos
 require_once 'config.php';
 
-/**
- * Calcula la edad de una persona a partir de su CURP
- * Extrae la fecha de nacimiento de la CURP y la resta a la fecha actual
- */
 function calcularEdadDesdeCurp($curp) {
     if (!$curp || strlen($curp) < 10) {
         return null;
     }
 
-    $fecha = substr($curp, 4, 6); // Extrae la fecha de la CURP
+    $fecha = substr($curp, 4, 6);
     if (!preg_match('/^\d{6}$/', $fecha)) {
         return null;
     }
@@ -36,10 +30,6 @@ function calcularEdadDesdeCurp($curp) {
     return $birthDate->diff(new DateTime())->y;
 }
 
-/**
- * Busca un documento subido en la carpeta de registro del usuario
- * El documentId es el tipo de documento: 1 = tarjeton, 6 = foto de perfil
- */
 function findUploadedDocument($matricula, $documentId) {
     $patterns = glob(__DIR__ . "/uploads/*/registro/{$matricula}/{$documentId}.*");
     if (!$patterns || count($patterns) === 0) {
@@ -50,20 +40,18 @@ function findUploadedDocument($matricula, $documentId) {
     return '/api' . $relativePath;
 }
 
-// Recibe los datos del frontend (React) en formato JSON
 $data = json_decode(file_get_contents("php://input"), true);
 $matricula = isset($data['matricula']) ? trim($data['matricula']) : '';
 $password  = isset($data['password'])  ? trim($data['password'])  : '';
 
-// Validacion: ambos campos son obligatorios
 if (empty($matricula) || empty($password)) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Matricula y contraseña son obligatorias.']);
+    echo json_encode(['success' => false, 'message' => 'Matrícula y contraseña son obligatorias.']);
     exit;
 }
 
 try {
-    // Consultar al usuario incluyendo los campos de bloqueo por intentos fallidos
+    // 1. Consultar usuario incluyendo campos de bloqueo
     $stmt = $pdo->prepare(
         "SELECT u.id, u.matricula, REPLACE(u.nombre, '/', ' ') AS nombre, u.adscripcion, u.categoria, u.curp, u.sexo,
                 u.telefono, u.correo, u.contrasena, u.idRol, u.codigo_2fa, u.two_factor_enabled,
@@ -76,22 +64,22 @@ try {
     $stmt->execute([':matricula' => $matricula]);
     $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Si no existe la matricula, avisar
+    // Matrícula no existe
     if (!$usuario) {
-        echo json_encode(['success' => false, 'message' => 'Matricula no encontrada en el sistema.']);
+        echo json_encode(['success' => false, 'message' => 'Matrícula no encontrada en el sistema.']);
         exit;
     }
 
-    // Si el usuario no tiene contraseña, aun no completo su registro
+    // Usuario existe en el padrón pero aún no ha completado su registro
     if (empty($usuario['contrasena'])) {
         echo json_encode([
             'success' => false,
-            'message' => 'Esta matricula aun no tiene registro completo. Por favor, ingresa a Registrarse para completar tu acceso.'
+            'message' => 'Esta matrícula aún no tiene registro completo. Por favor, ingresa a Registrarse para completar tu acceso.'
         ]);
         exit;
     }
 
-    // Verificar si la cuenta esta bloqueada por muchos intentos fallidos
+    // 2. Verificar bloqueo por intentos fallidos
     $intentos_fallidos = (int)$usuario['intentos_fallidos'];
     $bloqueo_hasta = $usuario['bloqueo_hasta'];
 
@@ -101,22 +89,22 @@ try {
         http_response_code(429); // Too Many Requests
         echo json_encode([
             'success' => false,
-            'message' => "Has superado el numero de intentos. Tu cuenta esta bloqueada por $minutos minutos.",
+            'message' => "Has superado el número de intentos. Tu cuenta está bloqueada por $minutos minutos.",
             'bloqueado' => true,
             'tiempo_restante' => $minutos
         ]);
         exit;
     }
 
-    // Verificar si la contraseña es correcta
+    // 3. Verificar contraseña
     if (!password_verify($password, $usuario['contrasena'])) {
-        // Si es incorrecta, aumentar el contador de intentos fallidos
+        // ❌ Contraseña incorrecta: incrementar intentos
         $nuevos_intentos = $intentos_fallidos + 1;
-        $mensaje = "Matricula o contraseña incorrectas. Intentos restantes: " . (5 - $nuevos_intentos);
+        $mensaje = "Matrícula o contraseña incorrectas. Intentos restantes: " . (5 - $nuevos_intentos);
         $bloquear = false;
 
-        // Si llega a 5 intentos fallidos, bloquear por 15 minutos
         if ($nuevos_intentos >= 5) {
+            // Bloquear por 15 minutos
             $bloqueo_tiempo = (new DateTime())->modify('+15 minutes')->format('Y-m-d H:i:s');
             $update = $pdo->prepare("UPDATE usuarios SET intentos_fallidos = :intentos, bloqueo_hasta = :bloqueo WHERE matricula = :matricula");
             $update->execute([
@@ -124,11 +112,10 @@ try {
                 ':bloqueo' => $bloqueo_tiempo,
                 ':matricula' => $matricula
             ]);
-            $mensaje = "Has superado el numero de intentos. Tu cuenta ha sido bloqueada por 15 minutos.";
+            $mensaje = "Has superado el número de intentos. Tu cuenta ha sido bloqueada por 15 minutos.";
             $bloquear = true;
             http_response_code(429);
         } else {
-            // Si no llega a 5, solo actualizar el contador
             $update = $pdo->prepare("UPDATE usuarios SET intentos_fallidos = :intentos WHERE matricula = :matricula");
             $update->execute([':intentos' => $nuevos_intentos, ':matricula' => $matricula]);
             http_response_code(401);
@@ -143,11 +130,11 @@ try {
         exit;
     }
 
-    // Si la contraseña es correcta, reiniciar los intentos fallidos
+    // ✅ Contraseña correcta: reiniciar intentos
     $reset = $pdo->prepare("UPDATE usuarios SET intentos_fallidos = 0, bloqueo_hasta = NULL WHERE matricula = :matricula");
     $reset->execute([':matricula' => $matricula]);
 
-    // Si el usuario no tiene codigo_2fa, generarlo automaticamente
+    // 🔥 Si el usuario no tiene codigo_2fa, se lo generamos automáticamente
     if (empty($usuario['codigo_2fa'])) {
         function generarSecretBase32($longitud = 16) {
             $alfabeto = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -164,12 +151,11 @@ try {
         $usuario['codigo_2fa'] = $nuevo_secret;
     }
 
-    // Obtener los roles del usuario (para saber si es validador, administrador, etc.)
+    // Obtener roles del usuario desde usuario_roles si existe
     $roles = [];
     $roleNames = [];
     $roleName = null;
 
-    // Verificar si existe la tabla usuario_roles
     $tableCheck = $pdo->query("SHOW TABLES LIKE 'usuario_roles'");
     $hasUsuarioRoles = $tableCheck !== false && $tableCheck->fetch() !== false;
 
@@ -190,7 +176,6 @@ try {
         }
     }
 
-    // Si no hay roles en la tabla usuario_roles, usar el campo idRol (por compatibilidad)
     if (empty($roles) && $usuario['idRol'] !== null) {
         $legacyRoles = [];
         if (is_numeric($usuario['idRol'])) {
@@ -220,24 +205,22 @@ try {
         }
     }
 
-    // Eliminar la contraseña de la respuesta por seguridad
     unset($usuario['contrasena']);
     $usuario['roles'] = $roles;
     $usuario['roleNames'] = $roleNames;
     $usuario['roleName'] = $roleNames[0] ?? null;
 
-    // Convertir valores a numeros enteros
+    // Castear tipos numéricos
     $usuario['id']    = (int) $usuario['id'];
     $usuario['edad']  = calcularEdadDesdeCurp($usuario['curp']);
     $usuario['tarjeton_path'] = findUploadedDocument($usuario['matricula'], 1);
     $usuario['foto_path'] = findUploadedDocument($usuario['matricula'], 6);
-    $usuario['requires_2fa'] = true; // 2FA siempre requerido
+    $usuario['requires_2fa'] = true;
     if (is_numeric($usuario['idRol'])) {
         $usuario['idRol'] = (int) $usuario['idRol'];
     }
     $usuario['status']= (int) $usuario['status'];
 
-    // Respuesta exitosa con todos los datos del usuario
     echo json_encode([
         'success' => true,
         'usuario' => $usuario
@@ -247,3 +230,4 @@ try {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Error en la base de datos: ' . $e->getMessage()]);
 }
+?>

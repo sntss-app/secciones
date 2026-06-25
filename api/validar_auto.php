@@ -1,47 +1,41 @@
 <?php
 /*
   Guarda el dictamen del validador.
-  Cambia el status del credito en la tabla auto y registra quien valido.
+  Cambia el status del crédito en la tabla auto y registra quién validó.
 */
-
-// Conectar a la base de datos
 require_once 'config.php';
 
-// Recibir los datos del frontend (React) en formato JSON
 $data = json_decode(file_get_contents('php://input'), true);
-$id = isset($data['id']) ? (int)$data['id'] : 0;                                // ID del registro en la tabla auto
-$matricula = isset($data['matricula']) ? trim($data['matricula']) : '';          // Matricula del solicitante
-$validatorMatricula = isset($data['validatorMatricula']) ? trim($data['validatorMatricula']) : ''; // Matricula del validador
-$validatorNombre = isset($data['validatorNombre']) ? trim($data['validatorNombre']) : '';          // Nombre del validador
-$estatus = isset($data['estatus']) ? trim($data['estatus']) : '';                // Nuevo estatus (texto)
-$observaciones = isset($data['observaciones']) ? trim($data['observaciones']) : ''; // Observaciones (opcional)
+$id = isset($data['id']) ? (int)$data['id'] : 0;
+$matricula = isset($data['matricula']) ? trim($data['matricula']) : '';
+$validatorMatricula = isset($data['validatorMatricula']) ? trim($data['validatorMatricula']) : '';
+$validatorNombre = isset($data['validatorNombre']) ? trim($data['validatorNombre']) : '';
+$estatus = isset($data['estatus']) ? trim($data['estatus']) : '';
+$observaciones = isset($data['observaciones']) ? trim($data['observaciones']) : '';
 
-// Validar que lleguen todos los datos obligatorios
 if (empty($matricula) || empty($validatorMatricula) || empty($validatorNombre) || empty($estatus)) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Faltan datos obligatorios para validar la solicitud.']);
     exit;
 }
 
-// Mapeo de estatus en texto a numeros para guardar en la base de datos
 $estatusMap = [
-    'preregistro' => 1,   // Recien registrado
-    'aprobado' => 2,      // Validado y aceptado
-    'observaciones' => 3, // Tiene correcciones que hacer
-    'sinconcluir' => 4,   // Incompleto
-    'denegado' => 5,      // Rechazado
+    // Equivalencia con la tabla auto:
+    // 1 preregistro, 2 validado, 3 observaciones, 4 sin concluir, 5 denegado.
+    'preregistro' => 1,
+    'aprobado' => 2,
+    'observaciones' => 3,
+    'sinconcluir' => 4,
+    'denegado' => 5,
 ];
 
-// Si el estatus no es valido, devolver error
 if (!array_key_exists($estatus, $estatusMap)) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Estatus invalido.']);
+    echo json_encode(['success' => false, 'message' => 'Estatus inválido.']);
     exit;
 }
 
 try {
-    // Buscar el registro de auto para esta matricula
-    // Si llega ID, lo usa; si no, busca por matricula
     if ($id > 0) {
         $stmt = $pdo->prepare('SELECT id, matricula FROM auto WHERE id = :id AND matricula = :matricula LIMIT 1');
         $stmt->execute([':id' => $id, ':matricula' => $matricula]);
@@ -51,23 +45,19 @@ try {
     }
     $record = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Si no existe el registro, avisar
     if (!$record) {
         http_response_code(404);
-        echo json_encode(['success' => false, 'message' => 'No existe un registro de credito de auto para esa matricula.']);
+        echo json_encode(['success' => false, 'message' => 'No existe un registro de crédito de auto para esa matrícula.']);
         exit;
     }
 
-    // Guardar informacion del validador: "Nombre (Matricula)"
     $validatorInfo = sprintf('%s (%s)', $validatorNombre, $validatorMatricula);
-
-    // Actualizar el registro con el nuevo estatus y la informacion del validador
     $update = $pdo->prepare(
         'UPDATE auto
-         SET valido = :valido,                // Quien valido
-             observaciones = :observaciones,  // Notas del validador
-             fecha_validado = NOW(),          // Fecha y hora de la validacion
-             status = :status                // Nuevo estatus (numero)
+         SET valido = :valido,
+             observaciones = :observaciones,
+             fecha_validado = NOW(),
+             status = :status
          WHERE id = :id'
     );
     $update->execute([
@@ -77,16 +67,14 @@ try {
         ':id' => (int)$record['id'],
     ]);
 
-    // Respuesta exitosa con los datos actualizados
     echo json_encode([
         'success' => true,
-        'message' => 'Dictamen de validacion guardado correctamente.',
+        'message' => 'Dictamen de validación guardado correctamente.',
         'status' => $estatus,
         'valido' => $validatorInfo,
         'observaciones' => $observaciones,
         'fecha_validado' => date('Y-m-d H:i:s')
     ]);
-
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Error en la base de datos: ' . $e->getMessage()]);
