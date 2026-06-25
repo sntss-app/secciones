@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaUserAlt, FaLock, FaSignInAlt, FaEye, FaEyeSlash, FaExclamationTriangle, FaUserPlus, FaEnvelope } from 'react-icons/fa';
 import { apiUrl } from '../config';
+import { storeUserSession } from '../utils/roles';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -19,69 +20,77 @@ const Login = () => {
     };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrorMsg('');
-    setLoading(true);
+        e.preventDefault();
+        setErrorMsg('');
+        setLoading(true);
 
-    const matricula = formData.matricula.trim();
-    const password = formData.password;
+        const matricula = formData.matricula.trim();
+        const password = formData.password;
 
-    if (!validarMatricula(matricula)) {
-        setErrorMsg('La matrícula debe tener entre 8 y 9 dígitos numéricos.');
-        setLoading(false);
-        return;
-    }
-
-    if (!password) {
-        setErrorMsg('La contraseña es obligatoria.');
-        setLoading(false);
-        return;
-    }
-
-    try {
-        const response = await fetch(apiUrl('/mail-login.php'), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ matricula, password })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok || !data.success) {
-            throw new Error(data.message || 'Error al iniciar sesión.');
+        if (!validarMatricula(matricula)) {
+            setErrorMsg('La matrícula debe tener entre 8 y 9 dígitos numéricos.');
+            setLoading(false);
+            return;
         }
 
-        console.log('Usuario logueado:', data.usuario);
-        console.log('Requiere 2FA:', data.usuario.requires_2fa);
+        if (!password) {
+            setErrorMsg('La contraseña es obligatoria.');
+            setLoading(false);
+            return;
+        }
 
-        // 🔥 VERIFICAR SI TIENE 2FA ACTIVADO 🔥
-        if (data.usuario.requires_2fa === true) {
-                sessionStorage.setItem('temp_matricula', data.usuario.matricula);
-                sessionStorage.setItem('temp_nombre', data.usuario.nombre);     // ← Agrega esta línea
-                sessionStorage.setItem('temp_correo', data.usuario.correo || ''); // ← Opcional
-                navigate('/verificar-2fa');
-            }else {
-            // Login normal, guardar datos permanentes
-            localStorage.setItem('matricula', data.usuario.matricula);
-            localStorage.setItem('nombre', data.usuario.nombre);
-            localStorage.setItem('correo', data.usuario.correo || '');
-            localStorage.setItem('idRol', data.usuario.idRol || '');
-            localStorage.setItem('roleName', data.usuario.roleName || '');
-            
-            if (data.usuario.foto_path) {
-                localStorage.setItem('foto', data.usuario.foto_path);
+        try {
+            const response = await fetch(apiUrl('/mail-login.php'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ matricula, password })
+            });
+
+            const data = await response.json();
+
+            // 🔥 Manejar errores con intentos fallidos y bloqueo 🔥
+            if (!response.ok || !data.success) {
+                if (data.bloqueado) {
+                    setErrorMsg(data.message);
+                    // Deshabilitar el botón por el tiempo que indica el servidor
+                    if (data.tiempo_restante) {
+                        // Opcional: mostrar contador regresivo
+                        console.log(`Cuenta bloqueada por ${data.tiempo_restante} minutos`);
+                    }
+                } else if (data.intentos !== undefined) {
+                    setErrorMsg(data.message); // Muestra intentos restantes
+                } else {
+                    setErrorMsg(data.message || 'Error al iniciar sesión.');
+                }
+                setLoading(false);
+                return;
             }
-            
-            console.log('Redirigiendo a /dashboard');
-            navigate('/dashboard');
+
+            console.log('Usuario logueado:', data.usuario);
+            console.log('Requiere 2FA:', data.usuario.requires_2fa);
+
+            // 🔥 VERIFICAR SI TIENE 2FA ACTIVADO 🔥
+            if (data.usuario.requires_2fa === true) {
+                storeUserSession(sessionStorage, data.usuario);
+                navigate('/verificar-2fa');
+            } else {
+                // Login normal, guardar datos permanentes
+                storeUserSession(localStorage, data.usuario);
+                
+                if (data.usuario.foto_path) {
+                    localStorage.setItem('foto', data.usuario.foto_path);
+                }
+                
+                console.log('Redirigiendo a /dashboard');
+                navigate('/dashboard');
+            }
+        } catch (err) {
+            console.error('Error en login:', err);
+            setErrorMsg('Error de conexión con el servidor. Intenta de nuevo.');
+        } finally {
+            setLoading(false);
         }
-    } catch (err) {
-        console.error('Error en login:', err);
-        setErrorMsg(err.message);
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
     // ... el resto del JSX (los estilos) se quedan igual
     const styles = {
@@ -105,12 +114,12 @@ const Login = () => {
             backgroundColor: '#0A0F1E',
             padding: '2rem',
             textAlign: 'center',
-            borderBottom: '4px solid #FFD700',
+            borderBottom: '4px solid #3EAEF4',
         },
         title: {
             fontSize: '1.8rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #FFD700 100%)',
+            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -169,7 +178,7 @@ const Login = () => {
             fontSize: '1rem',
             fontWeight: '600',
             color: '#0A0F1E',
-            backgroundColor: '#FFD700',
+            backgroundColor: '#3EAEF4',
             border: 'none',
             borderRadius: '8px',
             cursor: 'pointer',
@@ -197,7 +206,7 @@ const Login = () => {
             borderTop: '1px solid #eee',
         },
         footerLink: {
-            color: '#FFD700',
+            color: '#3EAEF4',
             textDecoration: 'none',
             fontWeight: '500',
             display: 'inline-flex',

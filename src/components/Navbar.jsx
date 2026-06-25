@@ -53,7 +53,7 @@ const Navbar = () => {
     const styles = {
         navbar: {
             backgroundColor: scrolled ? '#0A0F1E' : '#0A0F1E',
-            borderBottom: '3px solid #FFD700',
+            borderBottom: '3px solid #3EAEF4',
             boxShadow: scrolled ? '0 4px 12px rgba(0,0,0,0.3)' : 'none',
             transition: 'all 0.3s ease',
             position: 'sticky',
@@ -80,8 +80,8 @@ const Navbar = () => {
             width: '55px',
             borderRadius: '50%',
             objectFit: 'cover',
-            border: '2px solid #FFD700',
-            boxShadow: '0 0 0 2px #0A0F1E, 0 0 0 4px #FFD700',
+            border: '2px solid #3EAEF4',
+            boxShadow: '0 0 0 2px #0A0F1E, 0 0 0 4px #3EAEF4',
         },
         titleContainer: {
             display: 'flex',
@@ -90,7 +90,7 @@ const Navbar = () => {
         title: {
             fontSize: '1.4rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #FFD700 100%)',
+            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -99,7 +99,7 @@ const Navbar = () => {
         },
         badge: {
             fontSize: '0.7rem',
-            color: '#FFD700',
+            color: '#3EAEF4',
             fontWeight: '500',
             marginTop: '2px',
         },
@@ -112,7 +112,7 @@ const Navbar = () => {
             display: 'none',
             fontSize: '1.8rem',
             cursor: 'pointer',
-            color: '#FFD700',
+            color: '#3EAEF4',
         },
         mobileMenu: {
             display: 'none',
@@ -155,7 +155,7 @@ const Navbar = () => {
             boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
         },
         userName: {
-            color: '#FFD700',
+            color: '#3EAEF4',
             fontWeight: 'bold',
             marginRight: '0.5rem',
         },

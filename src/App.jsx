@@ -7,11 +7,25 @@ import Registro from './pages/Registro';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import RecuperarContraseña from './pages/RecuperarContraseña';
-import Verificar2FA from './pages/Verificar2FA';  // ← Importa el componente
+import Verificar2FA from './pages/Verificar2FA';
+import Perfil from './pages/Perfil';
+import AutoCredito from './pages/AutoCredito';
+import AutoValidador from './pages/AutoValidador';
+import NoticiasCrear from './pages/NoticiasCrear';
+import Noticias from './pages/Noticias';
 
 // Importar componentes
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+
+// Componente para rutas protegidas
+const RutaProtegida = ({ children }) => {
+    const matricula = localStorage.getItem('matricula');
+    if (!matricula) {
+        return <Navigate to="/login" replace />;
+    }
+    return children;
+};
 
 function App() {
     return (
@@ -24,9 +38,15 @@ function App() {
                         <Route path="/login" element={<Login />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/RecuperarContraseña" element={<RecuperarContraseña />} />
-                        <Route path="/verificar-2fa" element={<Verificar2FA />} />  {/* ← Ruta para 2FA */}
+                        <Route path="/verificar-2fa" element={<Verificar2FA />} />
+                        <Route path="/perfil" element={<RutaProtegida><Perfil /></RutaProtegida>} />
+                        <Route path="/registro-auto" element={<RutaProtegida><AutoCredito /></RutaProtegida>} />
+                        {/* 👇 Agrega esta línea para el validador */}
+                        <Route path="/validador-auto" element={<RutaProtegida><AutoValidador /></RutaProtegida>} />
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
                         <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                        <Route path="/noticias/crear" element={<RutaProtegida><NoticiasCrear /></RutaProtegida>} />
+                        <Route path="/noticias" element={<Noticias />} />
                     </Routes>
                 </main>
                 <Footer />

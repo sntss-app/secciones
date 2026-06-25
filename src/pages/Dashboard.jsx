@@ -1,14 +1,261 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaCar, FaNewspaper, FaInfoCircle, FaCalculator, FaSignInAlt, FaGift, FaShieldAlt, FaChartLine } from 'react-icons/fa';
+import { 
+    FaCar, FaNewspaper, FaInfoCircle, FaCalculator, FaSignInAlt, 
+    FaGift, FaShieldAlt, FaChartLine, FaCheckCircle, FaUser,
+    FaThumbtack, FaEye, FaCalendarAlt
+} from 'react-icons/fa';
 import { apiUrl } from '../config';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
+import { hasStoredRole, parseRoleIds } from '../utils/roles';
+
+// Estilos en línea mejorados
+const styles = {
+    container: {
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: '2rem 1.5rem',
+        minHeight: 'calc(100vh - 200px)', // Para que el footer se pegue abajo
+    },
+    heroSection: {
+        background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
+        borderRadius: '20px',
+        padding: '3rem 2rem',
+        marginBottom: '2rem',
+        textAlign: 'center',
+        color: 'white',
+        borderBottom: '4px solid #3EAEF4',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+        position: 'relative',
+        overflow: 'hidden',
+    },
+    heroTitle: {
+        fontSize: '2.8rem',
+        fontWeight: 'bold',
+        background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
+        marginBottom: '0.5rem',
+        letterSpacing: '-0.5px',
+    },
+    heroSubtitle: {
+        fontSize: '1.2rem',
+        color: '#ccc',
+        marginBottom: '1.5rem',
+    },
+    heroBtn: {
+        backgroundColor: '#3EAEF4',
+        color: '#0A0F1E',
+        padding: '0.75rem 2rem',
+        borderRadius: '30px',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        textDecoration: 'none',
+        fontWeight: 'bold',
+        fontSize: '1rem',
+        transition: 'all 0.3s ease',
+        border: 'none',
+        cursor: 'pointer',
+    },
+    actionGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+        gap: '1.5rem',
+        marginBottom: '2rem',
+    },
+    actionCard: {
+        backgroundColor: 'white',
+        borderRadius: '16px',
+        padding: '1.5rem',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+        transition: 'all 0.3s ease',
+        textDecoration: 'none',
+        color: 'inherit',
+        display: 'block',
+        border: '1px solid #e9ecef',
+        position: 'relative',
+        overflow: 'hidden',
+    },
+    actionCardIcon: {
+        fontSize: '2rem',
+        color: '#3EAEF4',
+        marginBottom: '0.3rem',
+    },
+    actionCardTitle: {
+        fontSize: '1rem',
+        fontWeight: 'bold',
+        marginBottom: '0.2rem',
+        color: '#0A0F1E',
+    },
+    actionCardDescription: {
+        fontSize: '0.8rem',
+        color: '#6c757d',
+        margin: 0,
+    },
+    grid2cols: {
+        display: 'grid',
+        gridTemplateColumns: '2fr 1fr',
+        gap: '2rem',
+        marginBottom: '2rem',
+    },
+    card: {
+        backgroundColor: 'white',
+        borderRadius: '16px',
+        padding: '1.5rem',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+        border: '1px solid #e9ecef',
+        transition: 'all 0.3s ease',
+        height: '100%',
+    },
+    cardTitle: {
+        fontSize: '1.1rem',
+        fontWeight: 'bold',
+        marginBottom: '1rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        color: '#0A0F1E',
+        borderBottom: '2px solid #3EAEF4',
+        paddingBottom: '0.5rem',
+    },
+    cardBody: {
+        color: '#495057',
+        lineHeight: '1.6',
+    },
+    noticiaCard: {
+        backgroundColor: '#f8f9fa',
+        borderRadius: '12px',
+        padding: '1rem',
+        marginBottom: '1rem',
+        transition: 'all 0.3s ease',
+        border: '1px solid #e9ecef',
+    },
+    noticiaTitulo: {
+        fontSize: '0.95rem',
+        fontWeight: 'bold',
+        marginBottom: '0.3rem',
+        color: '#0A0F1E',
+    },
+    noticiaResumen: {
+        color: '#6c757d',
+        fontSize: '0.8rem',
+        marginBottom: '0.3rem',
+    },
+    noticiaMeta: {
+        fontSize: '0.7rem',
+        color: '#adb5bd',
+        display: 'flex',
+        gap: '1rem',
+        alignItems: 'center',
+    },
+    noticiaBadge: {
+        backgroundColor: '#3EAEF4',
+        color: '#0A0F1E',
+        fontSize: '0.6rem',
+        fontWeight: 'bold',
+        padding: '0.1rem 0.5rem',
+        borderRadius: '10px',
+    },
+    sidebar: {
+        backgroundColor: 'white',
+        borderRadius: '16px',
+        padding: '1.5rem',
+        border: '1px solid #e9ecef',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+        height: '100%',
+    },
+    sidebarTitle: {
+        fontSize: '1rem',
+        fontWeight: 'bold',
+        marginBottom: '1rem',
+        borderBottom: '2px solid #3EAEF4',
+        paddingBottom: '0.5rem',
+        color: '#0A0F1E',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+    },
+    listaReglas: {
+        listStyle: 'none',
+        padding: 0,
+        margin: 0,
+    },
+    listaReglasItem: {
+        padding: '0.5rem 0',
+        borderBottom: '1px solid #e9ecef',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        fontSize: '0.85rem',
+    },
+    btnPrimary: {
+        backgroundColor: '#3EAEF4',
+        color: '#0A0F1E',
+        border: 'none',
+        padding: '0.6rem 1.2rem',
+        borderRadius: '12px',
+        fontWeight: 'bold',
+        transition: 'all 0.3s ease',
+        cursor: 'pointer',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        textDecoration: 'none',
+        fontSize: '0.9rem',
+    },
+    modalHeader: {
+        background: 'linear-gradient(90deg, #003c82, #00a8ff)',
+        color: 'white',
+        borderBottom: 'none',
+        borderRadius: '16px 16px 0 0',
+        padding: '1.5rem',
+    },
+    btnCalcular: {
+        backgroundColor: '#3EAEF4',
+        color: '#0A0F1E',
+        border: 'none',
+        padding: '0.6rem 1.2rem',
+        borderRadius: '10px',
+        fontWeight: 'bold',
+        width: '100%',
+        transition: 'all 0.3s ease',
+        cursor: 'pointer',
+        fontSize: '0.95rem',
+    },
+    resultadoContainer: {
+        backgroundColor: '#e9ecef',
+        borderRadius: '12px',
+        padding: '1.25rem',
+        textAlign: 'center',
+        marginTop: '1rem',
+        border: '1px solid #dee2e6',
+    },
+    resultadoMonto: {
+        fontSize: '2rem',
+        fontWeight: 'bold',
+        color: '#003c82',
+    },
+    badgeRol: {
+        display: 'inline-block',
+        padding: '0.25rem 0.75rem',
+        borderRadius: '20px',
+        fontSize: '0.75rem',
+        fontWeight: 'bold',
+        backgroundColor: '#3EAEF4',
+        color: '#0A0F1E',
+        marginBottom: '0.5rem',
+    },
+};
 
 const Dashboard = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userName, setUserName] = useState('');
+    const [isLoggedIn] = useState(() => Boolean(localStorage.getItem('matricula')));
+    const [userName] = useState(() => localStorage.getItem('nombre') || localStorage.getItem('matricula') || '');
     const [noticias, setNoticias] = useState([]);
     const [loadingNoticias, setLoadingNoticias] = useState(true);
+    const [hasAutoValidatorRole, setHasAutoValidatorRole] = useState(() => hasStoredRole(1, 'auto'));
+    const [hasNewsValidatorRole, setHasNewsValidatorRole] = useState(() => hasStoredRole(2, 'noticias'));
     
     // Estados para el modal y la calculadora de auto
     const [showModal, setShowModal] = useState(false);
@@ -17,15 +264,27 @@ const Dashboard = () => {
     const [montoAuto, setMontoAuto] = useState(null);
     const [mostrarResultado, setMostrarResultado] = useState(false);
 
-    // Verificar sesión
     useEffect(() => {
         const matricula = localStorage.getItem('matricula');
-        const nombre = localStorage.getItem('nombre');
-        
-        if (matricula) {
-            setIsLoggedIn(true);
-            setUserName(nombre || matricula);
-        }
+        if (!matricula || hasStoredRole(1, 'auto')) return;
+
+        const cargarRolesPerfil = async () => {
+            try {
+                const response = await fetch(apiUrl(`/obtener_perfil.php?matricula=${encodeURIComponent(matricula)}`));
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const roleIds = parseRoleIds(data.usuario?.idRol);
+                    setHasAutoValidatorRole(roleIds.includes('1'));
+                    setHasNewsValidatorRole(roleIds.includes('2'));
+                    localStorage.setItem('idRol', data.usuario?.idRol || '');
+                }
+            } catch (error) {
+                console.error('Error cargando roles del perfil:', error);
+            }
+        };
+
+        cargarRolesPerfil();
     }, []);
 
     // Cargar noticias públicas
@@ -80,164 +339,9 @@ const Dashboard = () => {
         setShowModal(true);
     };
 
-    const styles = {
-        container: {
-            width: '100%',
-            margin: '0 auto',
-            padding: '2rem',
-        },
-        heroSection: {
-            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%)',
-            borderRadius: '16px',
-            padding: '3rem 2rem',
-            marginBottom: '2rem',
-            textAlign: 'center',
-            color: 'white',
-            borderBottom: '4px solid #FFD700',
-        },
-        heroTitle: {
-            fontSize: '2.5rem',
-            fontWeight: 'bold',
-            marginBottom: '1rem',
-        },
-        heroSubtitle: {
-            fontSize: '1.1rem',
-            color: '#ccc',
-            marginBottom: '1.5rem',
-        },
-        loginPrompt: {
-            backgroundColor: '#FFD700',
-            color: '#0A0F1E',
-            padding: '0.75rem 1.5rem',
-            borderRadius: '25px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            textDecoration: 'none',
-            fontWeight: 'bold',
-        },
-        grid2cols: {
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '2rem',
-            marginBottom: '2rem',
-        },
-        card: {
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            padding: '1.5rem',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-            transition: 'transform 0.3s ease',
-            cursor: 'pointer',
-        },
-        cardTitle: {
-            fontSize: '1.3rem',
-            fontWeight: 'bold',
-            marginBottom: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-        },
-        cardBody: {
-            color: '#666',
-            lineHeight: '1.6',
-        },
-        noticiaCard: {
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            padding: '1rem',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-            marginBottom: '1rem',
-        },
-        noticiaTitulo: {
-            fontSize: '1.1rem',
-            fontWeight: 'bold',
-            marginBottom: '0.5rem',
-        },
-        noticiaResumen: {
-            color: '#666',
-            fontSize: '0.9rem',
-        },
-        sidebar: {
-            backgroundColor: '#f8f9fa',
-            borderRadius: '12px',
-            padding: '1.5rem',
-            border: '1px solid #e9ecef',
-        },
-        sidebarTitle: {
-            fontSize: '1.2rem',
-            fontWeight: 'bold',
-            marginBottom: '1rem',
-            borderBottom: '2px solid #FFD700',
-            paddingBottom: '0.5rem',
-        },
-        listaReglas: {
-            listStyle: 'none',
-            padding: 0,
-        },
-        listaReglasItem: {
-            padding: '0.5rem 0',
-            borderBottom: '1px solid #e9ecef',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-        },
-        calculadoraCard: {
-            backgroundColor: '#f8f9fa',
-            borderRadius: '12px',
-            padding: '1rem',
-            border: '1px solid #e9ecef',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            textAlign: 'center',
-        },
-        calculadoraIcon: {
-            fontSize: '2rem',
-            color: '#FFD700',
-            marginBottom: '0.5rem',
-        },
-        calculadoraTitle: {
-            fontSize: '0.9rem',
-            fontWeight: 'bold',
-            marginBottom: '0.25rem',
-        },
-        calculadoraDescription: {
-            fontSize: '0.75rem',
-            color: '#666',
-            marginBottom: '0.5rem',
-        },
-        calculadoraBtn: {
-            backgroundColor: '#FFD700',
-            color: '#0A0F1E',
-            border: 'none',
-            padding: '0.25rem 0.75rem',
-            borderRadius: '20px',
-            fontSize: '0.75rem',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-        },
-        modalHeader: {
-            background: 'linear-gradient(90deg, #003c82, #00a8ff)',
-            color: 'white',
-            borderBottom: 'none',
-        },
-        btnCalcular: {
-            backgroundColor: '#FFD700',
-            color: '#0A0F1E',
-            border: 'none',
-            padding: '0.5rem 1rem',
-            borderRadius: '8px',
-            fontWeight: 'bold',
-            width: '100%',
-        },
-        resultadoContainer: {
-            backgroundColor: '#e9ecef',
-            borderRadius: '8px',
-            padding: '1rem',
-            textAlign: 'center',
-            marginTop: '1rem',
-        },
-    };
+    const rolesDisponibles = [];
+    if (hasAutoValidatorRole) rolesDisponibles.push('Validador Auto');
+    if (hasNewsValidatorRole) rolesDisponibles.push('Editor Noticias');
 
     return (
         <div style={styles.container}>
@@ -249,100 +353,152 @@ const Dashboard = () => {
                 <p style={styles.heroSubtitle}>
                     Tu sindicato al servicio de los trabajadores del Seguro Social
                 </p>
+                
+                {/* Roles del usuario */}
+                {isLoggedIn && rolesDisponibles.length > 0 && (
+                    <div style={{ marginBottom: '1rem' }}>
+                        {rolesDisponibles.map((rol, idx) => (
+                            <span key={idx} style={{ ...styles.badgeRol, marginRight: '0.5rem' }}>
+                                🛡️ {rol}
+                            </span>
+                        ))}
+                    </div>
+                )}
+                
+                {/* Botón de perfil (solo visible cuando está logueado) */}
+                {isLoggedIn && (
+                    <Link to="/perfil" style={{ ...styles.heroBtn, backgroundColor: '#3EAEF4', marginTop: '0.5rem' }}>
+                        <FaUser className="me-2" /> Ver mi perfil
+                    </Link>
+                )}
+                
                 {!isLoggedIn && (
-                    <Link to="/login" style={styles.loginPrompt}>
+                    <Link to="/login" style={styles.heroBtn}>
                         <FaSignInAlt /> Inicia sesión para acceder a más beneficios
+                    </Link>
+                )}
+            </div>
+
+            {/* Cards de acción (incluyendo calculadora) */}
+            <div style={styles.actionGrid}>
+                <Link to="/registro-auto" style={styles.actionCard}>
+                    <div style={styles.actionCardIcon}>
+                        <FaCar />
+                    </div>
+                    <h3 style={styles.actionCardTitle}>🚗 Preregistro a la rifa de auto</h3>
+                    <p style={styles.actionCardDescription}>
+                        Participa en la rifa para obtener un crédito automotriz.
+                    </p>
+                </Link>
+                <Link to="/noticias" style={styles.actionCard}>
+                    <div style={styles.actionCardIcon}>
+                        <FaNewspaper />
+                    </div>
+                    <h3 style={styles.actionCardTitle}>📰 Noticias y avisos</h3>
+                    <p style={styles.actionCardDescription}>
+                        Mantente informado con las últimas noticias.
+                    </p>
+                </Link>
+                <div style={{ ...styles.actionCard, cursor: 'pointer' }} onClick={abrirModal}>
+                    <div style={{ ...styles.actionCardIcon, color: '#FFC107' }}>
+                        <FaCalculator />
+                    </div>
+                    <h3 style={styles.actionCardTitle}>💰 Calculadora de auto</h3>
+                    <p style={styles.actionCardDescription}>
+                        Simula tu financiamiento automotriz.
+                    </p>
+                </div>
+                {hasAutoValidatorRole && (
+                    <Link to="/validador-auto" style={{ ...styles.actionCard, borderColor: '#FFC107' }}>
+                        <div style={{ ...styles.actionCardIcon, color: '#FFC107' }}>
+                            <FaCheckCircle />
+                        </div>
+                        <h3 style={styles.actionCardTitle}>🔍 Validador Auto</h3>
+                        <p style={styles.actionCardDescription}>
+                            Gestiona solicitudes de crédito.
+                        </p>
+                    </Link>
+                )}
+                {hasNewsValidatorRole && (
+                    <Link to="/noticias/crear" style={{ ...styles.actionCard, borderColor: '#28a745' }}>
+                        <div style={{ ...styles.actionCardIcon, color: '#28a745' }}>
+                            <FaNewspaper />
+                        </div>
+                        <h3 style={styles.actionCardTitle}>✍️ Crear Noticia</h3>
+                        <p style={styles.actionCardDescription}>
+                            Publica nuevas noticias.
+                        </p>
                     </Link>
                 )}
             </div>
 
             {/* Grid de 2 columnas: Contenido principal + Sidebar */}
             <div style={styles.grid2cols}>
-                {/* Columna izquierda: Cards de funcionalidades */}
+                {/* Columna izquierda */}
                 <div>
-                    <div style={styles.card}>
-                        <div style={styles.cardTitle}>
-                            <FaCar style={{ color: '#FFD700' }} /> Crédito Automotriz
-                        </div>
-                        <div style={styles.cardBody}>
-                            Financiamiento para tu auto nuevo o seminuevo con tasas preferenciales para agremiados.
-                            {!isLoggedIn && (
-                                <div style={{ marginTop: '1rem', color: '#FFD700', fontSize: '0.85rem' }}>
-                                    🔒 Inicia sesión para solicitar tu crédito
-                                </div>
-                            )}
-                        </div>
-                    </div>
 
-                    {/* Calculadora Card - ahora usa React Bootstrap */}
-                    <div style={styles.calculadoraCard} onClick={abrirModal}>
-                        <div style={styles.calculadoraIcon}>
-                            <FaCar />
-                        </div>
-                        <h3 style={styles.calculadoraTitle}>PRÉSTAMO DE AUTO</h3>
-                        <p style={styles.calculadoraDescription}>Financiamiento para la compra de tu vehículo</p>
-                        <button type="button" style={styles.calculadoraBtn}>
-                            <FaCalculator /> Calcular
-                        </button>
-                    </div>
-
-                    <div style={styles.card}>
+                    {/* Noticias */}
+                    <div style={{ ...styles.card, marginTop: '1.5rem' }}>
                         <div style={styles.cardTitle}>
-                            <FaNewspaper style={{ color: '#FFD700' }} /> Noticias y Avisos
+                            <FaNewspaper style={{ color: '#3EAEF4' }} /> Noticias y Avisos
                         </div>
                         <div style={styles.cardBody}>
                             {loadingNoticias ? (
-                                <p>Cargando noticias...</p>
-                            ) : (
+                                <p className="text-muted">Cargando noticias...</p>
+                            ) : noticias.length > 0 ? (
                                 noticias.map((noticia, idx) => (
                                     <div key={idx} style={styles.noticiaCard}>
                                         <div style={styles.noticiaTitulo}>{noticia.titulo}</div>
                                         <div style={styles.noticiaResumen}>
                                             {noticia.resumen?.substring(0, 100)}...
                                         </div>
-                                        <small style={{ color: '#999' }}>
-                                            📅 {noticia.fecha} | 👁️ {noticia.vistas} vistas
-                                        </small>
+                                        <div style={styles.noticiaMeta}>
+                                            <span><FaCalendarAlt /> {noticia.fecha}</span>
+                                            <span><FaEye /> {noticia.vistas} vistas</span>
+                                            {noticia.fijada && <span style={styles.noticiaBadge}>📌 Fijada</span>}
+                                        </div>
                                     </div>
                                 ))
+                            ) : (
+                                <p className="text-muted">No hay noticias disponibles.</p>
                             )}
                             {!isLoggedIn && noticias.length > 0 && (
-                                <div style={{ marginTop: '1rem', color: '#FFD700', fontSize: '0.85rem' }}>
-                                    🔒 Inicia sesión para ver todas las noticias y documentos
+                                <div style={{ marginTop: '0.5rem', color: '#3EAEF4', fontSize: '0.85rem' }}>
+                                    🔒 Inicia sesión para ver todas las noticias
                                 </div>
                             )}
                         </div>
                     </div>
                 </div>
 
-                {/* Columna derecha: Sidebar con reglas y simulador */}
+                {/* Columna derecha: Sidebar */}
                 <div style={styles.sidebar}>
                     <div style={styles.sidebarTitle}>
                         <FaInfoCircle /> ¿Cómo participar?
                     </div>
                     <ul style={styles.listaReglas}>
                         <li style={styles.listaReglasItem}>
-                            <FaShieldAlt style={{ color: '#FFD700' }} /> Ser agremiado activo
+                            <FaShieldAlt style={{ color: '#3EAEF4' }} /> Ser agremiado activo
                         </li>
                         <li style={styles.listaReglasItem}>
-                            <FaChartLine style={{ color: '#FFD700' }} /> Tener mínimo 1 año de antigüedad
+                            <FaChartLine style={{ color: '#3EAEF4' }} /> Mínimo 1 año de antigüedad
                         </li>
                         <li style={styles.listaReglasItem}>
-                            <FaGift style={{ color: '#FFD700' }} /> Participar en la rifa de créditos automotrices
+                            <FaGift style={{ color: '#3EAEF4' }} /> Participar en la rifa de créditos
                         </li>
                     </ul>
                     
                     {!isLoggedIn ? (
-                        <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#FFD70020', borderRadius: '8px', textAlign: 'center' }}>
-                            <p style={{ fontWeight: 'bold' }}>✨ Beneficios exclusivos para agremiados ✨</p>
-                            <p style={{ fontSize: '0.85rem' }}>Préstamos, rifas, sorteos y más</p>
-                            <Link to="/registro" style={{ ...styles.loginPrompt, backgroundColor: '#FFD700', marginTop: '0.5rem' }}>
+                        <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#3EAEF420', borderRadius: '12px', textAlign: 'center' }}>
+                            <p style={{ fontWeight: 'bold', marginBottom: '0.3rem' }}>✨ Beneficios exclusivos ✨</p>
+                            <p style={{ fontSize: '0.85rem', color: '#6c757d' }}>Préstamos, rifas, sorteos y más</p>
+                            <Link to="/registro" style={{ ...styles.heroBtn, marginTop: '0.5rem', fontSize: '0.85rem', padding: '0.5rem 1.5rem' }}>
                                 Regístrate aquí
                             </Link>
                         </div>
                     ) : (
                         <div style={{ marginTop: '1rem' }}>
-                            <Link to="/registro-credito" style={styles.loginPrompt}>
+                            <Link to="/registro-credito" style={styles.heroBtn}>
                                 Solicitar crédito
                             </Link>
                         </div>
@@ -350,7 +506,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Modal con React Bootstrap */}
+            {/* Modal de la calculadora */}
             <Modal show={showModal} onHide={() => setShowModal(false)} centered>
                 <Modal.Header closeButton style={styles.modalHeader}>
                     <Modal.Title>
@@ -415,7 +571,7 @@ const Dashboard = () => {
                             <p className="fw-bold mb-2 text-center">Monto del préstamo para auto:</p>
                             <div style={styles.resultadoContainer}>
                                 <span className="d-block text-primary fw-bold fs-5">Por 24 veces el sueldo mensual integrado</span>
-                                <span className="d-block fs-3 fw-semibold" style={{ color: '#003c82' }}>
+                                <span style={styles.resultadoMonto}>
                                     {formatter.format(montoAuto)}
                                 </span>
                                 <p className="text-muted text-center mt-3 small mb-0">

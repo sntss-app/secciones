@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { FaShieldAlt, FaCheckCircle, FaCopy, FaKey } from 'react-icons/fa';
 import { apiUrl } from '../config';
+import { storeUserSession } from '../utils/roles';
 
 const Verificar2FA = () => {
     const navigate = useNavigate();
@@ -14,14 +15,10 @@ const Verificar2FA = () => {
     const [errorMsg, setErrorMsg] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
 
-    useEffect(() => {
-        cargarConfiguracion();
-    }, []);
-
-    const cargarConfiguracion = async () => {
+    const cargarConfiguracion = useCallback(async () => {
         setLoading(true);
         try {
-            const matricula = sessionStorage.getItem('temp_matricula');
+            const matricula = sessionStorage.getItem('matricula') || sessionStorage.getItem('temp_matricula');
             console.log('Matrícula para configurar 2FA:', matricula);
             
             const response = await fetch(apiUrl(`/mail-configurar_2fa.php?matricula=${matricula}`), {
@@ -44,14 +41,19 @@ const Verificar2FA = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        const loadTimer = setTimeout(cargarConfiguracion, 0);
+        return () => clearTimeout(loadTimer);
+    }, [cargarConfiguracion]);
 
     const handleVerificar = async (e) => {
         e.preventDefault();
         setErrorMsg('');
         setLoading(true);
 
-        const matricula = sessionStorage.getItem('temp_matricula') || localStorage.getItem('matricula');
+        const matricula = sessionStorage.getItem('matricula') || sessionStorage.getItem('temp_matricula') || localStorage.getItem('matricula');
 
         try {
             const response = await fetch(apiUrl('/mail-verificar_2fa.php'), {
@@ -62,18 +64,25 @@ const Verificar2FA = () => {
             const data = await response.json();
 
             if (data.success) {
-                const tempMatricula = sessionStorage.getItem('temp_matricula');
-                const tempNombre = sessionStorage.getItem('temp_nombre'); // ← Recupera el nombre temporal
-                const tempCorreo = sessionStorage.getItem('temp_correo'); // ← Recupera el correo temporal (opcional)
+                const tempUsuario = {
+                    matricula: sessionStorage.getItem('matricula'),
+                    nombre: sessionStorage.getItem('nombre'),
+                    correo: sessionStorage.getItem('correo'),
+                    idRol: sessionStorage.getItem('idRol'),
+                    roleName: sessionStorage.getItem('roleName'),
+                    roles: JSON.parse(sessionStorage.getItem('roles') || '[]'),
+                    roleNames: JSON.parse(sessionStorage.getItem('roleNames') || '[]')
+                };
                 
-                if (tempMatricula) {
-                    localStorage.setItem('matricula', tempMatricula);
-                    if (tempNombre) {
-                        localStorage.setItem('nombre', tempNombre);
-                    }
-                    if (tempCorreo) {
-                        localStorage.setItem('correo', tempCorreo);
-                    }
+                if (tempUsuario.matricula) {
+                    storeUserSession(localStorage, tempUsuario);
+                    sessionStorage.removeItem('matricula');
+                    sessionStorage.removeItem('nombre');
+                    sessionStorage.removeItem('correo');
+                    sessionStorage.removeItem('idRol');
+                    sessionStorage.removeItem('roleName');
+                    sessionStorage.removeItem('roles');
+                    sessionStorage.removeItem('roleNames');
                     sessionStorage.removeItem('temp_matricula');
                     sessionStorage.removeItem('temp_nombre');
                     sessionStorage.removeItem('temp_correo');
@@ -86,7 +95,7 @@ const Verificar2FA = () => {
             } else {
                 setErrorMsg(data.message || 'Código incorrecto');
             }
-        } catch (error) {
+        } catch {
             setErrorMsg('Error al verificar el código');
         } finally {
             setLoading(false);
@@ -101,7 +110,7 @@ const Verificar2FA = () => {
     if (loading) {
         return (
             <div className="text-center py-5">
-                <div className="spinner-border" style={{ color: '#FFD700' }} role="status"></div>
+                <div className="spinner-border" style={{ color: '#3EAEF4' }} role="status"></div>
                 <p className="mt-3">Cargando...</p>
             </div>
         );

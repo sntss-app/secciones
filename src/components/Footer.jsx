@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
+import AvisoPrivacidad from './AvisoPrivacidad';
 import { FaFacebook, FaTwitter, FaInstagram, FaYoutube, FaTiktok, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
+    const [showAvisoPrivacidad, setShowAvisoPrivacidad] = useState(false);
 
     const styles = {
         footer: {
@@ -26,14 +28,14 @@ const Footer = () => {
         title: {
             fontSize: '1.8rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #FFD700, #FFB347)',
+            background: 'linear-gradient(135deg, #3EAEF4, #FFB347)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
             marginBottom: '0.5rem',
         },
         slogan: {
-            color: '#FFD700',
+            color: '#3EAEF4',
             fontSize: '0.9rem',
             fontStyle: 'italic',
             marginBottom: '0.5rem',
@@ -81,7 +83,7 @@ const Footer = () => {
             transition: 'color 0.3s ease',
         },
         separator: {
-            color: '#FFD700',
+            color: '#3EAEF4',
         },
         copy: {
             fontSize: '0.75rem',
@@ -90,7 +92,7 @@ const Footer = () => {
             paddingTop: '1rem',
         },
         legend: {
-            color: '#FFD700',
+            color: '#3EAEF4',
             marginLeft: '5px',
         },
     };
@@ -122,7 +124,7 @@ const Footer = () => {
             background-color: rgba(0,242,234,0.2) !important;
         }
         .footer-link:hover {
-            color: #FFD700 !important;
+            color: #3EAEF4 !important;
         }
     `;
 
@@ -172,7 +174,9 @@ const Footer = () => {
                     </div>
                     
                     <div style={styles.linksRow}>
-                        <a href="#" style={styles.footerLink} className="footer-link">Aviso de privacidad</a>
+                        <a href="#" onClick={(e) => { e.preventDefault(); setShowAvisoPrivacidad(true); }} style={styles.footerLink}>
+                            Aviso de privacidad
+                        </a>
                         <span style={styles.separator}>|</span>
                         <a href="#" style={styles.footerLink} className="footer-link">Términos y condiciones</a>
                         <span style={styles.separator}>|</span>
@@ -183,6 +187,7 @@ const Footer = () => {
                         © {currentYear} SNTSS Sección XXXIII / 
                         <strong style={styles.legend}> Logic Legends 💀</strong>
                     </p>
+                    <AvisoPrivacidad show={showAvisoPrivacidad} onHide={() => setShowAvisoPrivacidad(false)} />
                 </div>
             </footer>
         </>

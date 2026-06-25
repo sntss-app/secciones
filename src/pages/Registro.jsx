@@ -1,7 +1,323 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { FaUserAlt, FaIdCard, FaPhone, FaEnvelope, FaLock, FaFilePdf, FaCamera, FaCheckCircle, FaExclamationTriangle, FaArrowLeft, FaArrowRight, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { 
+    FaUserAlt, FaIdCard, FaPhone, FaEnvelope, FaLock, FaFilePdf, 
+    FaCamera, FaCheckCircle, FaExclamationTriangle, FaArrowLeft, 
+    FaArrowRight, FaEye, FaEyeSlash, FaUser, FaBuilding, FaCalendarAlt 
+} from 'react-icons/fa';
 import { apiUrl } from '../config';
+import AvisoPrivacidad from '../components/AvisoPrivacidad';
+
+// Estilos en línea para el componente
+const styles = {
+    container: {
+        maxWidth: '800px',
+        margin: '0 auto',
+        padding: '2rem 1rem',
+    },
+    card: {
+        backgroundColor: 'white',
+        borderRadius: '20px',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06)',
+        overflow: 'hidden',
+        border: 'none',
+    },
+    cardHeader: {
+        background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%)',
+        padding: '1.8rem 2rem',
+        textAlign: 'center',
+        borderBottom: '4px solid #3EAEF4',
+    },
+    cardHeaderTitle: {
+        fontSize: '1.8rem',
+        fontWeight: 'bold',
+        background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
+        margin: 0,
+    },
+    cardHeaderSubtitle: {
+        color: '#aaa',
+        fontSize: '0.9rem',
+        margin: '0.3rem 0 0 0',
+    },
+    cardBody: {
+        padding: '2rem',
+    },
+    stepIndicator: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: '2rem',
+        position: 'relative',
+    },
+    stepItem: (active) => ({
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        flex: 1,
+        position: 'relative',
+    }),
+    stepCircle: (active, completed) => ({
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '1rem',
+        fontWeight: 'bold',
+        backgroundColor: active ? '#3EAEF4' : completed ? '#28a745' : '#e9ecef',
+        color: active || completed ? '#0A0F1E' : '#6c757d',
+        border: active ? '3px solid #3EAEF4' : completed ? '3px solid #28a745' : '3px solid #dee2e6',
+        transition: 'all 0.3s ease',
+        boxShadow: active ? '0 0 0 4px rgba(255,215,0,0.2)' : 'none',
+    }),
+    stepLabel: (active) => ({
+        fontSize: '0.7rem',
+        fontWeight: active ? 'bold' : 'normal',
+        color: active ? '#3EAEF4' : '#6c757d',
+        marginTop: '0.3rem',
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px',
+    }),
+    stepLine: (active) => ({
+        position: 'absolute',
+        top: '20px',
+        left: '50%',
+        width: '100%',
+        height: '2px',
+        backgroundColor: active ? '#3EAEF4' : '#dee2e6',
+        zIndex: -1,
+    }),
+    userCard: {
+        backgroundColor: '#f8f9fa',
+        borderRadius: '16px',
+        padding: '1.5rem',
+        marginBottom: '1.5rem',
+        border: '1px solid #e9ecef',
+        position: 'relative',
+        overflow: 'hidden',
+    },
+    userCardHeader: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        marginBottom: '1rem',
+        paddingBottom: '0.5rem',
+        borderBottom: '2px solid #3EAEF4',
+    },
+    userCardTitle: {
+        fontSize: '1rem',
+        fontWeight: 'bold',
+        color: '#0A0F1E',
+        margin: 0,
+    },
+    userDataGrid: {
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '0.5rem 1.5rem',
+    },
+    userDataItem: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    userDataLabel: {
+        fontSize: '0.7rem',
+        fontWeight: '600',
+        color: '#6c757d',
+        textTransform: 'uppercase',
+        letterSpacing: '0.3px',
+    },
+    userDataValue: {
+        fontSize: '0.95rem',
+        fontWeight: '600',
+        color: '#0A0F1E',
+        margin: 0,
+    },
+    inputGroup: {
+        marginBottom: '1.2rem',
+    },
+    label: {
+        display: 'block',
+        fontWeight: '600',
+        fontSize: '0.9rem',
+        color: '#333',
+        marginBottom: '0.3rem',
+    },
+    input: {
+        width: '100%',
+        padding: '0.6rem 1rem',
+        fontSize: '1rem',
+        border: '1px solid #ddd',
+        borderRadius: '12px',
+        transition: 'all 0.3s ease',
+        outline: 'none',
+        backgroundColor: 'white',
+    },
+    inputFocus: {
+        borderColor: '#3EAEF4',
+        boxShadow: '0 0 0 3px rgba(255,215,0,0.15)',
+    },
+    inputGroupWrapper: {
+        position: 'relative',
+    },
+    inputIcon: {
+        position: 'absolute',
+        left: '12px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        color: '#aaa',
+        fontSize: '1rem',
+    },
+    inputWithIcon: {
+        paddingLeft: '2.5rem',
+    },
+    btnPrimary: {
+        backgroundColor: '#3EAEF4',
+        color: '#0A0F1E',
+        border: 'none',
+        padding: '0.7rem 1.5rem',
+        borderRadius: '12px',
+        fontWeight: 'bold',
+        fontSize: '1rem',
+        transition: 'all 0.3s ease',
+        cursor: 'pointer',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.5rem',
+        width: '100%',
+    },
+    btnPrimaryHover: {
+        transform: 'translateY(-2px)',
+        boxShadow: '0 4px 12px rgba(255,215,0,0.3)',
+    },
+    btnSecondary: {
+        backgroundColor: '#e9ecef',
+        color: '#333',
+        border: 'none',
+        padding: '0.7rem 1.5rem',
+        borderRadius: '12px',
+        fontWeight: 'bold',
+        transition: 'all 0.3s ease',
+        cursor: 'pointer',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.5rem',
+    },
+    btnSuccess: {
+        backgroundColor: '#28a745',
+        color: 'white',
+        border: 'none',
+        padding: '0.7rem 1.5rem',
+        borderRadius: '12px',
+        fontWeight: 'bold',
+        transition: 'all 0.3s ease',
+        cursor: 'pointer',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.5rem',
+        width: '100%',
+    },
+    btnOutline: {
+        backgroundColor: 'transparent',
+        color: '#6c757d',
+        border: '1px solid #ddd',
+        padding: '0.7rem 1.5rem',
+        borderRadius: '12px',
+        fontWeight: 'bold',
+        transition: 'all 0.3s ease',
+        cursor: 'pointer',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.5rem',
+    },
+    fileInput: {
+        width: '100%',
+        padding: '0.6rem 1rem',
+        fontSize: '1rem',
+        border: '1px solid #ddd',
+        borderRadius: '12px',
+        transition: 'all 0.3s ease',
+        outline: 'none',
+        backgroundColor: 'white',
+        cursor: 'pointer',
+    },
+    fileInputHover: {
+        borderColor: '#3EAEF4',
+        boxShadow: '0 0 0 3px rgba(255,215,0,0.1)',
+    },
+    checkbox: {
+        marginRight: '0.5rem',
+        accentColor: '#3EAEF4',
+        width: '18px',
+        height: '18px',
+        cursor: 'pointer',
+    },
+    checkboxLabel: {
+        fontSize: '0.9rem',
+        color: '#333',
+        cursor: 'pointer',
+    },
+    fotoPreview: {
+        width: '120px',
+        height: '120px',
+        borderRadius: '50%',
+        objectFit: 'cover',
+        border: '3px solid #3EAEF4',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+        marginTop: '0.5rem',
+    },
+    alertError: {
+        backgroundColor: '#fee2e2',
+        color: '#dc2626',
+        padding: '0.75rem 1rem',
+        borderRadius: '12px',
+        marginBottom: '1.5rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        fontSize: '0.9rem',
+    },
+    alertSuccess: {
+        backgroundColor: '#d4edda',
+        color: '#155724',
+        padding: '0.75rem 1rem',
+        borderRadius: '12px',
+        marginBottom: '1.5rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        fontSize: '0.9rem',
+    },
+    link: {
+        color: '#3EAEF4',
+        textDecoration: 'none',
+        fontWeight: 'bold',
+        cursor: 'pointer',
+    },
+    linkHover: {
+        textDecoration: 'underline',
+    },
+    smallText: {
+        fontSize: '0.75rem',
+        color: '#6c757d',
+        marginTop: '0.2rem',
+        display: 'block',
+    },
+    flexRow: {
+        display: 'flex',
+        gap: '0.5rem',
+        marginTop: '1rem',
+    },
+    flexGrow: {
+        flex: 1,
+    },
+};
 
 const Registro = () => {
     const navigate = useNavigate();
@@ -9,6 +325,9 @@ const Registro = () => {
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
+    const [aceptaInformacion, setAceptaInformacion] = useState(false);
+    const [aceptaPrivacidad, setAceptaPrivacidad] = useState(false);
+    const [showAvisoPrivacidad, setShowAvisoPrivacidad] = useState(false);
     
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -36,31 +355,14 @@ const Registro = () => {
     };
 
     const validarCURP = (curp) => {
-    // Limpia la CURP (solo letras y números)
-    const limpia = curp.toUpperCase().replace(/[^A-Z0-9]/g, '');
-    
-    // Verifica longitud
-    if (limpia.length !== 18) {
-        console.log('Longitud CURP:', limpia.length);
-        return false;
-    }
-    
-    // Verifica formato: 4 letras, 6 números, 6 letras, 2 números
-    const regex = /^[A-Z]{4}\d{6}[A-Z]{6}[A-Z0-9]{2}$/;
-    const esValido = regex.test(limpia);
-    
-    if (!esValido) {
-        console.log('CURP no cumple formato:', limpia);
-    }
-    
-    return esValido;
-};
-
-    const validarPassword = (password) => {
-        return password.length >= 8;
+        const limpia = curp.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (limpia.length !== 18) return false;
+        const regex = /^[A-Z]{4}\d{6}[A-Z]{6}[A-Z0-9]{2}$/;
+        return regex.test(limpia);
     };
 
-    // Paso 1: Buscar usuario
+    const validarPassword = (password) => password.length >= 8;
+
     const handleBuscarUsuario = async (e) => {
         e.preventDefault();
         setErrorMsg('');
@@ -69,13 +371,6 @@ const Registro = () => {
         const matricula = formData.matricula.trim();
         let curp = formData.curp.trim().toUpperCase();
         curp = curp.replace(/[^A-Z0-9]/g, '');
-
-        // 🔥 AHORA SÍ, después de declarar curp, haces los console.log
-    console.log('CURP original:', formData.curp);
-    console.log('CURP después de limpiar:', curp);
-    console.log('Longitud CURP:', curp.length);
-    console.log('¿Pasa validación?', validarCURP(curp));
-
 
         if (!validarMatricula(matricula)) {
             setErrorMsg('La matrícula debe tener entre 8 y 9 dígitos numéricos.');
@@ -104,9 +399,7 @@ const Registro = () => {
 
             if (data.usuario && data.usuario.contrasena !== undefined && data.usuario.contrasena !== null && data.usuario.contrasena !== '') {
                 setErrorMsg('Este usuario ya se encuentra registrado. Por favor, inicia sesión.');
-                setTimeout(() => {
-                    navigate('/login');
-                }, 3000);
+                setTimeout(() => navigate('/login'), 3000);
                 setLoading(false);
                 return;
             }
@@ -120,7 +413,6 @@ const Registro = () => {
         }
     };
 
-    // Paso 2: Completar registro
     const handleCompletarRegistro = async (e) => {
         e.preventDefault();
         setErrorMsg('');
@@ -161,6 +453,12 @@ const Registro = () => {
 
         if (password !== confirmar_password) {
             setErrorMsg('Las contraseñas no coinciden.');
+            setLoading(false);
+            return;
+        }
+
+        if (!aceptaInformacion || !aceptaPrivacidad) {
+            setErrorMsg('Debes aceptar la veracidad de la información y el aviso de privacidad.');
             setLoading(false);
             return;
         }
@@ -270,9 +568,7 @@ const Registro = () => {
             }
 
             setSuccessMsg('¡Registro completado exitosamente! Redirigiendo al inicio de sesión...');
-            setTimeout(() => {
-                navigate('/login');
-            }, 3000);
+            setTimeout(() => navigate('/login'), 3000);
         } catch (err) {
             setErrorMsg(err.message);
         } finally {
@@ -283,102 +579,110 @@ const Registro = () => {
     // Renderizado de pasos
     const renderStep1 = () => (
         <form onSubmit={handleBuscarUsuario}>
-            <div className="mb-4">
-                <label className="form-label fw-semibold">
-                    <FaUserAlt className="me-2" /> Matrícula
+            <div style={styles.inputGroup}>
+                <label style={styles.label}>
+                    <FaUserAlt className="me-2" style={{ color: '#3EAEF4' }} /> Matrícula
                 </label>
                 <input
                     type="text"
-                    className="form-control form-control-lg"
+                    style={styles.input}
                     placeholder="Ej. 97123456"
                     value={formData.matricula}
                     onChange={(e) => setFormData({ ...formData, matricula: e.target.value })}
                     disabled={loading}
                     required
                 />
-                <small className="text-muted">8 o 9 dígitos numéricos</small>
+                <small style={styles.smallText}>8 o 9 dígitos numéricos</small>
             </div>
 
-            <div className="mb-4">
-                <label className="form-label fw-semibold">
-                    <FaIdCard className="me-2" /> CURP
+            <div style={styles.inputGroup}>
+                <label style={styles.label}>
+                    <FaIdCard className="me-2" style={{ color: '#3EAEF4' }} /> CURP
                 </label>
                 <input
                     type="text"
-                    className="form-control form-control-lg text-uppercase"
+                    style={{ ...styles.input, textTransform: 'uppercase' }}
                     placeholder="Ej. LOPA800101MDFRRN09"
                     value={formData.curp}
-                    onChange={(e) => setFormData({ ...formData, curp: e.target.value.slice(0, 18) })}
+                    onChange={(e) => setFormData({ ...formData, curp: e.target.value.slice(0, 18).toUpperCase() })}
                     disabled={loading}
                     required
                     maxLength="18"
                 />
-                <small className="text-muted">18 caracteres (letras y números)</small>
+                <small style={styles.smallText}>18 caracteres (letras y números)</small>
             </div>
 
-            <button type="submit" className="btn btn-primary btn-lg w-100" disabled={loading}>
+            <button 
+                type="submit" 
+                style={styles.btnPrimary}
+                disabled={loading}
+                onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 4px 12px rgba(255,215,0,0.3)'; }}
+                onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
+            >
                 {loading ? 'Validando...' : 'Siguiente'}
-                <FaArrowRight className="ms-2" />
+                <FaArrowRight />
             </button>
         </form>
     );
 
     const renderStep2 = () => (
         <>
-            <div className="card bg-light mb-4">
-                <div className="card-body">
-                    <h6 className="card-title fw-bold mb-3">Datos verificados</h6>
-                    <div className="row g-3">
-                        <div className="col-6">
-                            <small className="text-muted">Matrícula</small>
-                            <p className="fw-semibold mb-0">{usuarioValidado?.matricula}</p>
-                        </div>
-                        <div className="col-6">
-                            <small className="text-muted">Nombre</small>
-                            <p className="fw-semibold mb-0">{usuarioValidado?.nombre}</p>
-                        </div>
-                        <div className="col-6">
-                            <small className="text-muted">Adscripción</small>
-                            <p className="fw-semibold mb-0">{usuarioValidado?.adscripcion || 'N/A'}</p>
-                        </div>
-                        <div className="col-6">
-                            <small className="text-muted">Categoría</small>
-                            <p className="fw-semibold mb-0">{usuarioValidado?.categoria || 'N/A'}</p>
-                        </div>
-                        <div className="col-6">
-                            <small className="text-muted">CURP</small>
-                            <p className="fw-semibold mb-0">{usuarioValidado?.curp}</p>
-                        </div>
-                        <div className="col-6">
-                            <small className="text-muted">Edad</small>
-                            <p className="fw-semibold mb-0">{usuarioValidado?.edad || 'N/A'} años</p>
-                        </div>
+            {/* Card de datos verificados con estilo fachero */}
+            <div style={styles.userCard}>
+                <div style={styles.userCardHeader}>
+                    <FaCheckCircle style={{ color: '#28a745' }} />
+                    <h5 style={styles.userCardTitle}>Datos verificados</h5>
+                </div>
+                <div style={styles.userDataGrid}>
+                    <div style={styles.userDataItem}>
+                        <span style={styles.userDataLabel}><FaIdCard className="me-1" /> Matrícula</span>
+                        <span style={styles.userDataValue}>{usuarioValidado?.matricula}</span>
+                    </div>
+                    <div style={styles.userDataItem}>
+                        <span style={styles.userDataLabel}><FaUser className="me-1" /> Nombre</span>
+                        <span style={styles.userDataValue}>{usuarioValidado?.nombre}</span>
+                    </div>
+                    <div style={styles.userDataItem}>
+                        <span style={styles.userDataLabel}><FaBuilding className="me-1" /> Adscripción</span>
+                        <span style={styles.userDataValue}>{usuarioValidado?.adscripcion || 'N/A'}</span>
+                    </div>
+                    <div style={styles.userDataItem}>
+                        <span style={styles.userDataLabel}><FaUserAlt className="me-1" /> Categoría</span>
+                        <span style={styles.userDataValue}>{usuarioValidado?.categoria || 'N/A'}</span>
+                    </div>
+                    <div style={styles.userDataItem}>
+                        <span style={styles.userDataLabel}><FaIdCard className="me-1" /> CURP</span>
+                        <span style={styles.userDataValue}>{usuarioValidado?.curp}</span>
+                    </div>
+                    <div style={styles.userDataItem}>
+                        <span style={styles.userDataLabel}><FaCalendarAlt className="me-1" /> Edad</span>
+                        <span style={styles.userDataValue}>{usuarioValidado?.edad || 'N/A'} años</span>
                     </div>
                 </div>
             </div>
 
             <form onSubmit={handleCompletarRegistro}>
-                <div className="mb-3">
-                    <label className="form-label fw-semibold">Antigüedad (años)</label>
+                <div style={styles.inputGroup}>
+                    <label style={styles.label}>Antigüedad (años)</label>
                     <input
                         type="number"
-                        className="form-control"
+                        style={styles.input}
                         placeholder="Ej. 5, 10, 15, 20"
                         value={registroData.antiguedad}
                         onChange={(e) => setRegistroData({ ...registroData, antiguedad: e.target.value })}
                         disabled={loading}
                         required
                     />
-                    <small className="text-muted">Esta información viene en tu tarjetón de pago</small>
+                    <small style={styles.smallText}>Esta información viene en tu tarjetón de pago</small>
                 </div>
 
-                <div className="mb-3">
-                    <label className="form-label fw-semibold">
-                        <FaPhone className="me-1" /> Teléfono
+                <div style={styles.inputGroup}>
+                    <label style={styles.label}>
+                        <FaPhone className="me-2" style={{ color: '#3EAEF4' }} /> Teléfono
                     </label>
                     <input
                         type="tel"
-                        className="form-control"
+                        style={styles.input}
                         placeholder="10 dígitos numéricos"
                         value={registroData.telefono}
                         onChange={(e) => setRegistroData({ ...registroData, telefono: e.target.value })}
@@ -387,13 +691,13 @@ const Registro = () => {
                     />
                 </div>
 
-                <div className="mb-3">
-                    <label className="form-label fw-semibold">
-                        <FaEnvelope className="me-1" /> Correo Electrónico
+                <div style={styles.inputGroup}>
+                    <label style={styles.label}>
+                        <FaEnvelope className="me-2" style={{ color: '#3EAEF4' }} /> Correo Electrónico
                     </label>
                     <input
                         type="email"
-                        className="form-control"
+                        style={styles.input}
                         placeholder="tu@email.com"
                         value={registroData.correo}
                         onChange={(e) => setRegistroData({ ...registroData, correo: e.target.value })}
@@ -402,14 +706,14 @@ const Registro = () => {
                     />
                 </div>
 
-                <div className="mb-3">
-                    <label className="form-label fw-semibold">
-                        <FaLock className="me-1" /> Contraseña
+                <div style={styles.inputGroup}>
+                    <label style={styles.label}>
+                        <FaLock className="me-2" style={{ color: '#3EAEF4' }} /> Contraseña
                     </label>
-                    <div className="input-group">
+                    <div style={styles.inputGroupWrapper}>
                         <input
                             type={showPassword ? "text" : "password"}
-                            className="form-control"
+                            style={{ ...styles.input, ...styles.inputWithIcon }}
                             placeholder="Mínimo 8 caracteres"
                             value={registroData.password}
                             onChange={(e) => setRegistroData({ ...registroData, password: e.target.value })}
@@ -418,23 +722,23 @@ const Registro = () => {
                         />
                         <button
                             type="button"
-                            className="btn btn-outline-secondary"
+                            style={{ ...styles.btnOutline, position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)', padding: '0.3rem 0.6rem', border: 'none' }}
                             onClick={() => setShowPassword(!showPassword)}
                         >
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
                     </div>
-                    <small className="text-muted">Mínimo 8 caracteres</small>
+                    <small style={styles.smallText}>Mínimo 8 caracteres</small>
                 </div>
 
-                <div className="mb-4">
-                    <label className="form-label fw-semibold">
-                        <FaLock className="me-1" /> Confirmar Contraseña
+                <div style={styles.inputGroup}>
+                    <label style={styles.label}>
+                        <FaLock className="me-2" style={{ color: '#3EAEF4' }} /> Confirmar Contraseña
                     </label>
-                    <div className="input-group">
+                    <div style={styles.inputGroupWrapper}>
                         <input
                             type={showConfirmPassword ? "text" : "password"}
-                            className="form-control"
+                            style={{ ...styles.input, ...styles.inputWithIcon }}
                             placeholder="Repite tu contraseña"
                             value={registroData.confirmar_password}
                             onChange={(e) => setRegistroData({ ...registroData, confirmar_password: e.target.value })}
@@ -443,7 +747,7 @@ const Registro = () => {
                         />
                         <button
                             type="button"
-                            className="btn btn-outline-secondary"
+                            style={{ ...styles.btnOutline, position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)', padding: '0.3rem 0.6rem', border: 'none' }}
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
                             {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
@@ -451,13 +755,52 @@ const Registro = () => {
                     </div>
                 </div>
 
-                <div className="d-flex gap-2">
-                    <button type="button" className="btn btn-outline-secondary" onClick={() => setStep(1)} disabled={loading}>
-                        <FaArrowLeft className="me-1" /> Atrás
+                <div style={styles.inputGroup}>
+                    <input
+                        type="checkbox"
+                        style={styles.checkbox}
+                        id="aceptaInformacion"
+                        checked={aceptaInformacion}
+                        onChange={(e) => setAceptaInformacion(e.target.checked)}
+                        required
+                    />
+                    <label style={styles.checkboxLabel} htmlFor="aceptaInformacion">
+                        <strong>Declaro que la información proporcionada es verdadera y completa.</strong>
+                    </label>
+                </div>
+
+                <div style={{ ...styles.inputGroup, marginBottom: '1.5rem' }}>
+                    <input
+                        type="checkbox"
+                        style={styles.checkbox}
+                        id="aceptaPrivacidad"
+                        checked={aceptaPrivacidad}
+                        onChange={(e) => setAceptaPrivacidad(e.target.checked)}
+                        required
+                    />
+                    <label style={styles.checkboxLabel} htmlFor="aceptaPrivacidad">
+                        He leído y acepto el <a href="#" style={styles.link} onClick={(e) => { e.preventDefault(); setShowAvisoPrivacidad(true); }}>Aviso de Privacidad</a>
+                    </label>
+                </div>
+
+                <div style={styles.flexRow}>
+                    <button 
+                        type="button" 
+                        style={styles.btnOutline} 
+                        onClick={() => setStep(1)} 
+                        disabled={loading}
+                    >
+                        <FaArrowLeft /> Atrás
                     </button>
-                    <button type="submit" className="btn btn-primary flex-grow-1" disabled={loading}>
+                    <button 
+                        type="submit" 
+                        style={{ ...styles.btnPrimary, ...styles.flexGrow }}
+                        disabled={loading}
+                        onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 4px 12px rgba(255,215,0,0.3)'; }}
+                        onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
+                    >
                         {loading ? 'Guardando...' : 'Siguiente'}
-                        <FaArrowRight className="ms-2" />
+                        <FaArrowRight />
                     </button>
                 </div>
             </form>
@@ -466,105 +809,122 @@ const Registro = () => {
 
     const renderStep3 = () => (
         <form onSubmit={handleSubirDocumentos}>
-            <div className="mb-4">
-                <label className="form-label fw-semibold">
-                    <FaFilePdf className="me-2 text-danger" /> Último Tarjetón de Pago (PDF)
+            <div style={styles.inputGroup}>
+                <label style={styles.label}>
+                    <FaFilePdf className="me-2" style={{ color: '#dc3545' }} /> Último Tarjetón de Pago (PDF)
                 </label>
                 <input
                     type="file"
-                    className="form-control"
+                    style={styles.fileInput}
                     accept=".pdf"
                     onChange={(e) => setTarjetonFile(e.target.files[0])}
                     disabled={loading}
                     required
                 />
-                <small className="text-muted">Máximo 5MB. Solo PDF.</small>
+                <small style={styles.smallText}>Máximo 5MB. Solo PDF.</small>
             </div>
 
-            <div className="mb-4">
-                <label className="form-label fw-semibold">
-                    <FaCamera className="me-2" /> Foto de Busto para Perfil
+            <div style={styles.inputGroup}>
+                <label style={styles.label}>
+                    <FaCamera className="me-2" style={{ color: '#3EAEF4' }} /> Foto de Busto para Perfil
                 </label>
                 <input
                     type="file"
-                    className="form-control"
+                    style={styles.fileInput}
                     accept="image/jpeg,image/png,image/webp"
                     onChange={handleFotoChange}
                     disabled={loading}
                     required
                 />
-                <small className="text-muted">Máximo 5MB. JPG, PNG o WEBP.</small>
+                <small style={styles.smallText}>Máximo 5MB. JPG, PNG o WEBP.</small>
                 {fotoPreview && (
-                    <div className="mt-3 text-center">
-                        <img src={fotoPreview} alt="Vista previa" className="rounded-circle border" style={{ width: '120px', height: '120px', objectFit: 'cover' }} />
+                    <div className="text-center mt-2">
+                        <img src={fotoPreview} alt="Vista previa" style={styles.fotoPreview} />
                     </div>
                 )}
             </div>
 
-            <div className="d-flex gap-2">
-                <button type="button" className="btn btn-outline-secondary" onClick={() => setStep(2)} disabled={loading}>
-                    <FaArrowLeft className="me-1" /> Atrás
+            <div style={styles.flexRow}>
+                <button 
+                    type="button" 
+                    style={styles.btnOutline} 
+                    onClick={() => setStep(2)} 
+                    disabled={loading}
+                >
+                    <FaArrowLeft /> Atrás
                 </button>
-                <button type="submit" className="btn btn-success flex-grow-1" disabled={loading}>
+                <button 
+                    type="submit" 
+                    style={{ ...styles.btnSuccess, ...styles.flexGrow }}
+                    disabled={loading}
+                    onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 4px 12px rgba(40,167,69,0.3)'; }}
+                    onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
+                >
                     {loading ? 'Subiendo documentos...' : 'Completar Registro'}
-                    <FaCheckCircle className="ms-2" />
+                    <FaCheckCircle />
                 </button>
             </div>
         </form>
     );
 
+    const stepLabels = ['Validación', 'Datos', 'Documentos'];
+
     return (
-        <div className="container py-5">
-            <div className="row justify-content-center">
-                <div className="col-lg-6 col-md-8">
-                    <div className="card shadow-sm border-0">
-                        <div className="card-header bg-dark text-white text-center py-3">
-                            <h4 className="mb-0">Crear Cuenta</h4>
-                            <small>SNTSS Sección XXXIII</small>
-                        </div>
-                        <div className="card-body p-4">
-                            <div className="d-flex justify-content-between mb-4">
-                                <div className={`text-center flex-grow-1 ${step >= 1 ? 'text-primary' : 'text-muted'}`}>
-                                    <div className={`rounded-circle mx-auto d-flex align-items-center justify-content-center ${step >= 1 ? 'bg-primary text-white' : 'bg-secondary text-white'}`} style={{ width: '30px', height: '30px' }}>1</div>
-                                    <small>Validación</small>
+        <div style={styles.container}>
+            <div style={styles.card}>
+                <div style={styles.cardHeader}>
+                    <h2 style={styles.cardHeaderTitle}>Crear Cuenta</h2>
+                    <p style={styles.cardHeaderSubtitle}>SNTSS Sección XXXIII</p>
+                </div>
+                <div style={styles.cardBody}>
+                    {/* Indicador de pasos */}
+                    <div style={styles.stepIndicator}>
+                        {[1, 2, 3].map((num) => {
+                            const active = step === num;
+                            const completed = step > num;
+                            return (
+                                <div key={num} style={{ ...styles.stepItem(active), position: 'relative' }}>
+                                    {num < 3 && (
+                                        <div style={{ ...styles.stepLine(active || completed), left: '50%', width: '100%' }} />
+                                    )}
+                                    <div style={styles.stepCircle(active, completed)}>
+                                        {completed ? <FaCheckCircle /> : num}
+                                    </div>
+                                    <span style={styles.stepLabel(active)}>{stepLabels[num - 1]}</span>
                                 </div>
-                                <div className={`text-center flex-grow-1 ${step >= 2 ? 'text-primary' : 'text-muted'}`}>
-                                    <div className={`rounded-circle mx-auto d-flex align-items-center justify-content-center ${step >= 2 ? 'bg-primary text-white' : 'bg-secondary text-white'}`} style={{ width: '30px', height: '30px' }}>2</div>
-                                    <small>Datos</small>
-                                </div>
-                                <div className={`text-center flex-grow-1 ${step >= 3 ? 'text-primary' : 'text-muted'}`}>
-                                    <div className={`rounded-circle mx-auto d-flex align-items-center justify-content-center ${step >= 3 ? 'bg-primary text-white' : 'bg-secondary text-white'}`} style={{ width: '30px', height: '30px' }}>3</div>
-                                    <small>Documentos</small>
-                                </div>
-                            </div>
-
-                            {errorMsg && (
-                                <div className="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-                                    <FaExclamationTriangle className="me-2" /> {errorMsg}
-                                    <button type="button" className="btn-close" data-bs-dismiss="alert" onClick={() => setErrorMsg('')}></button>
-                                </div>
-                            )}
-                            {successMsg && (
-                                <div className="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                                    <FaCheckCircle className="me-2" /> {successMsg}
-                                </div>
-                            )}
-
-                            {step === 1 && renderStep1()}
-                            {step === 2 && renderStep2()}
-                            {step === 3 && renderStep3()}
-
-                            {step === 1 && (
-                                <div className="mt-4 text-center">
-                                    <p className="mb-0">
-                                        ¿Ya tienes cuenta? <Link to="/login" className="text-decoration-none fw-semibold">Inicia sesión aquí</Link>
-                                    </p>
-                                </div>
-                            )}
-                        </div>
+                            );
+                        })}
                     </div>
+
+                    {/* Mensajes de error y éxito */}
+                    {errorMsg && (
+                        <div style={styles.alertError}>
+                            <FaExclamationTriangle /> {errorMsg}
+                            <button type="button" style={{ background: 'none', border: 'none', marginLeft: 'auto', color: 'inherit' }} onClick={() => setErrorMsg('')}>✕</button>
+                        </div>
+                    )}
+                    {successMsg && (
+                        <div style={styles.alertSuccess}>
+                            <FaCheckCircle /> {successMsg}
+                        </div>
+                    )}
+
+                    {/* Renderizado de pasos */}
+                    {step === 1 && renderStep1()}
+                    {step === 2 && renderStep2()}
+                    {step === 3 && renderStep3()}
+
+                    {/* Enlace a login */}
+                    {step === 1 && (
+                        <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+                            <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                                ¿Ya tienes cuenta? <Link to="/login" style={styles.link}>Inicia sesión aquí</Link>
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
+            <AvisoPrivacidad show={showAvisoPrivacidad} onHide={() => setShowAvisoPrivacidad(false)} />
         </div>
     );
 };

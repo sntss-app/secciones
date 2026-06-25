@@ -7,22 +7,27 @@
   la actualiza hasheada en la base de datos y la envía por correo
   utilizando PHPMailer con SMTP.
 */
+
+// Conectar a la base de datos
 require_once 'config.php';
 
-// Incluir PHPMailer
+// Incluir las clases de PHPMailer para enviar correos
+// PHPMailer es una librería que permite enviar correos usando SMTP
 require 'PHPMailer/src/Exception.php';
 require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
 
+// Importar las clases para usarlas directamente
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-// Obtener datos del cuerpo del request (JSON)
+// Recibe los datos del frontend (React) en formato JSON
 $data = json_decode(file_get_contents("php://input"), true);
 $matricula = isset($data['matricula']) ? trim($data['matricula']) : '';
 $correo = isset($data['correo']) ? trim($data['correo']) : '';
 
+// Validar que ambos campos sean obligatorios
 if (empty($matricula) || empty($correo)) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'La matrícula y el correo electrónico son obligatorios.']);
@@ -38,12 +43,14 @@ try {
     ]);
     $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    // Si no existe, avisar
     if (!$usuario) {
         http_response_code(404);
         echo json_encode(['success' => false, 'message' => 'No se encontró ningún trabajador registrado con esa combinación de matrícula y correo.']);
         exit;
     }
 
+    // Si el usuario no tiene contraseña (no ha completado registro)
     if (empty($usuario['contrasena'])) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Esta cuenta aún no tiene contraseña. Por favor, completa tu registro primero.']);
@@ -57,7 +64,7 @@ try {
         $password_temporal .= $caracteres[rand(0, strlen($caracteres) - 1)];
     }
 
-    // Hashear la contraseña temporal
+    // Encriptar la contraseña temporal antes de guardarla
     $password_hashed = password_hash($password_temporal, PASSWORD_DEFAULT);
 
     // Actualizar la contraseña en la base de datos
@@ -67,6 +74,7 @@ try {
         ':id' => $usuario['id']
     ]);
 
+    // Si falla la actualización, avisar
     if (!$resultado) {
         http_response_code(500);
         echo json_encode(['success' => false, 'message' => 'No se pudo restablecer la contraseña en este momento.']);
@@ -75,26 +83,27 @@ try {
 
     // ============ ENVÍO DE CORREO CON SMTP ============
     
+    // Crear una instancia de PHPMailer para enviar el correo
     $mail = new PHPMailer(true);
     
     try {
-        // Configuración del servidor SMTP
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.ionos.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'soporte@sntss-secciones.org';
-        $mail->Password   = 'Espi_neza092';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        // Configuración del servidor SMTP de IONOS
+        $mail->isSMTP();                                    // Usar SMTP
+        $mail->Host       = 'smtp.ionos.com';               // Servidor SMTP de IONOS
+        $mail->SMTPAuth   = true;                           // Autenticación requerida
+        $mail->Username   = 'soporte@sntss-secciones.org';  // Correo que envía
+        $mail->Password   = 'Espi_neza092';                 // Contraseña del correo
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Cifrado TLS
+        $mail->Port       = 587;                            // Puerto SMTP
         
-        // Configuración del correo
-        $mail->setFrom('soporte@sntss-secciones.org', 'SNTSS Sección XXXIII');
-        $mail->addAddress($correo, $usuario['nombre']);
+        // Configuración del correo en sí
+        $mail->setFrom('soporte@sntss-secciones.org', 'SNTSS Sección XXXIII'); // Quién envía
+        $mail->addAddress($correo, $usuario['nombre']);                        // Quién recibe
         
-        $mail->isHTML(true);
+        $mail->isHTML(true); // El correo contiene HTML
         $mail->Subject = 'Recuperación de Contraseña - SNTSS Sección XXXIII';
         
-        // Cuerpo del correo
+        // Cuerpo del correo en formato HTML (con estilos para que se vea bonito)
         $mail->Body = "
         <html>
         <head>
@@ -125,16 +134,17 @@ try {
         </html>
         ";
         
-        // Enviar correo
+        // Enviar el correo
         $mail->send();
         
+        // Respuesta exitosa
         echo json_encode([
             'success' => true,
             'message' => 'Se ha enviado un correo electrónico con tu contraseña temporal. Revisa tu bandeja de entrada o spam.'
         ]);
         
     } catch (Exception $e) {
-        // Si falla el envío, pero la contraseña ya se cambió en BD
+        // Si falla el envío, pero la contraseña ya se cambió en BD, avisar
         echo json_encode([
             'success' => true,
             'message' => 'Contraseña temporal generada correctamente, pero no se pudo enviar el correo. Error: ' . $mail->ErrorInfo
@@ -142,7 +152,7 @@ try {
     }
     
 } catch (PDOException $e) {
+    // Si algo falla en la base de datos, devolver error 500
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Error en la base de datos: ' . $e->getMessage()]);
 }
-?>
