@@ -28,7 +28,7 @@ const Footer = () => {
         title: {
             fontSize: '1.8rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #3EAEF4, #FFB347)',
+            background: 'linear-gradient(135deg, #9fd3f4, #1a41cf)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
