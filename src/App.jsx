@@ -13,6 +13,7 @@ import AutoCredito from './pages/AutoCredito';
 import AutoValidador from './pages/AutoValidador';
 import NoticiasCrear from './pages/NoticiasCrear';
 import Noticias from './pages/Noticias';
+import NoticiasPapelera from './pages/NoticiasPapelera';
 
 // Importar componentes
 import Navbar from './components/Navbar';
@@ -47,6 +48,7 @@ function App() {
                         <Route path="*" element={<Navigate to="/dashboard" replace />} />
                         <Route path="/noticias/crear" element={<RutaProtegida><NoticiasCrear /></RutaProtegida>} />
                         <Route path="/noticias" element={<Noticias />} />
+                        <Route path="/noticias/papelera" element={<RutaProtegida><NoticiasPapelera /></RutaProtegida>} />
                     </Routes>
                 </main>
                 <Footer />

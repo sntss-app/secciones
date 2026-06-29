@@ -778,6 +778,9 @@ const NoticiasCrear = () => {
                 <Link to="/dashboard" className="btn btn-outline-secondary">
                     <FaArrowLeft className="me-1" /> Volver
                 </Link>
+                <Link to="/noticias/papelera" className="btn btn-outline-danger btn-sm">
+                    <FaTrash className="me-1" /> Papelera
+                </Link>
             </div>
 
             {errorMsg && (
