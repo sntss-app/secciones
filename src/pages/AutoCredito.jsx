@@ -732,7 +732,7 @@ const AutoCredito = () => {
                     {registroExistente && registroExistente.estatus !== 'observaciones' && (
                         <div className="text-center mt-3">
                             <Link to="/dashboard" style={styles.btnPrimary}>
-                                Volver al Dashboard
+                                Volver 
                             </Link>
                         </div>
                     )}

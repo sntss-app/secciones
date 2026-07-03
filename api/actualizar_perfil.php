@@ -11,13 +11,13 @@ require_once 'config.php';
 $esFormData = isset($_FILES) && !empty($_FILES);
 
 if ($esFormData) {
-    // 📸 Petición con archivos (FormData)
+    // Petición con archivos (FormData)
     $matricula = isset($_POST['matricula']) ? trim($_POST['matricula']) : '';
     $telefono = isset($_POST['telefono']) ? trim($_POST['telefono']) : '';
     $correo = isset($_POST['correo']) ? trim($_POST['correo']) : '';
     $fotoFile = isset($_FILES['foto']) ? $_FILES['foto'] : null;
 } else {
-    // 📝 Petición JSON (solo datos)
+    // Petición JSON (solo datos)
     $data = json_decode(file_get_contents('php://input'), true);
     $matricula = isset($data['matricula']) ? trim($data['matricula']) : '';
     $telefono = isset($data['telefono']) ? trim($data['telefono']) : '';

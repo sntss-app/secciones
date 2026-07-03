@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 import { 
     FaNewspaper, FaSearch, FaEye, FaCalendarAlt, FaUser, FaFilePdf, 
     FaVideo, FaImages, FaYoutube, FaTimes, FaChevronLeft, FaChevronRight, 
-    FaThumbtack, FaHeart, FaUserCircle
+    FaThumbtack, FaHeart, FaUserCircle, FaArrowLeft
 } from "react-icons/fa";
 import { apiUrl } from '../config';
-
 // Estilos
 const styles = {
     container: {
@@ -42,6 +41,7 @@ const styles = {
         marginBottom: '2rem',
         flexWrap: 'wrap',
         alignItems: 'center',
+        justifyContent: 'space-between', // 🔥 Distribuye el espacio
     },
     searchInput: {
         flex: 1,
@@ -53,6 +53,7 @@ const styles = {
         transition: 'all 0.3s ease',
         minWidth: '200px',
         backgroundColor: '#f0f2f5',
+        height: '48px', // 🔥 Misma altura que el botón
     },
     searchInputFocus: {
         borderColor: '#1877f2',
@@ -69,6 +70,7 @@ const styles = {
         cursor: 'pointer',
         minWidth: '150px',
         transition: 'all 0.3s ease',
+        height: '48px', // 🔥 Misma altura que el input
     },
     gridCards: {
         display: 'grid',
@@ -154,6 +156,27 @@ const styles = {
         fontSize: '3rem',
         borderRadius: '8px',
         marginBottom: '0.5rem',
+    },
+    // Botón Volver
+    backButton: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center', // 🔥 Centra el contenido
+        gap: '0.5rem',
+        backgroundColor: '#1877f2',
+        color: 'white',
+        border: 'none',
+        padding: '0.75rem 1.2rem', // 🔥 Mismo padding que el input
+        borderRadius: '25px',
+        fontWeight: 'bold',
+        fontSize: '0.9rem',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        textDecoration: 'none',
+        height: '100%', // 🔥 Que ocupe la misma altura
+        minHeight: '48px', // 🔥 Misma altura que el input
+        boxShadow: '0 2px 8px rgba(24,119,242,0.2)',
+        whiteSpace: 'nowrap', // 🔥 Evita que el texto se rompa
     },
     btnLeerMas: {
         backgroundColor: 'transparent',
@@ -329,6 +352,19 @@ const Noticias = () => {
     const [paginaActual, setPaginaActual] = useState(1);
     const [userLikes, setUserLikes] = useState({});
     const itemsPorPagina = 6;
+    const getImageUrl = (path) => {
+        if (!path) return null;
+        // Si ya es una URL completa, devolverla
+        if (path.startsWith('http://') || path.startsWith('https://')) {
+            return path;
+        }
+        // Si empieza con /api, usar apiUrl
+        if (path.startsWith('/api')) {
+            return apiUrl(path.replace('/api', ''));
+        }
+        // Si no, asumir que es una ruta relativa
+        return apiUrl(path);
+    };
 
     // Estado para likes
     const [likesEstado, setLikesEstado] = useState({});
@@ -522,7 +558,14 @@ const Noticias = () => {
                     </button>
 
                     {n.imagen && (
-                        <img src={n.imagen} alt={n.titulo} style={styles.modalImage} />
+                        <img 
+                            src={getImageUrl(n.imagen)} 
+                            alt={n.titulo} 
+                            style={styles.modalImage}
+                            onError={(e) => {
+                                e.target.style.display = 'none';
+                            }}
+                        />
                     )}
 
                     <h1 style={styles.modalTitle}>{n.titulo}</h1>
@@ -606,10 +649,17 @@ const Noticias = () => {
                                         >
                                             {item.type === 'video' ? (
                                                 <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} controls>
-                                                    <source src={item.path} />
+                                                    <source src={getImageUrl(item.path)} />
                                                 </video>
                                             ) : (
-                                                <img src={item.path} alt={`Galería ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                <img 
+                                                    src={getImageUrl(item.path)} 
+                                                    alt={`Galería ${idx}`} 
+                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                    onError={(e) => {
+                                                        e.target.style.display = 'none';
+                                                    }}
+                                                />
                                             )}
                                         </div>
                                     ))}
@@ -724,6 +774,7 @@ const Noticias = () => {
 
     return (
         <div style={styles.container}>
+            {/* 🔥 Botón Volver al Dashboard */}
             {/* Header */}
             <div style={styles.header}>
                 <h1 style={styles.headerTitle}>
@@ -736,23 +787,29 @@ const Noticias = () => {
 
             {/* Search y filtros */}
             <div style={styles.searchBar}>
-                <div style={{ flex: 1, position: 'relative' }}>
+                <div style={{ flex: 2, position: 'relative', minWidth: '200px' }}>
                     <FaSearch style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)', color: '#999' }} />
                     <input
                         type="text"
                         style={styles.searchInput}
-                        placeholder="Buscar noticias por título, resumen o autor..."
+                        placeholder="Buscar noticias..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
+                
+                <Link to="/dashboard" style={styles.backButton}>
+                    <FaArrowLeft /> Volver
+                </Link>
+                
                 <select style={styles.filterSelect} value={filtroFijadas} onChange={(e) => setFiltroFijadas(e.target.value)}>
                     <option value="todas">Todas las noticias</option>
                     <option value="fijadas">📌 Solo fijadas</option>
                     <option value="no-fijadas">Sin fijar</option>
                 </select>
-                <span className="text-muted" style={{ display: 'flex', alignItems: 'center', fontSize: '0.9rem' }}>
-                    {noticiasFiltradas.length} noticias encontradas
+                
+                <span className="text-muted" style={{ display: 'flex', alignItems: 'center', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>
+                    {noticiasFiltradas.length} noticias
                 </span>
             </div>
 
@@ -788,7 +845,20 @@ const Noticias = () => {
 
                             {/* Imagen */}
                             {noticia.imagen ? (
-                                <img src={noticia.imagen} alt={noticia.titulo} style={styles.cardImage} />
+                                 <img 
+                                    src={getImageUrl(noticia.imagen)} 
+                                    alt={noticia.titulo} 
+                                    style={styles.cardImage}
+                                    onError={(e) => {
+                                        // Si la imagen falla, mostrar placeholder
+                                        e.target.style.display = 'none';
+                                        e.target.parentElement.innerHTML = `
+                                            <div style="${styles.cardImagePlaceholder}">
+                                                <FaNewspaper />
+                                            </div>
+                                        `;
+                                    }}
+                                />
                             ) : (
                                 <div style={styles.cardImagePlaceholder}>
                                     <FaNewspaper />

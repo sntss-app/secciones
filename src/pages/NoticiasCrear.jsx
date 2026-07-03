@@ -4,7 +4,7 @@ import {
     FaNewspaper, FaFilePdf, FaImage, FaVideo, FaImages, FaPlus, 
     FaTrash, FaSave, FaArrowLeft, FaCheckCircle, FaExclamationTriangle,
     FaEye, FaEyeSlash, FaThumbtack, FaEdit, FaUpload, FaSync,
-    FaChevronLeft, FaChevronRight
+    FaChevronLeft, FaChevronRight, FaUser, FaCalendarAlt, FaTimes, FaHeart
 } from 'react-icons/fa';
 import { useDropzone } from 'react-dropzone';
 import { apiUrl } from '../config';
@@ -283,6 +283,87 @@ const styles = {
         alignItems: 'center',
         gap: '0.3rem',
     },
+    modalOverlay: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem',
+        overflowY: 'auto',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        borderRadius: '20px',
+        maxWidth: '900px',
+        width: '100%',
+        maxHeight: '90vh',
+        overflowY: 'auto',
+        padding: '2rem',
+        position: 'relative',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+    },
+    modalClose: {
+        position: 'sticky',
+        top: 0,
+        float: 'right',
+        backgroundColor: 'rgba(0,0,0,0.1)',
+        border: 'none',
+        borderRadius: '50%',
+        width: '40px',
+        height: '40px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '1.2rem',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        zIndex: 10,
+    },
+    modalImage: {
+        width: '100%',
+        maxHeight: '400px',
+        objectFit: 'cover',
+        borderRadius: '12px',
+        marginBottom: '1.5rem',
+    },
+    modalTitle: {
+        fontSize: '1.8rem',
+        fontWeight: 'bold',
+        marginBottom: '0.5rem',
+        color: '#0A0F1E',
+    },
+    modalMeta: {
+        display: 'flex',
+        gap: '1.5rem',
+        flexWrap: 'wrap',
+        fontSize: '0.9rem',
+        color: '#6c757d',
+        marginBottom: '1.5rem',
+        borderBottom: '1px solid #e9ecef',
+        paddingBottom: '1rem',
+    },
+    modalBody: {
+        fontSize: '1rem',
+        lineHeight: '1.8',
+        color: '#333',
+    },
+    cardBadge: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.3rem',
+        padding: '0.2rem 0.6rem',
+        borderRadius: '12px',
+        fontSize: '0.7rem',
+        fontWeight: 'bold',
+        backgroundColor: '#1877f2',
+        color: 'white',
+    },
     btnOutline: {
         backgroundColor: 'transparent',
         color: '#6c757d',
@@ -357,6 +438,62 @@ const styles = {
         gap: '0.3rem',
         flexWrap: 'wrap',
         marginTop: '0.5rem',
+    },
+    noticiaActionBtn: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.2rem',
+        padding: '0.3rem 0.6rem',
+        borderRadius: '6px',
+        fontSize: '0.7rem',
+        fontWeight: '600',
+        border: '1.5px solid',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        backgroundColor: 'transparent',
+        minWidth: '70px',
+        height: '28px',
+    },
+    btnEdit: {
+        borderColor: '#0d6efd',
+        color: '#0d6efd',
+    },
+    btnEditHover: {
+        backgroundColor: '#0d6efd',
+        color: 'white',
+    },
+    btnPreview: {
+        borderColor: '#0dcaf0',
+        color: '#0dcaf0',
+    },
+    btnPreviewHover: {
+        backgroundColor: '#0dcaf0',
+        color: 'white',
+    },
+    btnToggle: {
+        borderColor: '#ffc107',
+        color: '#ffc107',
+    },
+    btnToggleHover: {
+        backgroundColor: '#ffc107',
+        color: '#0A0F1E',
+    },
+    btnPin: {
+        borderColor: '#6f42c1',
+        color: '#6f42c1',
+    },
+    btnPinHover: {
+        backgroundColor: '#6f42c1',
+        color: 'white',
+    },
+    btnDelete: {
+        borderColor: '#dc3545',
+        color: '#dc3545',
+    },
+    btnDeleteHover: {
+        backgroundColor: '#dc3545',
+        color: 'white',
     },
     badge: (color) => ({
         display: 'inline-flex',
@@ -493,6 +630,31 @@ const NoticiasCrear = () => {
     const [videoName, setVideoName] = useState('');
     const [galeriaFiles, setGaleriaFiles] = useState([]);
     const [galeriaPreviews, setGaleriaPreviews] = useState([]);
+    const [noticiaPreviewSeleccionada, setNoticiaPreviewSeleccionada] = useState(null);
+    const [showPreviewModal, setShowPreviewModal] = useState(false);
+    const [previewGalleryIndex, setPreviewGalleryIndex] = useState(0);
+
+    const getImageUrl = (path) => {
+        if (!path) return null;
+        if (path.startsWith('http://') || path.startsWith('https://')) {
+            return path;
+        }
+        if (path.startsWith('/api')) {
+            return apiUrl(path.replace('/api', ''));
+        }
+        return apiUrl(path);
+    };
+
+    const abrirPreviewNoticia = (noticia) => {
+        setNoticiaPreviewSeleccionada(noticia);
+        setShowPreviewModal(true);
+        setPreviewGalleryIndex(0);
+    };
+
+    const cerrarPreviewNoticia = () => {
+        setShowPreviewModal(false);
+        setNoticiaPreviewSeleccionada(null);
+    };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         accept: {
@@ -639,6 +801,220 @@ const NoticiasCrear = () => {
         setVideoName('');
         setGaleriaFiles([]);
         setGaleriaPreviews([]);
+    };
+
+    const renderNoticiaPreviewModal = () => {
+        if (!noticiaPreviewSeleccionada) return null;
+        const n = noticiaPreviewSeleccionada;
+
+        return (
+            <div style={styles.modalOverlay} onClick={(e) => {
+                if (e.target === e.currentTarget) cerrarPreviewNoticia();
+            }}>
+                <div style={styles.modalContent}>
+                    <button style={styles.modalClose} onClick={cerrarPreviewNoticia}>
+                        <FaTimes />
+                    </button>
+
+                    {n.imagen && (
+                        <img 
+                            src={getImageUrl(n.imagen)} 
+                            alt={n.titulo} 
+                            style={styles.modalImage}
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                        />
+                    )}
+
+                    <h1 style={styles.modalTitle}>{n.titulo}</h1>
+
+                    <div style={styles.modalMeta}>
+                        <span><FaUser /> {n.autor || 'SNTSS'}</span>
+                        <span><FaCalendarAlt /> {n.fecha}</span>
+                        <span><FaEye /> {n.vistas || 0} vistas</span>
+                        <span><FaHeart style={{ color: '#1877f2' }} /> {n.likes || 0} me gusta</span>
+                        {n.fijada && <span style={styles.cardBadge}>📌 Fijada</span>}
+                    </div>
+
+                    <div style={styles.modalBody}>
+                        {n.contenido ? (
+                            <div dangerouslySetInnerHTML={{ __html: n.contenido.replace(/\n/g, '<br/>') }} />
+                        ) : (
+                            <p>{n.resumen}</p>
+                        )}
+                    </div>
+
+                    {n.pdfPath && (
+                        <div style={{ marginTop: '1.5rem' }}>
+                            <a href={getImageUrl(n.pdfPath)} target="_blank" rel="noopener noreferrer" className="btn btn-warning">
+                                <FaFilePdf className="me-2" /> Descargar PDF adjunto
+                            </a>
+                        </div>
+                    )}
+
+                    {n.videoPath && (
+                        <div style={{ marginTop: '1.5rem' }}>
+                            <video controls style={{ width: '100%', maxHeight: '400px', borderRadius: '12px' }}>
+                                <source src={getImageUrl(n.videoPath)} />
+                                Tu navegador no soporta videos.
+                            </video>
+                        </div>
+                    )}
+
+                    {(() => {
+                        const videoUrl = n.youtubeUrl || n.url_video || '';
+                        if (!videoUrl) return null;
+
+                        let embedUrl = videoUrl;
+                        if (videoUrl.includes('watch?v=')) {
+                            embedUrl = videoUrl.replace('watch?v=', 'embed/');
+                        } else if (videoUrl.includes('youtu.be/')) {
+                            const videoId = videoUrl.split('youtu.be/')[1]?.split('?')[0];
+                            if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                        } else if (videoUrl.includes('embed/')) {
+                            embedUrl = videoUrl;
+                        }
+
+                        return (
+                            <div style={{ marginTop: '1.5rem' }}>
+                                <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '12px' }}>
+                                    <iframe
+                                        src={embedUrl}
+                                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                                        frameBorder="0"
+                                        allowFullScreen
+                                        title="Video YouTube"
+                                    />
+                                </div>
+                            </div>
+                        );
+                    })()}
+
+                    {/* Galería */}
+                    {n.galeria && n.galeria.length > 0 && (
+                        <div style={{ marginTop: '1.5rem' }}>
+                            <h5><FaImages className="me-2" />Galería ({n.galeria.length} archivos)</h5>
+                            <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', backgroundColor: '#e9ecef' }}>
+                                <div style={{ display: 'flex', transition: 'transform 0.5s ease' }}>
+                                    {n.galeria.map((item, idx) => (
+                                        <div 
+                                            key={idx} 
+                                            style={{ 
+                                                minWidth: '100%',
+                                                display: idx === previewGalleryIndex ? 'block' : 'none',
+                                                aspectRatio: '16/9',
+                                                backgroundColor: '#e9ecef',
+                                            }}
+                                        >
+                                            {item.type === 'video' ? (
+                                                <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} controls>
+                                                    <source src={getImageUrl(item.path)} />
+                                                </video>
+                                            ) : (
+                                                <img 
+                                                    src={getImageUrl(item.path)} 
+                                                    alt={`Galería ${idx}`} 
+                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                    onError={(e) => { e.target.style.display = 'none'; }}
+                                                />
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {n.galeria.length > 1 && (
+                                    <>
+                                        <button
+                                            style={{
+                                                position: 'absolute',
+                                                top: '50%',
+                                                transform: 'translateY(-50%)',
+                                                left: '10px',
+                                                backgroundColor: 'rgba(0,0,0,0.5)',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '50%',
+                                                width: '36px',
+                                                height: '36px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: 'pointer',
+                                                zIndex: 5,
+                                            }}
+                                            onClick={() => setPreviewGalleryIndex(prev => prev === 0 ? n.galeria.length - 1 : prev - 1)}
+                                        >
+                                            <FaChevronLeft />
+                                        </button>
+                                        <button
+                                            style={{
+                                                position: 'absolute',
+                                                top: '50%',
+                                                transform: 'translateY(-50%)',
+                                                right: '10px',
+                                                backgroundColor: 'rgba(0,0,0,0.5)',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '50%',
+                                                width: '36px',
+                                                height: '36px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: 'pointer',
+                                                zIndex: 5,
+                                            }}
+                                            onClick={() => setPreviewGalleryIndex(prev => prev === n.galeria.length - 1 ? 0 : prev + 1)}
+                                        >
+                                            <FaChevronRight />
+                                        </button>
+                                        <div style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            gap: '0.5rem',
+                                            padding: '0.5rem',
+                                            position: 'absolute',
+                                            bottom: '10px',
+                                            left: 0,
+                                            right: 0,
+                                            zIndex: 5,
+                                        }}>
+                                            {n.galeria.map((_, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    style={{
+                                                        width: '10px',
+                                                        height: '10px',
+                                                        borderRadius: '50%',
+                                                        backgroundColor: idx === previewGalleryIndex ? '#1877f2' : 'rgba(255,255,255,0.5)',
+                                                        border: 'none',
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.3s ease',
+                                                    }}
+                                                    onClick={() => setPreviewGalleryIndex(idx)}
+                                                />
+                                            ))}
+                                        </div>
+                                        <div style={{
+                                            position: 'absolute',
+                                            bottom: '10px',
+                                            right: '10px',
+                                            backgroundColor: 'rgba(0,0,0,0.6)',
+                                            color: 'white',
+                                            padding: '0.2rem 0.6rem',
+                                            borderRadius: '12px',
+                                            fontSize: '0.7rem',
+                                            zIndex: 5,
+                                        }}>
+                                            {previewGalleryIndex + 1} / {n.galeria.length}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
     };
 
     const cambiarVisibilidad = async (id, visible) => {
@@ -1004,18 +1380,46 @@ const NoticiasCrear = () => {
                                         </div>
                                     </div>
                                     <div style={styles.noticiaActions}>
-                                        <button style={styles.btnSuccess} onClick={() => editarNoticia(noticia)}>
+                                        <button 
+                                            style={{ ...styles.noticiaActionBtn, ...styles.btnEdit }}
+                                            onMouseEnter={(e) => { e.target.style.backgroundColor = '#0d6efd'; e.target.style.color = 'white'; }}
+                                            onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#0d6efd'; }}
+                                            onClick={() => editarNoticia(noticia)}
+                                        >
                                             <FaEdit /> Editar
                                         </button>
-                                        <button style={styles.btnWarning} onClick={() => cambiarVisibilidad(noticia.id, !noticia.visible)}>
+                                        <button 
+                                            style={{ ...styles.noticiaActionBtn, ...styles.btnPreview }}
+                                            onMouseEnter={(e) => { e.target.style.backgroundColor = '#0dcaf0'; e.target.style.color = 'white'; }}
+                                            onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#0dcaf0'; }}
+                                            onClick={() => abrirPreviewNoticia(noticia)}
+                                        >
+                                            <FaEye /> Vista Previa
+                                        </button>
+                                        <button 
+                                            style={{ ...styles.noticiaActionBtn, ...styles.btnToggle }}
+                                            onMouseEnter={(e) => { e.target.style.backgroundColor = '#ffc107'; e.target.style.color = '#0A0F1E'; }}
+                                            onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#ffc107'; }}
+                                            onClick={() => cambiarVisibilidad(noticia.id, !noticia.visible)}
+                                        >
                                             {noticia.visible ? <FaEyeSlash /> : <FaEye />}
                                             {noticia.visible ? ' Ocultar' : ' Publicar'}
                                         </button>
-                                        <button style={styles.btnWarning} onClick={() => cambiarFijada(noticia.id, !noticia.fijada)}>
+                                        <button 
+                                            style={{ ...styles.noticiaActionBtn, ...styles.btnPin }}
+                                            onMouseEnter={(e) => { e.target.style.backgroundColor = '#6f42c1'; e.target.style.color = 'white'; }}
+                                            onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#6f42c1'; }}
+                                            onClick={() => cambiarFijada(noticia.id, !noticia.fijada)}
+                                        >
                                             <FaThumbtack />
                                             {noticia.fijada ? ' Desfijar' : ' Fijar'}
                                         </button>
-                                        <button style={styles.btnDanger} onClick={() => eliminarNoticia(noticia.id)}>
+                                        <button 
+                                            style={{ ...styles.noticiaActionBtn, ...styles.btnDelete }}
+                                            onMouseEnter={(e) => { e.target.style.backgroundColor = '#dc3545'; e.target.style.color = 'white'; }}
+                                            onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#dc3545'; }}
+                                            onClick={() => eliminarNoticia(noticia.id)}
+                                        >
                                             <FaTrash /> Eliminar
                                         </button>
                                     </div>
@@ -1025,6 +1429,7 @@ const NoticiasCrear = () => {
                     </div>
                 </div>
             </div>
+            {renderNoticiaPreviewModal()}
         </div>
     );
 };

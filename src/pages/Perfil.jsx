@@ -19,6 +19,20 @@ const Perfil = () => {
         confirmar_password: ''
     });
 
+    const getImageUrl = (path) => {
+        if (!path) return null;
+        // Si ya es una URL completa, devolverla
+        if (path.startsWith('http://') || path.startsWith('https://')) {
+            return path;
+        }
+        // Si empieza con /api, usar apiUrl
+        if (path.startsWith('/api')) {
+            return apiUrl(path.replace('/api', ''));
+        }
+        // Si no, asumir que es una ruta relativa
+        return apiUrl(path);
+    };
+
     const [perfil, setPerfil] = useState({
         matricula: '',
         nombre: '',
@@ -247,10 +261,20 @@ const Perfil = () => {
                                     <div className="position-relative">
                                         {fotoPreview ? (
                                             <img 
-                                                src={fotoPreview} 
+                                                src={getImageUrl(fotoPreview)} 
                                                 alt="Foto de perfil" 
                                                 className="rounded-circle border border-3 border-info"
                                                 style={{ width: '150px', height: '150px', objectFit: 'cover' }}
+                                                onError={(e) => {
+                                                    // Si la imagen falla, mostrar el placeholder
+                                                    e.target.style.display = 'none';
+                                                    e.target.parentElement.innerHTML = `
+                                                        <div class="rounded-circle bg-light border border-3 border-info d-flex align-items-center justify-content-center mx-auto"
+                                                            style="width: 150px; height: 150px;">
+                                                            <FaUser style="font-size: 60px; color: #ccc;" />
+                                                        </div>
+                                                    `;
+                                                }}
                                             />
                                         ) : (
                                             <div 

@@ -374,7 +374,7 @@ const Dashboard = () => {
                 
                 {!isLoggedIn && (
                     <Link to="/login" style={styles.heroBtn}>
-                        <FaSignInAlt /> Inicia sesión para acceder a más beneficios
+                        <FaSignInAlt /> Inicia sesión para acceder a los beneficios
                     </Link>
                 )}
             </div>
@@ -405,7 +405,7 @@ const Dashboard = () => {
                     </div>
                     <h3 style={styles.actionCardTitle}>💰 Calculadora de auto</h3>
                     <p style={styles.actionCardDescription}>
-                        Simula tu financiamiento automotriz.
+                        El calculo del financiamiento automotriz es aproximado.
                     </p>
                 </div>
                 {hasAutoValidatorRole && (
@@ -478,10 +478,10 @@ const Dashboard = () => {
                     </div>
                     <ul style={styles.listaReglas}>
                         <li style={styles.listaReglasItem}>
-                            <FaShieldAlt style={{ color: '#3EAEF4' }} /> Ser agremiado activo
+                            <FaShieldAlt style={{ color: '#3EAEF4' }} /> Ser agremiado de base.
                         </li>
                         <li style={styles.listaReglasItem}>
-                            <FaChartLine style={{ color: '#3EAEF4' }} /> Mínimo 1 año de antigüedad
+                            <FaChartLine style={{ color: '#3EAEF4' }} /> 5 años de antigüedad
                         </li>
                         <li style={styles.listaReglasItem}>
                             <FaGift style={{ color: '#3EAEF4' }} /> Participar en la rifa de créditos
