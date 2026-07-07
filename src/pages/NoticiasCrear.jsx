@@ -4,17 +4,82 @@ import {
     FaNewspaper, FaFilePdf, FaImage, FaVideo, FaImages, FaPlus, 
     FaTrash, FaSave, FaArrowLeft, FaCheckCircle, FaExclamationTriangle,
     FaEye, FaEyeSlash, FaThumbtack, FaEdit, FaUpload, FaSync,
-    FaChevronLeft, FaChevronRight, FaUser, FaCalendarAlt, FaTimes, FaHeart
+    FaChevronLeft, FaChevronRight, FaUser, FaCalendarAlt, FaTimes, FaHeart,
+    FaRocket, FaStar
 } from 'react-icons/fa';
 import { useDropzone } from 'react-dropzone';
 import { apiUrl } from '../config';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
-// Estilos
+// ========== ESTILOS  ==========
 const styles = {
     container: {
         maxWidth: '1400px',
         margin: '0 auto',
-        padding: '2rem 1rem',
+        padding: '2rem 1.5rem',
+        background: '#f0f4f8',
+        minHeight: 'calc(100vh - 200px)',
+    },
+    header: {
+        background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
+        borderRadius: '20px',
+        padding: '2rem 2rem',
+        marginBottom: '2rem',
+        borderBottom: '4px solid #3EAEF4',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+        position: 'relative',
+        overflow: 'hidden',
+    },
+    headerGlow: {
+        position: 'absolute',
+        top: '-50%',
+        right: '-20%',
+        width: '400px',
+        height: '400px',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(62,174,244,0.1) 0%, transparent 70%)',
+        pointerEvents: 'none',
+    },
+    headerContent: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '1rem',
+        position: 'relative',
+        zIndex: 2,
+    },
+    headerTitle: {
+        fontSize: '2rem',
+        fontWeight: 'bold',
+        background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
+        margin: 0,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.8rem',
+    },
+    headerSubtitle: {
+        color: '#aab',
+        fontSize: '0.9rem',
+        margin: 0,
+    },
+    headerBadge: {
+        display: 'inline-block',
+        backgroundColor: '#3EAEF4',
+        color: '#0A0F1E',
+        padding: '0.3rem 1rem',
+        borderRadius: '20px',
+        fontSize: '0.75rem',
+        fontWeight: 'bold',
+    },
+    headerButtons: {
+        display: 'flex',
+        gap: '0.5rem',
+        flexWrap: 'wrap',
     },
     grid2cols: {
         display: 'grid',
@@ -22,12 +87,14 @@ const styles = {
         gap: '2rem',
     },
     card: {
-        backgroundColor: 'white',
+        backgroundColor: 'rgba(255,255,255,0.9)',
+        backdropFilter: 'blur(10px)',
         borderRadius: '20px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06)',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
         overflow: 'hidden',
-        border: 'none',
+        border: '1px solid rgba(255,255,255,0.5)',
         height: 'fit-content',
+        transition: 'all 0.3s ease',
     },
     cardHeader: {
         background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%)',
@@ -106,106 +173,6 @@ const styles = {
         color: '#3EAEF4',
         marginBottom: '0.3rem',
     },
-    // Carrusel de la galería
-    carouselContainer: {
-        position: 'relative',
-        marginTop: '1rem',
-        borderRadius: '12px',
-        overflow: 'hidden',
-        backgroundColor: '#e9ecef',
-        minHeight: '150px',
-    },
-    carouselSlide: {
-        display: 'flex',
-        transition: 'transform 0.5s ease',
-    },
-    carouselItem: {
-        minWidth: '100%',
-        position: 'relative',
-        aspectRatio: '16/9',
-        backgroundColor: '#e9ecef',
-    },
-    carouselImage: {
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-    },
-    carouselVideo: {
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-    },
-    carouselRemove: {
-        position: 'absolute',
-        top: '10px',
-        right: '10px',
-        backgroundColor: 'rgba(220,53,69,0.8)',
-        color: 'white',
-        border: 'none',
-        borderRadius: '50%',
-        width: '30px',
-        height: '30px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease',
-        zIndex: 5,
-    },
-    carouselNav: {
-        position: 'absolute',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        color: 'white',
-        border: 'none',
-        borderRadius: '50%',
-        width: '36px',
-        height: '36px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease',
-        zIndex: 5,
-    },
-    carouselNavLeft: {
-        left: '10px',
-    },
-    carouselNavRight: {
-        right: '10px',
-    },
-    carouselDots: {
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '0.5rem',
-        padding: '0.5rem',
-        position: 'absolute',
-        bottom: '10px',
-        left: 0,
-        right: 0,
-        zIndex: 5,
-    },
-    carouselDot: (active) => ({
-        width: '10px',
-        height: '10px',
-        borderRadius: '50%',
-        backgroundColor: active ? '#3EAEF4' : 'rgba(255,255,255,0.5)',
-        border: 'none',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease',
-    }),
-    carouselCounter: {
-        position: 'absolute',
-        bottom: '10px',
-        right: '10px',
-        backgroundColor: 'rgba(0,0,0,0.6)',
-        color: 'white',
-        padding: '0.2rem 0.6rem',
-        borderRadius: '12px',
-        fontSize: '0.7rem',
-        zIndex: 5,
-    },
     toggleGroup: {
         display: 'flex',
         gap: '0.5rem',
@@ -213,7 +180,7 @@ const styles = {
         flexWrap: 'wrap',
     },
     toggleBtn: (active) => ({
-        padding: '0.3rem 0.8rem',
+        padding: '0.4rem 1rem',
         borderRadius: '20px',
         border: active ? '2px solid #3EAEF4' : '1px solid #ddd',
         backgroundColor: active ? 'rgba(255,215,0,0.1)' : 'transparent',
@@ -230,7 +197,7 @@ const styles = {
         backgroundColor: '#3EAEF4',
         color: '#0A0F1E',
         border: 'none',
-        padding: '0.6rem 1.2rem',
+        padding: '0.7rem 1.5rem',
         borderRadius: '12px',
         fontWeight: 'bold',
         fontSize: '0.95rem',
@@ -240,20 +207,7 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         gap: '0.5rem',
-    },
-    btnSuccess: {
-        backgroundColor: '#28a745',
-        color: 'white',
-        border: 'none',
-        padding: '0.4rem 0.8rem',
-        borderRadius: '8px',
-        fontWeight: 'bold',
-        fontSize: '0.8rem',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '0.3rem',
+        width: '100%',
     },
     btnDanger: {
         backgroundColor: '#dc3545',
@@ -269,19 +223,98 @@ const styles = {
         alignItems: 'center',
         gap: '0.3rem',
     },
-    btnWarning: {
-        backgroundColor: '#3EAEF4',
-        color: '#0A0F1E',
-        border: 'none',
-        padding: '0.4rem 0.8rem',
-        borderRadius: '8px',
+    btnOutline: {
+        backgroundColor: 'transparent',
+        color: '#6c757d',
+        border: '1px solid #ddd',
+        padding: '0.6rem 1.2rem',
+        borderRadius: '12px',
         fontWeight: 'bold',
-        fontSize: '0.8rem',
+        fontSize: '0.9rem',
         transition: 'all 0.3s ease',
         cursor: 'pointer',
         display: 'inline-flex',
         alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.5rem',
+        textDecoration: 'none',
+    },
+    noticiaItem: {
+        backgroundColor: 'white',
+        borderRadius: '12px',
+        padding: '1rem',
+        marginBottom: '1rem',
+        border: '1px solid #e9ecef',
+        transition: 'all 0.3s ease',
+    },
+    noticiaTitulo: {
+        fontSize: '1rem',
+        fontWeight: 'bold',
+        margin: 0,
+        color: '#0A0F1E',
+    },
+    noticiaMeta: {
+        fontSize: '0.75rem',
+        color: '#6c757d',
+        display: 'flex',
+        gap: '0.5rem 1rem',
+        flexWrap: 'wrap',
+        marginTop: '0.3rem',
+    },
+    noticiaActions: {
+        display: 'flex',
         gap: '0.3rem',
+        flexWrap: 'wrap',
+        marginTop: '0.5rem',
+    },
+    noticiaActionBtn: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.2rem',
+        padding: '0.3rem 0.6rem',
+        borderRadius: '6px',
+        fontSize: '0.7rem',
+        fontWeight: '600',
+        border: '1.5px solid',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        backgroundColor: 'transparent',
+        minWidth: '70px',
+        height: '28px',
+    },
+    badge: (color) => ({
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.3rem',
+        padding: '0.2rem 0.6rem',
+        borderRadius: '12px',
+        fontSize: '0.7rem',
+        fontWeight: 'bold',
+        backgroundColor: color,
+        color: 'white',
+    }),
+    alertError: {
+        backgroundColor: '#fee2e2',
+        color: '#dc2626',
+        padding: '0.75rem 1rem',
+        borderRadius: '12px',
+        marginBottom: '1rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        fontSize: '0.9rem',
+    },
+    alertSuccess: {
+        backgroundColor: '#d4edda',
+        color: '#155724',
+        padding: '0.75rem 1rem',
+        borderRadius: '12px',
+        marginBottom: '1rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        fontSize: '0.9rem',
     },
     modalOverlay: {
         position: 'fixed',
@@ -353,6 +386,31 @@ const styles = {
         lineHeight: '1.8',
         color: '#333',
     },
+    loadingSpinner: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '2rem',
+        gap: '1rem',
+        color: '#6c757d',
+    },
+    flexRow: {
+        display: 'flex',
+        gap: '0.5rem',
+        flexWrap: 'wrap',
+        marginTop: '1rem',
+    },
+    flexGrow: {
+        flex: 1,
+    },
+    carouselContainer: {
+        position: 'relative',
+        marginTop: '1rem',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        backgroundColor: '#e9ecef',
+        minHeight: '150px',
+    },
     cardBadge: {
         display: 'inline-flex',
         alignItems: 'center',
@@ -364,159 +422,9 @@ const styles = {
         backgroundColor: '#1877f2',
         color: 'white',
     },
-    btnOutline: {
-        backgroundColor: 'transparent',
-        color: '#6c757d',
-        border: '1px solid #ddd',
-        padding: '0.6rem 1.2rem',
-        borderRadius: '12px',
-        fontWeight: 'bold',
-        fontSize: '0.95rem',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.5rem',
-        textDecoration: 'none',
-    },
-    flexRow: {
-        display: 'flex',
-        gap: '0.5rem',
-        flexWrap: 'wrap',
-        marginTop: '1rem',
-    },
-    flexGrow: {
-        flex: 1,
-    },
-    alertError: {
-        backgroundColor: '#fee2e2',
-        color: '#dc2626',
-        padding: '0.75rem 1rem',
-        borderRadius: '12px',
-        marginBottom: '1rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        fontSize: '0.9rem',
-    },
-    alertSuccess: {
-        backgroundColor: '#d4edda',
-        color: '#155724',
-        padding: '0.75rem 1rem',
-        borderRadius: '12px',
-        marginBottom: '1rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        fontSize: '0.9rem',
-    },
-    noticiaItem: {
-        backgroundColor: 'white',
-        borderRadius: '12px',
-        padding: '1rem',
-        marginBottom: '1rem',
-        border: '1px solid #e9ecef',
-        transition: 'all 0.3s ease',
-    },
-    noticiaTitulo: {
-        fontSize: '1rem',
-        fontWeight: 'bold',
-        margin: 0,
-        color: '#0A0F1E',
-    },
-    noticiaMeta: {
-        fontSize: '0.75rem',
-        color: '#6c757d',
-        display: 'flex',
-        gap: '1rem',
-        flexWrap: 'wrap',
-        marginTop: '0.3rem',
-    },
-    noticiaActions: {
-        display: 'flex',
-        gap: '0.3rem',
-        flexWrap: 'wrap',
-        marginTop: '0.5rem',
-    },
-    noticiaActionBtn: {
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.2rem',
-        padding: '0.3rem 0.6rem',
-        borderRadius: '6px',
-        fontSize: '0.7rem',
-        fontWeight: '600',
-        border: '1.5px solid',
-        cursor: 'pointer',
-        transition: 'all 0.2s ease',
-        backgroundColor: 'transparent',
-        minWidth: '70px',
-        height: '28px',
-    },
-    btnEdit: {
-        borderColor: '#0d6efd',
-        color: '#0d6efd',
-    },
-    btnEditHover: {
-        backgroundColor: '#0d6efd',
-        color: 'white',
-    },
-    btnPreview: {
-        borderColor: '#0dcaf0',
-        color: '#0dcaf0',
-    },
-    btnPreviewHover: {
-        backgroundColor: '#0dcaf0',
-        color: 'white',
-    },
-    btnToggle: {
-        borderColor: '#ffc107',
-        color: '#ffc107',
-    },
-    btnToggleHover: {
-        backgroundColor: '#ffc107',
-        color: '#0A0F1E',
-    },
-    btnPin: {
-        borderColor: '#6f42c1',
-        color: '#6f42c1',
-    },
-    btnPinHover: {
-        backgroundColor: '#6f42c1',
-        color: 'white',
-    },
-    btnDelete: {
-        borderColor: '#dc3545',
-        color: '#dc3545',
-    },
-    btnDeleteHover: {
-        backgroundColor: '#dc3545',
-        color: 'white',
-    },
-    badge: (color) => ({
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '0.3rem',
-        padding: '0.2rem 0.6rem',
-        borderRadius: '12px',
-        fontSize: '0.7rem',
-        fontWeight: 'bold',
-        backgroundColor: color,
-        color: 'white',
-    }),
-    loadingSpinner: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '2rem',
-        gap: '1rem',
-        color: '#6c757d',
-    },
 };
 
-// Componente Carrusel de Galería
+// ========== COMPONENTE CARRUSEL ==========
 const GaleriaCarrusel = ({ items, onRemove }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -537,30 +445,48 @@ const GaleriaCarrusel = ({ items, onRemove }) => {
 
     return (
         <div style={styles.carouselContainer}>
-            <div style={styles.carouselSlide}>
+            <div style={{ display: 'flex', transition: 'transform 0.5s ease' }}>
                 {items.map((item, index) => (
                     <div
                         key={index}
                         style={{
-                            ...styles.carouselItem,
+                            minWidth: '100%',
                             display: index === currentIndex ? 'block' : 'none',
+                            aspectRatio: '16/9',
+                            backgroundColor: '#e9ecef',
+                            position: 'relative',
                         }}
                     >
                         {isVideo(item) ? (
-                            <video style={styles.carouselVideo} controls>
+                            <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} controls>
                                 <source src={item.preview} />
                             </video>
                         ) : (
                             <img
                                 src={item.preview}
                                 alt={`Galería ${index}`}
-                                style={styles.carouselImage}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             />
                         )}
                         <button
-                            style={styles.carouselRemove}
+                            style={{
+                                position: 'absolute',
+                                top: '10px',
+                                right: '10px',
+                                backgroundColor: 'rgba(220,53,69,0.8)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '30px',
+                                height: '30px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease',
+                                zIndex: 5,
+                            }}
                             onClick={() => onRemove(index)}
-                            title="Eliminar"
                         >
                             <FaTrash size={12} />
                         </button>
@@ -571,27 +497,89 @@ const GaleriaCarrusel = ({ items, onRemove }) => {
             {items.length > 1 && (
                 <>
                     <button
-                        style={{ ...styles.carouselNav, ...styles.carouselNavLeft }}
+                        style={{
+                            position: 'absolute',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            left: '10px',
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '50%',
+                            width: '36px',
+                            height: '36px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            zIndex: 5,
+                        }}
                         onClick={goToPrevious}
                     >
                         <FaChevronLeft />
                     </button>
                     <button
-                        style={{ ...styles.carouselNav, ...styles.carouselNavRight }}
+                        style={{
+                            position: 'absolute',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            right: '10px',
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '50%',
+                            width: '36px',
+                            height: '36px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            zIndex: 5,
+                        }}
                         onClick={goToNext}
                     >
                         <FaChevronRight />
                     </button>
-                    <div style={styles.carouselDots}>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        padding: '0.5rem',
+                        position: 'absolute',
+                        bottom: '10px',
+                        left: 0,
+                        right: 0,
+                        zIndex: 5,
+                    }}>
                         {items.map((_, index) => (
                             <button
                                 key={index}
-                                style={styles.carouselDot(index === currentIndex)}
+                                style={{
+                                    width: '10px',
+                                    height: '10px',
+                                    borderRadius: '50%',
+                                    backgroundColor: index === currentIndex ? '#3EAEF4' : 'rgba(255,255,255,0.5)',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s ease',
+                                }}
                                 onClick={() => setCurrentIndex(index)}
                             />
                         ))}
                     </div>
-                    <div style={styles.carouselCounter}>
+                    <div style={{
+                        position: 'absolute',
+                        bottom: '10px',
+                        right: '10px',
+                        backgroundColor: 'rgba(0,0,0,0.6)',
+                        color: 'white',
+                        padding: '0.2rem 0.6rem',
+                        borderRadius: '12px',
+                        fontSize: '0.7rem',
+                        zIndex: 5,
+                    }}>
                         {currentIndex + 1} / {items.length}
                     </div>
                 </>
@@ -600,6 +588,7 @@ const GaleriaCarrusel = ({ items, onRemove }) => {
     );
 };
 
+// ========== COMPONENTE PRINCIPAL ==========
 const NoticiasCrear = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -889,7 +878,6 @@ const NoticiasCrear = () => {
                         );
                     })()}
 
-                    {/* Galería */}
                     {n.galeria && n.galeria.length > 0 && (
                         <div style={{ marginTop: '1.5rem' }}>
                             <h5><FaImages className="me-2" />Galería ({n.galeria.length} archivos)</h5>
@@ -1055,26 +1043,85 @@ const NoticiasCrear = () => {
         }
     };
 
-    const eliminarNoticia = async (id) => {
-        if (!window.confirm('¿Estás seguro de eliminar esta noticia?')) return;
-        try {
-            const response = await fetch(apiUrl('/eliminar_noticia.php'), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id })
-            });
-            const data = await response.json();
-            if (data.success) {
-                setSuccessMsg('Noticia eliminada correctamente.');
-                cargarNoticias();
-                if (noticiaId === id) cancelarEdicion();
-            } else {
-                setErrorMsg(data.message || 'Error al eliminar noticia.');
-            }
-        } catch (error) {
-            setErrorMsg('Error de conexión.');
+    const eliminarNoticia = async (id, titulo) => {
+    // 🔥 Reemplazo de window.confirm por SweetAlert2
+    const result = await Swal.fire({
+        title: '🗑️ ¿Eliminar noticia?',
+        html: `¿Estás seguro de que deseas eliminar <strong>"${titulo}"</strong>?<br><small style="color:#6c757d;">Esta acción no se puede deshacer. La noticia se moverá a la papelera.</small>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '✅ Sí, eliminar',
+        cancelButtonText: '❌ Cancelar',
+        reverseButtons: true,
+        background: '#fff',
+        backdrop: 'rgba(0,0,0,0.6)',
+        showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
         }
-    };
+    });
+
+    // Si el usuario cancela, no hacer nada
+    if (!result.isConfirmed) return;
+
+    // Mostrar loading
+    Swal.fire({
+        title: 'Eliminando...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    try {
+        const response = await fetch(apiUrl('/eliminar_noticia.php'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            // ✅ Éxito
+            await Swal.fire({
+                title: '✅ ¡Eliminada!',
+                text: 'La noticia ha sido eliminada correctamente.',
+                icon: 'success',
+                confirmButtonColor: '#28a745',
+                confirmButtonText: 'Perfecto',
+                timer: 3000,
+                timerProgressBar: true,
+            });
+            setSuccessMsg('Noticia eliminada correctamente.');
+            cargarNoticias();
+            if (noticiaId === id) cancelarEdicion();
+        } else {
+            // ❌ Error del servidor
+            await Swal.fire({
+                title: '❌ Error',
+                text: data.message || 'Error al eliminar noticia.',
+                icon: 'error',
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'Entendido',
+            });
+            setErrorMsg(data.message || 'Error al eliminar noticia.');
+        }
+    } catch (error) {
+        // ❌ Error de conexión
+        await Swal.fire({
+            title: '❌ Error de conexión',
+            text: 'No se pudo conectar con el servidor. Intenta de nuevo.',
+            icon: 'error',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'Entendido',
+        });
+        setErrorMsg('Error de conexión.');
+    }
+};
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -1144,34 +1191,63 @@ const NoticiasCrear = () => {
         return '🚫 Oculta';
     };
 
+    // Botones de acción con estilos
+    const btnEdit = { borderColor: '#0d6efd', color: '#0d6efd' };
+    const btnEditHover = { backgroundColor: '#0d6efd', color: 'white' };
+    const btnPreview = { borderColor: '#0dcaf0', color: '#0dcaf0' };
+    const btnPreviewHover = { backgroundColor: '#0dcaf0', color: 'white' };
+    const btnToggle = { borderColor: '#ffc107', color: '#ffc107' };
+    const btnToggleHover = { backgroundColor: '#ffc107', color: '#0A0F1E' };
+    const btnPin = { borderColor: '#6f42c1', color: '#6f42c1' };
+    const btnPinHover = { backgroundColor: '#6f42c1', color: 'white' };
+    const btnDelete = { borderColor: '#dc3545', color: '#dc3545' };
+    const btnDeleteHover = { backgroundColor: '#dc3545', color: 'white' };
+
     return (
         <div style={styles.container}>
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 style={{ margin: 0 }}>
-                    <FaNewspaper className="me-2 text-warning" />
-                    {editando ? 'Editar Noticia' : 'Crear Noticia'}
-                </h2>
-                <Link to="/dashboard" className="btn btn-outline-secondary">
-                    <FaArrowLeft className="me-1" /> Volver
-                </Link>
-                <Link to="/noticias/papelera" className="btn btn-outline-danger btn-sm">
-                    <FaTrash className="me-1" /> Papelera
-                </Link>
+            {/* Header con glow */}
+            <div style={styles.header}>
+                <div style={styles.headerGlow} />
+                <div style={styles.headerContent}>
+                    <div>
+                        <h2 style={styles.headerTitle}>
+                            <FaRocket style={{ color: '#3EAEF4' }} /> 
+                            {editando ? ' Editar Noticia' : ' Crear Noticia'}
+                        </h2>
+                        <p style={styles.headerSubtitle}>
+                            {editando ? 'Actualiza la información de la noticia' : 'Publica nuevas noticias para los agremiados'}
+                        </p>
+                        <span style={styles.headerBadge}>
+                            <FaStar style={{ marginRight: '5px' }} /> 
+                            {editando ? 'Modo Edición' : 'Nueva Publicación'}
+                        </span>
+                    </div>
+                    <div style={styles.headerButtons}>
+                        <Link to="/dashboard" style={styles.btnOutline}>
+                            <FaArrowLeft /> Volver
+                        </Link>
+                        <Link to="/noticias/papelera" style={{ ...styles.btnOutline, color: '#dc3545', borderColor: '#dc3545' }}>
+                            <FaTrash /> Papelera
+                        </Link>
+                    </div>
+                </div>
             </div>
 
+            {/* Alertas */}
             {errorMsg && (
                 <div style={styles.alertError}>
                     <FaExclamationTriangle /> {errorMsg}
-                    <button type="button" style={{ background: 'none', border: 'none', marginLeft: 'auto', color: 'inherit' }} onClick={() => setErrorMsg('')}>✕</button>
+                    <button type="button" style={{ background: 'none', border: 'none', marginLeft: 'auto', color: 'inherit', fontSize: '1.2rem' }} onClick={() => setErrorMsg('')}>✕</button>
                 </div>
             )}
             {successMsg && (
                 <div style={styles.alertSuccess}>
                     <FaCheckCircle /> {successMsg}
-                    <button type="button" style={{ background: 'none', border: 'none', marginLeft: 'auto', color: 'inherit' }} onClick={() => setSuccessMsg('')}>✕</button>
+                    <button type="button" style={{ background: 'none', border: 'none', marginLeft: 'auto', color: 'inherit', fontSize: '1.2rem' }} onClick={() => setSuccessMsg('')}>✕</button>
                 </div>
             )}
 
+            {/* Grid de 2 columnas - Responsive */}
             <div style={styles.grid2cols}>
                 {/* Columna izquierda: Formulario */}
                 <div style={styles.card}>
@@ -1302,7 +1378,6 @@ const NoticiasCrear = () => {
                                 {videoName && <p style={{ fontSize: '0.75rem', color: '#28a745' }}>✅ {videoName}</p>}
                             </div>
 
-                            {/* Galería con carrusel */}
                             <div style={styles.inputGroup}>
                                 <label style={styles.label}><FaImages className="me-1" /> Galería (hasta 10 archivos)</label>
                                 <div 
@@ -1366,7 +1441,7 @@ const NoticiasCrear = () => {
                         ) : (
                             noticias.map((noticia) => (
                                 <div key={noticia.id} style={styles.noticiaItem}>
-                                    <div className="d-flex justify-content-between align-items-start">
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                         <div>
                                             <p style={styles.noticiaTitulo}>{noticia.titulo}</p>
                                             <div style={styles.noticiaMeta}>
@@ -1381,7 +1456,7 @@ const NoticiasCrear = () => {
                                     </div>
                                     <div style={styles.noticiaActions}>
                                         <button 
-                                            style={{ ...styles.noticiaActionBtn, ...styles.btnEdit }}
+                                            style={{ ...styles.noticiaActionBtn, ...btnEdit }}
                                             onMouseEnter={(e) => { e.target.style.backgroundColor = '#0d6efd'; e.target.style.color = 'white'; }}
                                             onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#0d6efd'; }}
                                             onClick={() => editarNoticia(noticia)}
@@ -1389,7 +1464,7 @@ const NoticiasCrear = () => {
                                             <FaEdit /> Editar
                                         </button>
                                         <button 
-                                            style={{ ...styles.noticiaActionBtn, ...styles.btnPreview }}
+                                            style={{ ...styles.noticiaActionBtn, ...btnPreview }}
                                             onMouseEnter={(e) => { e.target.style.backgroundColor = '#0dcaf0'; e.target.style.color = 'white'; }}
                                             onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#0dcaf0'; }}
                                             onClick={() => abrirPreviewNoticia(noticia)}
@@ -1397,7 +1472,7 @@ const NoticiasCrear = () => {
                                             <FaEye /> Vista Previa
                                         </button>
                                         <button 
-                                            style={{ ...styles.noticiaActionBtn, ...styles.btnToggle }}
+                                            style={{ ...styles.noticiaActionBtn, ...btnToggle }}
                                             onMouseEnter={(e) => { e.target.style.backgroundColor = '#ffc107'; e.target.style.color = '#0A0F1E'; }}
                                             onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#ffc107'; }}
                                             onClick={() => cambiarVisibilidad(noticia.id, !noticia.visible)}
@@ -1406,7 +1481,7 @@ const NoticiasCrear = () => {
                                             {noticia.visible ? ' Ocultar' : ' Publicar'}
                                         </button>
                                         <button 
-                                            style={{ ...styles.noticiaActionBtn, ...styles.btnPin }}
+                                            style={{ ...styles.noticiaActionBtn, ...btnPin }}
                                             onMouseEnter={(e) => { e.target.style.backgroundColor = '#6f42c1'; e.target.style.color = 'white'; }}
                                             onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#6f42c1'; }}
                                             onClick={() => cambiarFijada(noticia.id, !noticia.fijada)}
@@ -1415,11 +1490,11 @@ const NoticiasCrear = () => {
                                             {noticia.fijada ? ' Desfijar' : ' Fijar'}
                                         </button>
                                         <button 
-                                            style={{ ...styles.noticiaActionBtn, ...styles.btnDelete }}
-                                            onMouseEnter={(e) => { e.target.style.backgroundColor = '#dc3545'; e.target.style.color = 'white'; }}
-                                            onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#dc3545'; }}
-                                            onClick={() => eliminarNoticia(noticia.id)}
-                                        >
+                                                style={{ ...styles.noticiaActionBtn, ...btnDelete }}
+                                                onMouseEnter={(e) => { e.target.style.backgroundColor = '#dc3545'; e.target.style.color = 'white'; }}
+                                                onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#dc3545'; }}
+                                                onClick={() => eliminarNoticia(noticia.id, noticia.titulo)}  // ← PASAS ID Y TÍTULO
+                                            >
                                             <FaTrash /> Eliminar
                                         </button>
                                     </div>
@@ -1429,7 +1504,9 @@ const NoticiasCrear = () => {
                     </div>
                 </div>
             </div>
-            {renderNoticiaPreviewModal()}
+
+            {/* Modal de preview */}
+            {showPreviewModal && renderNoticiaPreviewModal()}
         </div>
     );
 };

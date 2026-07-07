@@ -156,7 +156,7 @@ const Footer = () => {
                     </div>
                     
                     <div style={styles.socials}>
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
+                        <a href="https://www.facebook.com/profile.php?id=61583448263870&locale=es_LA" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
                             <FaFacebook size={24} />
                         </a>
                         <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tw">
@@ -185,7 +185,7 @@ const Footer = () => {
                     
                     <p style={styles.copy}>
                         © {currentYear} SNTSS Sección XXXIII / 
-                        <strong style={styles.legend}> Logic Legends 💀</strong>
+                        <strong style={styles.legend}> espineza.dev</strong>
                     </p>
                     <AvisoPrivacidad show={showAvisoPrivacidad} onHide={() => setShowAvisoPrivacidad(false)} />
                 </div>

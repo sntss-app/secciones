@@ -51,10 +51,10 @@ if (empty($matricula) || empty($password)) {
 }
 
 try {
-    // 1. Consultar usuario incluyendo campos de bloqueo
+    // 1. Consultar usuario - ELIMINADO u.idRol
     $stmt = $pdo->prepare(
         "SELECT u.id, u.matricula, REPLACE(u.nombre, '/', ' ') AS nombre, u.adscripcion, u.categoria, u.curp, u.sexo,
-                u.telefono, u.correo, u.contrasena, u.idRol, u.codigo_2fa, u.two_factor_enabled,
+                u.telefono, u.correo, u.contrasena, u.codigo_2fa, u.two_factor_enabled,
                 u.fecha_registro, u.status, u.antiguedad,
                 u.intentos_fallidos, u.bloqueo_hasta
         FROM usuarios u
@@ -86,7 +86,7 @@ try {
     if ($bloqueo_hasta && new DateTime() < new DateTime($bloqueo_hasta)) {
         $restante = (new DateTime($bloqueo_hasta))->diff(new DateTime());
         $minutos = $restante->i + 1;
-        http_response_code(429); // Too Many Requests
+        http_response_code(429);
         echo json_encode([
             'success' => false,
             'message' => "Has superado el número de intentos. Tu cuenta está bloqueada por $minutos minutos.",
@@ -98,13 +98,11 @@ try {
 
     // 3. Verificar contraseña
     if (!password_verify($password, $usuario['contrasena'])) {
-        // ❌ Contraseña incorrecta: incrementar intentos
         $nuevos_intentos = $intentos_fallidos + 1;
         $mensaje = "Matrícula o contraseña incorrectas. Intentos restantes: " . (5 - $nuevos_intentos);
         $bloquear = false;
 
         if ($nuevos_intentos >= 5) {
-            // Bloquear por 15 minutos
             $bloqueo_tiempo = (new DateTime())->modify('+15 minutes')->format('Y-m-d H:i:s');
             $update = $pdo->prepare("UPDATE usuarios SET intentos_fallidos = :intentos, bloqueo_hasta = :bloqueo WHERE matricula = :matricula");
             $update->execute([
@@ -151,57 +149,24 @@ try {
         $usuario['codigo_2fa'] = $nuevo_secret;
     }
 
-    // Obtener roles del usuario desde usuario_roles si existe
+    // ========== OBTENER ROLES DEL USUARIO ==========
     $roles = [];
     $roleNames = [];
-    $roleName = null;
 
-    $tableCheck = $pdo->query("SHOW TABLES LIKE 'usuario_roles'");
-    $hasUsuarioRoles = $tableCheck !== false && $tableCheck->fetch() !== false;
-
-    if ($hasUsuarioRoles) {
-        $rolesStmt = $pdo->prepare(
-            "SELECT r.id, r.evento
-             FROM usuario_roles ur
-             JOIN roles r ON ur.rol_id = r.id
-             WHERE ur.usuario_id = :usuario_id AND r.status = 1"
-        );
-        $rolesStmt->execute([':usuario_id' => $usuario['id']]);
-        while ($row = $rolesStmt->fetch(PDO::FETCH_ASSOC)) {
-            $name = trim($row['evento']);
-            if ($name !== '') {
-                $roles[] = ['id' => (int) $row['id'], 'name' => $name];
-                $roleNames[] = mb_strtolower($name);
-            }
-        }
-    }
-
-    if (empty($roles) && $usuario['idRol'] !== null) {
-        $legacyRoles = [];
-        if (is_numeric($usuario['idRol'])) {
-            $legacyRoles[] = (int) $usuario['idRol'];
-        } else {
-            $pieces = array_filter(array_map('trim', explode(',', $usuario['idRol'])));
-            foreach ($pieces as $piece) {
-                if (is_numeric($piece)) {
-                    $legacyRoles[] = (int) $piece;
-                }
-            }
-        }
-
-        if (!empty($legacyRoles)) {
-            $placeholders = implode(',', array_fill(0, count($legacyRoles), '?'));
-            $legacyStmt = $pdo->prepare(
-                "SELECT id, evento FROM roles WHERE id IN ($placeholders) AND status = 1"
-            );
-            $legacyStmt->execute($legacyRoles);
-            while ($legacyRole = $legacyStmt->fetch(PDO::FETCH_ASSOC)) {
-                $name = trim($legacyRole['evento']);
-                if ($name !== '') {
-                    $roles[] = ['id' => (int) $legacyRole['id'], 'name' => $name];
-                    $roleNames[] = mb_strtolower($name);
-                }
-            }
+    // Obtener roles desde la tabla usuario_roles (NUEVO SISTEMA)
+    $rolesStmt = $pdo->prepare(
+        "SELECT r.id, r.evento
+         FROM usuario_roles ur
+         JOIN roles r ON ur.rol_id = r.id
+         WHERE ur.usuario_matricula = :matricula AND r.activo = 1"
+    );
+    $rolesStmt->execute([':matricula' => $matricula]);
+    
+    while ($row = $rolesStmt->fetch(PDO::FETCH_ASSOC)) {
+        $name = trim($row['evento']);
+        if ($name !== '') {
+            $roles[] = ['id' => (int) $row['id'], 'name' => $name];
+            $roleNames[] = mb_strtolower($name);
         }
     }
 
@@ -209,6 +174,7 @@ try {
     $usuario['roles'] = $roles;
     $usuario['roleNames'] = $roleNames;
     $usuario['roleName'] = $roleNames[0] ?? null;
+    $usuario['roleIds'] = array_column($roles, 'id'); // 🔥 Array de IDs de roles
 
     // Castear tipos numéricos
     $usuario['id']    = (int) $usuario['id'];
@@ -216,10 +182,7 @@ try {
     $usuario['tarjeton_path'] = findUploadedDocument($usuario['matricula'], 1);
     $usuario['foto_path'] = findUploadedDocument($usuario['matricula'], 6);
     $usuario['requires_2fa'] = true;
-    if (is_numeric($usuario['idRol'])) {
-        $usuario['idRol'] = (int) $usuario['idRol'];
-    }
-    $usuario['status']= (int) $usuario['status'];
+    $usuario['status'] = (int) $usuario['status'];
 
     echo json_encode([
         'success' => true,

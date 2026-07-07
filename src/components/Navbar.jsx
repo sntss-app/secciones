@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { FaBars, FaTimes, FaUserCircle, FaSignOutAlt, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
-import logo from "../assets/logo.jpg";
+import { 
+    FaBars, 
+    FaTimes, 
+    FaUserCircle, 
+    FaSignOutAlt, 
+    FaSignInAlt, 
+    FaUserPlus,
+    FaFacebook,
+    FaTwitter,
+    FaInstagram,
+    FaYoutube,
+    FaTiktok
+} from 'react-icons/fa';
+import logo from "../assets/logo.jpeg";
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -11,7 +23,6 @@ const Navbar = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
-    // Verificar sesión al cargar y cuando cambia la ubicación
     useEffect(() => {
         const matricula = localStorage.getItem('matricula');
         const nombre = localStorage.getItem('nombre');
@@ -25,7 +36,6 @@ const Navbar = () => {
         }
     }, [location]);
 
-    // Efecto para el scroll
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 50);
@@ -49,6 +59,67 @@ const Navbar = () => {
     const closeMobileMenu = () => {
         setMobileMenuOpen(false);
     };
+
+    // Estilos iguales a los del footer
+    const socialStyles = `
+        .social-fb:hover {
+            color: #1877f2 !important;
+            transform: translateY(-3px) scale(1.1);
+            background-color: rgba(24,119,242,0.2) !important;
+        }
+        .social-tw:hover {
+            color: #1da1f2 !important;
+            transform: translateY(-3px) scale(1.1);
+            background-color: rgba(29,161,242,0.2) !important;
+        }
+        .social-ig:hover {
+            color: #e4405f !important;
+            transform: translateY(-3px) scale(1.1);
+            background-color: rgba(228,64,95,0.2) !important;
+        }
+        .social-yt:hover {
+            color: #ff0000 !important;
+            transform: translateY(-3px) scale(1.1);
+            background-color: rgba(255,0,0,0.2) !important;
+        }
+        .social-tt:hover {
+            color: #00f2ea !important;
+            transform: translateY(-3px) scale(1.1);
+            background-color: rgba(0,242,234,0.2) !important;
+        }
+        .nav-link:hover {
+            color: #3EAEF4 !important;
+        }
+        @media (max-width: 768px) {
+            .desktop-links {
+                display: none !important;
+            }
+            .mobile-menu-icon {
+                display: block !important;
+            }
+            .navbar-container {
+                padding: 0.8rem 1rem !important;
+            }
+            .navbar-title {
+                font-size: 1.1rem !important;
+            }
+            .navbar-logo {
+                height: 45px !important;
+                width: 45px !important;
+            }
+            .navbar-socials {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .navbar-title {
+                font-size: 0.9rem !important;
+            }
+            .navbar-badge {
+                font-size: 0.6rem !important;
+            }
+        }
+    `;
 
     const styles = {
         navbar: {
@@ -102,6 +173,27 @@ const Navbar = () => {
             color: '#3EAEF4',
             fontWeight: '500',
             marginTop: '2px',
+        },
+        // Sección de redes sociales (igual que el footer)
+        socials: {
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '0.8rem',
+            alignItems: 'center',
+        },
+        socialLink: {
+            color: 'white',
+            transition: 'all 0.3s ease',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '8px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255,255,255,0.05)',
+            textDecoration: 'none',
+            cursor: 'pointer',
+            width: '36px',
+            height: '36px',
         },
         desktopLinks: {
             display: 'flex',
@@ -158,42 +250,15 @@ const Navbar = () => {
             color: '#3EAEF4',
             fontWeight: 'bold',
             marginRight: '0.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
         },
     };
 
-    // Estilos responsive
-    const responsiveStyles = `
-        @media (max-width: 768px) {
-            .desktop-links {
-                display: none !important;
-            }
-            .mobile-menu-icon {
-                display: block !important;
-            }
-            .navbar-container {
-                padding: 0.8rem 1rem !important;
-            }
-            .navbar-title {
-                font-size: 1.1rem !important;
-            }
-            .navbar-logo {
-                height: 45px !important;
-                width: 45px !important;
-            }
-        }
-        @media (max-width: 480px) {
-            .navbar-title {
-                font-size: 0.9rem !important;
-            }
-            .navbar-badge {
-                font-size: 0.6rem !important;
-            }
-        }
-    `;
-
     return (
         <>
-            <style>{responsiveStyles}</style>
+            <style>{socialStyles}</style>
             <nav style={styles.navbar}>
                 <div style={styles.container} className="navbar-container">
                     {/* Logo y título */}
@@ -201,18 +266,37 @@ const Navbar = () => {
                         <img src={logo} alt="Logo SNTSS" style={styles.logo} className="navbar-logo" />
                         <div style={styles.titleContainer}>
                             <span style={styles.title} className="navbar-title">SNTSS Sección XXXIII</span>
-                            <span style={styles.badge} className="navbar-badge">✨ La Logic Legends Rifa!!</span>
+                            <span style={styles.badge} className="navbar-badge">✨ "Unidad y Fortaleza Sindical"</span>
                         </div>
+                    </div>
+
+                    {/* Social Links - Desktop (igual que el footer) */}
+                    <div style={styles.socials} className="navbar-socials">
+                        <a href="https://www.facebook.com/search/top?q=secci%C3%B3n%2033%20sntss&locale=es_LA" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
+                            <FaFacebook size={20} />
+                        </a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tw">
+                            <FaTwitter size={20} />
+                        </a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-ig">
+                            <FaInstagram size={20} />
+                        </a>
+                        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-yt">
+                            <FaYoutube size={20} />
+                        </a>
+                        <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tt">
+                            <FaTiktok size={20} />
+                        </a>
                     </div>
 
                     {/* Desktop Links */}
                     <div style={styles.desktopLinks} className="desktop-links">
                         {!isLoggedIn ? (
                             <>
-                                <Link to="/login" style={styles.link}>
+                                <Link to="/login" style={styles.link} className="nav-link">
                                     <FaSignInAlt /> Iniciar sesión
                                 </Link>
-                                <Link to="/registro" style={styles.link}>
+                                <Link to="/registro" style={styles.link} className="nav-link">
                                     <FaUserPlus /> Registrarse
                                 </Link>
                             </>
@@ -237,10 +321,10 @@ const Navbar = () => {
                     <div style={{ ...styles.mobileMenu, ...(mobileMenuOpen ? styles.mobileMenuOpen : {}) }} className="mobile-menu">
                         {!isLoggedIn ? (
                             <>
-                                <Link to="/login" style={styles.link} onClick={closeMobileMenu}>
+                                <Link to="/login" style={styles.link} onClick={closeMobileMenu} className="nav-link">
                                     <FaSignInAlt /> Iniciar sesión
                                 </Link>
-                                <Link to="/registro" style={styles.link} onClick={closeMobileMenu}>
+                                <Link to="/registro" style={styles.link} onClick={closeMobileMenu} className="nav-link">
                                     <FaUserPlus /> Registrarse
                                 </Link>
                             </>

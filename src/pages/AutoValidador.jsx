@@ -3,7 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { 
     FaCheckCircle, FaExclamationTriangle, FaClock, FaTimesCircle, 
     FaInfoCircle, FaFilePdf, FaSearch, FaArrowLeft, FaSave, FaSync, 
-    FaUser, FaBuilding, FaIdCard, FaCalendarAlt, FaShieldAlt, FaEye 
+    FaUser, FaBuilding, FaIdCard, FaCalendarAlt, FaShieldAlt, FaEye,
+    FaStar, FaRocket
 } from 'react-icons/fa';
 import { apiUrl } from '../config';
 import { hasStoredRole, parseRoleIds } from '../utils/roles';
@@ -15,131 +16,6 @@ const getAssetUrl = (path) => {
     if (/^https?:\/\//i.test(path)) return path;
     const endpoint = path.startsWith('/api/') ? path.replace(/^\/api/, '') : path;
     return apiUrl(endpoint.startsWith('/') ? endpoint : `/${endpoint}`);
-};
-
-// Estilos en línea para el componente
-const styles = {
-    container: {
-        maxWidth: '1400px',
-        margin: '0 auto',
-        padding: '1.5rem',
-    },
-    header: {
-        background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%)',
-        borderRadius: '16px',
-        padding: '2rem 2rem',
-        marginBottom: '2rem',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: '1rem',
-        borderBottom: '4px solid #3EAEF4',
-    },
-    headerTitle: {
-        fontSize: '1.8rem',
-        fontWeight: 'bold',
-        background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text',
-        margin: 0,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-    },
-    headerSubtitle: {
-        color: '#aaa',
-        fontSize: '0.9rem',
-        margin: 0,
-    },
-    card: {
-        backgroundColor: 'white',
-        borderRadius: '16px',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.1)',
-        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-        height: '100%',
-        border: 'none',
-    },
-    cardHover: {
-        transform: 'translateY(-4px)',
-        boxShadow: '0 12px 24px rgba(0,0,0,0.12)',
-    },
-    cardHeader: {
-        background: 'linear-gradient(90deg, #0A0F1E, #1a1f2e)',
-        color: 'white',
-        borderBottom: '3px solid #3EAEF4',
-        borderRadius: '16px 16px 0 0',
-        padding: '1rem 1.25rem',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: '0.5rem',
-    },
-    badge: (color) => ({
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '0.3rem',
-        padding: '0.3rem 0.8rem',
-        borderRadius: '20px',
-        fontSize: '0.75rem',
-        fontWeight: 'bold',
-        backgroundColor: color,
-        color: 'white',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    }),
-    filterBar: {
-        backgroundColor: '#f8f9fa',
-        borderRadius: '12px',
-        padding: '1rem',
-        marginBottom: '1.5rem',
-        border: '1px solid #e9ecef',
-    },
-    btnPrimary: {
-        backgroundColor: '#3EAEF4',
-        color: '#0A0F1E',
-        border: 'none',
-        padding: '0.5rem 1rem',
-        borderRadius: '25px',
-        fontWeight: 'bold',
-        transition: 'all 0.3s ease',
-    },
-    btnSuccess: {
-        backgroundColor: '#28a745',
-        color: 'white',
-        border: 'none',
-        padding: '0.5rem 1rem',
-        borderRadius: '25px',
-        fontWeight: 'bold',
-        transition: 'all 0.3s ease',
-    },
-    btnOutline: {
-        backgroundColor: 'transparent',
-        color: '#3EAEF4',
-        border: '2px solid #3EAEF4',
-        padding: '0.5rem 1rem',
-        borderRadius: '25px',
-        fontWeight: 'bold',
-        transition: 'all 0.3s ease',
-    },
-    inputSearch: {
-        border: '1px solid #ddd',
-        borderRadius: '25px',
-        padding: '0.5rem 1rem',
-        width: '100%',
-        outline: 'none',
-        transition: 'border-color 0.3s ease',
-    },
-    selectStyled: {
-        border: '1px solid #ddd',
-        borderRadius: '25px',
-        padding: '0.5rem 1rem',
-        width: '100%',
-        outline: 'none',
-        backgroundColor: 'white',
-        cursor: 'pointer',
-    },
 };
 
 const AutoValidador = () => {
@@ -327,11 +203,11 @@ const AutoValidador = () => {
 
     const getStatusInfo = (estatus) => {
         const map = {
-            'preregistro': { color: '#6c757d', icon: <FaClock />, label: '1 Preregistro' },
-            'aprobado': { color: '#28a745', icon: <FaCheckCircle />, label: '2 Validado' },
-            'observaciones': { color: '#ffc107', icon: <FaExclamationTriangle />, label: '3 Con observaciones' },
-            'sinconcluir': { color: '#fd7e14', icon: <FaInfoCircle />, label: '4 Registro inconcluso' },
-            'denegado': { color: '#dc3545', icon: <FaTimesCircle />, label: '5 Denegado' }
+            'preregistro': { color: '#6c757d', icon: <FaClock />, label: '1 Preregistro', bg: 'linear-gradient(135deg, #6c757d, #495057)' },
+            'aprobado': { color: '#28a745', icon: <FaCheckCircle />, label: '2 Validado', bg: 'linear-gradient(135deg, #28a745, #20c997)' },
+            'observaciones': { color: '#ffc107', icon: <FaExclamationTriangle />, label: '3 Con observaciones', bg: 'linear-gradient(135deg, #ffc107, #fd7e14)' },
+            'sinconcluir': { color: '#fd7e14', icon: <FaInfoCircle />, label: '4 Registro inconcluso', bg: 'linear-gradient(135deg, #fd7e14, #dc3545)' },
+            'denegado': { color: '#dc3545', icon: <FaTimesCircle />, label: '5 Denegado', bg: 'linear-gradient(135deg, #dc3545, #c82333)' }
         };
         return map[estatus] || map['preregistro'];
     };
@@ -350,23 +226,264 @@ const AutoValidador = () => {
     const indexPrimeroSeguro = indexUltimoSeguro - itemsPorPagina;
     const solicitudesPagina = solicitudesFiltradas.slice(indexPrimeroSeguro, indexUltimoSeguro);
 
+    // ========== ESTILOS MODERNOS ==========
+    const styles = {
+        container: {
+            maxWidth: '1400px',
+            margin: '0 auto',
+            padding: '1.5rem',
+            background: '#f0f4f8',
+            minHeight: 'calc(100vh - 200px)',
+            '@media (max-width: 768px)': {
+                padding: '1rem 0.8rem',
+            },
+        },
+        header: {
+            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
+            borderRadius: '20px',
+            padding: '2.5rem 2rem',
+            marginBottom: '2rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '1rem',
+            borderBottom: '4px solid #3EAEF4',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+            position: 'relative',
+            overflow: 'hidden',
+            '@media (max-width: 768px)': {
+                padding: '1.5rem',
+                flexDirection: 'column',
+                textAlign: 'center',
+            },
+        },
+        headerGlow: {
+            position: 'absolute',
+            top: '-50%',
+            right: '-20%',
+            width: '400px',
+            height: '400px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(62,174,244,0.1) 0%, transparent 70%)',
+            pointerEvents: 'none',
+        },
+        headerTitle: {
+            fontSize: '2rem',
+            fontWeight: 'bold',
+            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            margin: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.8rem',
+            position: 'relative',
+            zIndex: 2,
+            '@media (max-width: 768px)': {
+                fontSize: '1.5rem',
+                justifyContent: 'center',
+            },
+        },
+        headerSubtitle: {
+            color: '#aab',
+            fontSize: '0.95rem',
+            margin: 0,
+            position: 'relative',
+            zIndex: 2,
+            '@media (max-width: 768px)': {
+                fontSize: '0.85rem',
+            },
+        },
+        headerBadge: {
+            display: 'inline-block',
+            backgroundColor: '#3EAEF4',
+            color: '#0A0F1E',
+            padding: '0.3rem 1rem',
+            borderRadius: '20px',
+            fontSize: '0.8rem',
+            fontWeight: 'bold',
+            marginTop: '0.3rem',
+            position: 'relative',
+            zIndex: 2,
+        },
+        btnOutline: {
+            backgroundColor: 'transparent',
+            color: '#3EAEF4',
+            border: '2px solid #3EAEF4',
+            padding: '0.5rem 1.5rem',
+            borderRadius: '30px',
+            fontWeight: 'bold',
+            transition: 'all 0.3s ease',
+            textDecoration: 'none',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            position: 'relative',
+            zIndex: 2,
+            '@media (max-width: 768px)': {
+                width: '100%',
+                justifyContent: 'center',
+            },
+        },
+        filterBar: {
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '1.5rem',
+            marginBottom: '2rem',
+            border: '1px solid rgba(255,255,255,0.5)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+        },
+        // Card moderna con glassmorphism
+        card: {
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            height: '100%',
+            border: '1px solid rgba(255,255,255,0.5)',
+            overflow: 'hidden',
+        },
+        cardHover: {
+            transform: 'translateY(-6px)',
+            boxShadow: '0 16px 40px rgba(0,0,0,0.1)',
+            borderColor: '#3EAEF4',
+        },
+        cardHeader: {
+            background: 'linear-gradient(135deg, #0A0F1E, #1a1f2e)',
+            color: 'white',
+            borderBottom: '3px solid #3EAEF4',
+            padding: '1rem 1.25rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '0.5rem',
+        },
+        cardBody: {
+            padding: '1.5rem',
+        },
+        badge: (bg) => ({
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            padding: '0.3rem 0.9rem',
+            borderRadius: '20px',
+            fontSize: '0.75rem',
+            fontWeight: 'bold',
+            background: bg,
+            color: 'white',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        }),
+        infoRow: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: '#6c757d',
+            fontSize: '0.8rem',
+            fontWeight: '500',
+        },
+        infoValue: {
+            fontSize: '0.95rem',
+            fontWeight: '600',
+            color: '#0A0F1E',
+        },
+        btnPrimary: {
+            background: 'linear-gradient(135deg, #3EAEF4, #2d8fd4)',
+            color: '#0A0F1E',
+            border: 'none',
+            padding: '0.6rem 1.5rem',
+            borderRadius: '25px',
+            fontWeight: 'bold',
+            transition: 'all 0.3s ease',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            cursor: 'pointer',
+            width: '100%',
+            justifyContent: 'center',
+        },
+        btnPrimaryHover: {
+            transform: 'translateY(-2px)',
+            boxShadow: '0 4px 16px rgba(62,174,244,0.3)',
+        },
+        btnSuccess: {
+            background: 'linear-gradient(135deg, #28a745, #20c997)',
+            color: 'white',
+            border: 'none',
+            padding: '0.6rem 1.5rem',
+            borderRadius: '25px',
+            fontWeight: 'bold',
+            transition: 'all 0.3s ease',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            cursor: 'pointer',
+            width: '100%',
+            justifyContent: 'center',
+        },
+        selectStyled: {
+            border: '1px solid #ddd',
+            borderRadius: '12px',
+            padding: '0.6rem 1rem',
+            width: '100%',
+            outline: 'none',
+            backgroundColor: 'white',
+            cursor: 'pointer',
+            transition: 'border-color 0.3s ease',
+        },
+        textareaStyled: {
+            border: '1px solid #ddd',
+            borderRadius: '12px',
+            padding: '0.6rem 1rem',
+            width: '100%',
+            outline: 'none',
+            transition: 'border-color 0.3s ease',
+            resize: 'vertical',
+            minHeight: '80px',
+        },
+        inputSearch: {
+            border: '1px solid #ddd',
+            borderRadius: '25px',
+            padding: '0.6rem 1.2rem',
+            width: '100%',
+            outline: 'none',
+            transition: 'all 0.3s ease',
+            backgroundColor: 'white',
+        },
+    };
+
     if (!validadorData.matricula) return null;
 
     if (verificandoPermisos) {
         return (
-            <div className="container py-5 text-center">
-                <div className="spinner-border text-warning" role="status"></div>
-                <p className="mt-3">Verificando permisos...</p>
+            <div style={styles.container}>
+                <div style={{ textAlign: 'center', padding: '4rem' }}>
+                    <div className="spinner-border text-warning" role="status" style={{ width: '3rem', height: '3rem' }}></div>
+                    <p className="mt-3 text-muted">Verificando permisos...</p>
+                </div>
             </div>
         );
     }
 
     if (!tienePermisoAuto) {
         return (
-            <div className="container py-5">
-                <div className="alert alert-danger">
-                    <FaExclamationTriangle className="me-2" />
-                    No tienes permisos para acceder a esta sección. Solo validadores de crédito automotriz.
+            <div style={styles.container}>
+                <div style={{ 
+                    background: 'rgba(255,255,255,0.9)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '3rem',
+                    textAlign: 'center',
+                    border: '1px solid rgba(255,0,0,0.2)',
+                }}>
+                    <FaExclamationTriangle style={{ fontSize: '3rem', color: '#dc3545', marginBottom: '1rem' }} />
+                    <h3 style={{ color: '#dc3545' }}>Acceso Denegado</h3>
+                    <p className="text-muted">No tienes permisos para acceder a esta sección. Solo validadores de crédito automotriz.</p>
+                    <Link to="/dashboard" style={styles.btnOutline}>Volver al Dashboard</Link>
                 </div>
             </div>
         );
@@ -374,88 +491,103 @@ const AutoValidador = () => {
 
     if (cargando) {
         return (
-            <div className="container py-5 text-center">
-                <div className="spinner-border text-warning" role="status"></div>
-                <p className="mt-3">Cargando solicitudes...</p>
+            <div style={styles.container}>
+                <div style={{ textAlign: 'center', padding: '4rem' }}>
+                    <div className="spinner-border text-warning" role="status" style={{ width: '3rem', height: '3rem' }}></div>
+                    <p className="mt-3 text-muted">Cargando solicitudes...</p>
+                </div>
             </div>
         );
     }
 
     return (
         <div style={styles.container}>
-            {/* Header con estilo cholo */}
+            {/* Header con glow */}
             <div style={styles.header}>
+                <div style={styles.headerGlow} />
                 <div>
                     <h2 style={styles.headerTitle}>
-                        <FaShieldAlt /> Validador de Crédito Automotriz
+                        <FaShieldAlt style={{ color: '#3EAEF4' }} /> Validador de Crédito Automotriz
                     </h2>
                     <p style={styles.headerSubtitle}>
                         Gestiona y valida las solicitudes de los agremiados
                     </p>
+                    <span style={styles.headerBadge}>
+                        <FaStar style={{ marginRight: '5px' }} /> Panel de Validación
+                    </span>
                 </div>
                 <Link to="/dashboard" style={styles.btnOutline}>
-                    <FaArrowLeft className="me-2" /> Volver al Dashboard
+                    <FaArrowLeft /> Volver al Dashboard
                 </Link>
             </div>
 
+            {/* Alertas */}
             {errorMsg && (
-                <div className="alert alert-danger alert-dismissible fade show">
+                <div className="alert alert-danger alert-dismissible fade show" style={{ borderRadius: '12px' }}>
                     <FaExclamationTriangle className="me-2" /> {errorMsg}
                     <button type="button" className="btn-close" onClick={() => setErrorMsg('')}></button>
                 </div>
             )}
             {successMsg && (
-                <div className="alert alert-success alert-dismissible fade show">
+                <div className="alert alert-success alert-dismissible fade show" style={{ borderRadius: '12px' }}>
                     <FaCheckCircle className="me-2" /> {successMsg}
                     <button type="button" className="btn-close" onClick={() => setSuccessMsg('')}></button>
                 </div>
             )}
 
             {/* Filtros y búsqueda */}
-            <div style={styles.filterBar} className="row align-items-center g-3">
-                <div className="col-md-5">
-                    <div className="input-group">
-                        <span className="input-group-text bg-white border-0"><FaSearch className="text-warning" /></span>
-                        <input
-                            type="text"
-                            className="form-control border-0 shadow-none"
+            <div style={styles.filterBar}>
+                <div className="row g-3 align-items-center">
+                    <div className="col-md-5">
+                        <div className="input-group">
+                            <span className="input-group-text bg-white border-0" style={{ borderRadius: '25px 0 0 25px' }}>
+                                <FaSearch style={{ color: '#3EAEF4' }} />
+                            </span>
+                            <input
+                                type="text"
+                                className="form-control border-0 shadow-none"
+                                style={{ borderRadius: '0 25px 25px 0' }}
+                                placeholder="Buscar por matrícula, nombre, adscripción..."
+                                value={busqueda}
+                                onChange={(e) => {
+                                    setBusqueda(e.target.value);
+                                    setPaginaActual(1);
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="col-md-3">
+                        <select
+                            className="form-select"
                             style={{ borderRadius: '25px' }}
-                            placeholder="Buscar por matrícula, nombre, adscripción..."
-                            value={busqueda}
+                            value={filtro}
                             onChange={(e) => {
-                                setBusqueda(e.target.value);
+                                setFiltro(e.target.value);
                                 setPaginaActual(1);
                             }}
-                        />
+                        >
+                            <option value="todos">📋 Todos los estatus</option>
+                            <option value="preregistro">1️⃣ Preregistro</option>
+                            <option value="aprobado">✅ Validado</option>
+                            <option value="observaciones">⚠️ Con observaciones</option>
+                            <option value="sinconcluir">📝 Incompleto</option>
+                            <option value="denegado">❌ Denegado</option>
+                        </select>
                     </div>
-                </div>
-                <div className="col-md-3">
-                    <select
-                        className="form-select"
-                        style={{ borderRadius: '25px' }}
-                        value={filtro}
-                        onChange={(e) => {
-                            setFiltro(e.target.value);
-                            setPaginaActual(1);
-                        }}
-                    >
-                        <option value="todos">Todos los estatus</option>
-                        <option value="preregistro">1 Preregistro</option>
-                        <option value="aprobado">2 Validado</option>
-                        <option value="observaciones">3 Con observaciones</option>
-                        <option value="sinconcluir">4 Incompleto</option>
-                        <option value="denegado">5 Denegado</option>
-                    </select>
-                </div>
-                <div className="col-md-2">
-                    <span className="text-muted">
-                        <FaEye className="me-1" /> {solicitudesFiltradas.length} solicitudes
-                    </span>
-                </div>
-                <div className="col-md-2 text-end">
-                    <button className="btn btn-outline-warning btn-sm" onClick={cargarSolicitudes}>
-                        <FaSync className="me-1" /> Actualizar
-                    </button>
+                    <div className="col-md-2">
+                        <span className="text-muted" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <FaEye style={{ color: '#3EAEF4' }} /> {solicitudesFiltradas.length} solicitudes
+                        </span>
+                    </div>
+                    <div className="col-md-2 text-end">
+                        <button 
+                            className="btn btn-outline-warning btn-sm" 
+                            style={{ borderRadius: '25px', fontWeight: 'bold' }}
+                            onClick={cargarSolicitudes}
+                        >
+                            <FaSync className="me-1" /> Actualizar
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -463,10 +595,17 @@ const AutoValidador = () => {
             <div className="row g-4">
                 {solicitudesPagina.length === 0 ? (
                     <div className="col-12">
-                        <div className="border rounded-4 p-5 text-center text-muted bg-light">
-                            <FaInfoCircle className="fs-1 mb-3 text-warning" />
-                            <p className="fs-5">No hay solicitudes para mostrar</p>
-                            <small>Los registros aparecerán aquí cuando los agremiados soliciten su crédito</small>
+                        <div style={{
+                            background: 'rgba(255,255,255,0.9)',
+                            backdropFilter: 'blur(10px)',
+                            borderRadius: '16px',
+                            padding: '4rem 2rem',
+                            textAlign: 'center',
+                            border: '1px solid rgba(255,255,255,0.5)',
+                        }}>
+                            <FaInfoCircle style={{ fontSize: '3rem', color: '#3EAEF4', marginBottom: '1rem' }} />
+                            <h4 style={{ color: '#0A0F1E' }}>No hay solicitudes para mostrar</h4>
+                            <p className="text-muted">Los registros aparecerán aquí cuando los agremiados soliciten su crédito</p>
                         </div>
                     </div>
                 ) : (
@@ -477,59 +616,87 @@ const AutoValidador = () => {
 
                         return (
                             <div className="col-12 col-xl-6" key={solicitud.id || solicitud.matricula || idx}>
-                                <div style={styles.card}>
+                                <div 
+                                    style={styles.card}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.transform = 'translateY(-6px)';
+                                        e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,0,0,0.1)';
+                                        e.currentTarget.style.borderColor = '#3EAEF4';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                        e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.06)';
+                                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)';
+                                    }}
+                                >
                                     {/* Card Header */}
                                     <div style={styles.cardHeader}>
                                         <div>
                                             <small className="text-white-50">Solicitud #{indexPrimeroSeguro + idx + 1}</small>
-                                            <h6 className="mb-0 text-white">{solicitud.nombre || 'Sin nombre'}</h6>
+                                            <h6 className="mb-0 text-white" style={{ fontSize: '1rem' }}>
+                                                {solicitud.nombre || 'Sin nombre'}
+                                            </h6>
                                         </div>
-                                        <span style={styles.badge(statusInfo.color)}>
+                                        <span style={styles.badge(statusInfo.bg)}>
                                             {statusInfo.icon} {statusInfo.label}
                                         </span>
                                     </div>
 
                                     {/* Card Body */}
-                                    <div className="card-body p-4">
+                                    <div style={styles.cardBody}>
                                         {/* Datos del solicitante */}
                                         <div className="row g-3 mb-3">
                                             <div className="col-md-6">
-                                                <div className="d-flex align-items-center gap-2 text-muted small">
+                                                <div style={styles.infoRow}>
                                                     <FaIdCard /> Matrícula
                                                 </div>
-                                                <div className="fw-semibold">{solicitud.matricula}</div>
+                                                <div style={styles.infoValue}>{solicitud.matricula}</div>
                                             </div>
                                             <div className="col-md-6">
-                                                <div className="d-flex align-items-center gap-2 text-muted small">
+                                                <div style={styles.infoRow}>
                                                     <FaCalendarAlt /> Fecha registro
                                                 </div>
-                                                <div className="fw-semibold">{solicitud.fecha || 'N/A'}</div>
+                                                <div style={styles.infoValue}>{solicitud.fecha || 'N/A'}</div>
                                             </div>
                                             <div className="col-md-6">
-                                                <div className="d-flex align-items-center gap-2 text-muted small">
+                                                <div style={styles.infoRow}>
                                                     <FaBuilding /> Adscripción
                                                 </div>
-                                                <div>{solicitud.adscripcion || 'N/A'}</div>
+                                                <div style={styles.infoValue}>{solicitud.adscripcion || 'N/A'}</div>
                                             </div>
                                             <div className="col-md-6">
-                                                <div className="d-flex align-items-center gap-2 text-muted small">
+                                                <div style={styles.infoRow}>
                                                     <FaUser /> Categoría
                                                 </div>
-                                                <div>{solicitud.categoria || 'N/A'}</div>
+                                                <div style={styles.infoValue}>{solicitud.categoria || 'N/A'}</div>
                                             </div>
                                         </div>
 
                                         {/* Documentos */}
-                                        <div className="border-top pt-3 mb-3">
-                                            <div className="fw-semibold mb-2">📄 Documentos</div>
+                                        <div style={{ borderTop: '1px solid #e9ecef', paddingTop: '1rem', marginBottom: '1rem' }}>
+                                            <div style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#0A0F1E' }}>
+                                                📄 Documentos
+                                            </div>
                                             <div className="d-flex flex-wrap gap-2">
                                                 {solicitud.tarjetonPath && (
-                                                    <a href={getAssetUrl(solicitud.tarjetonPath)} target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-sm rounded-pill">
+                                                    <a 
+                                                        href={getAssetUrl(solicitud.tarjetonPath)} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer" 
+                                                        className="btn btn-outline-primary btn-sm rounded-pill"
+                                                        style={{ fontWeight: '500' }}
+                                                    >
                                                         <FaFilePdf className="me-1" /> Tarjetón
                                                     </a>
                                                 )}
                                                 {solicitud.inePath && (
-                                                    <a href={getAssetUrl(solicitud.inePath)} target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-sm rounded-pill">
+                                                    <a 
+                                                        href={getAssetUrl(solicitud.inePath)} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer" 
+                                                        className="btn btn-outline-primary btn-sm rounded-pill"
+                                                        style={{ fontWeight: '500' }}
+                                                    >
                                                         <FaFilePdf className="me-1" /> INE
                                                     </a>
                                                 )}
@@ -541,26 +708,37 @@ const AutoValidador = () => {
 
                                         {/* Última validación */}
                                         {solicitud.valido && (
-                                            <div className="bg-light rounded-3 p-2 mb-3 small">
-                                                <strong>Última validación:</strong> {solicitud.valido}
-                                                {solicitud.fecha_validado && <span> | {solicitud.fecha_validado}</span>}
+                                            <div style={{
+                                                background: '#f8f9fa',
+                                                borderRadius: '10px',
+                                                padding: '0.6rem 1rem',
+                                                marginBottom: '1rem',
+                                                fontSize: '0.85rem',
+                                                border: '1px solid #e9ecef',
+                                            }}>
+                                                <strong style={{ color: '#0A0F1E' }}>Última validación:</strong> {solicitud.valido}
+                                                {solicitud.fecha_validado && <span style={{ color: '#6c757d' }}> | {solicitud.fecha_validado}</span>}
                                             </div>
                                         )}
 
                                         {/* Observaciones */}
-                                        <div className="mb-3">
-                                            <label className="form-label fw-semibold">Observaciones</label>
+                                        <div style={{ marginBottom: '1rem' }}>
+                                            <label className="form-label fw-semibold" style={{ color: '#0A0F1E' }}>
+                                                Observaciones
+                                            </label>
                                             <textarea
                                                 className="form-control"
                                                 rows="3"
-                                                style={{ borderRadius: '12px' }}
+                                                style={styles.textareaStyled}
                                                 value={draft.observaciones}
                                                 onChange={(e) => updateDraft(solicitud, 'observaciones', e.target.value)}
                                                 placeholder="Describe qué documento debe corregir el usuario o deja una nota interna de la validación."
                                                 disabled={isSaving}
+                                                onFocus={(e) => e.target.style.borderColor = '#3EAEF4'}
+                                                onBlur={(e) => e.target.style.borderColor = '#ddd'}
                                             />
                                             {draft.estatus === 'observaciones' && (
-                                                <div className="form-text text-warning mt-1">
+                                                <div className="form-text text-warning mt-1" style={{ fontSize: '0.8rem' }}>
                                                     ⚡ Este estatus permite que el usuario vuelva a subir sus documentos en Crédito Auto.
                                                 </div>
                                             )}
@@ -569,13 +747,17 @@ const AutoValidador = () => {
                                         {/* Selector de estatus y botón guardar */}
                                         <div className="row g-2 align-items-end">
                                             <div className="col-md-7">
-                                                <label className="form-label fw-semibold">Validación</label>
+                                                <label className="form-label fw-semibold" style={{ color: '#0A0F1E' }}>
+                                                    Validación
+                                                </label>
                                                 <select
                                                     className="form-select"
-                                                    style={{ borderRadius: '12px' }}
+                                                    style={styles.selectStyled}
                                                     value={draft.estatus}
                                                     onChange={(e) => updateDraft(solicitud, 'estatus', e.target.value)}
                                                     disabled={isSaving}
+                                                    onFocus={(e) => e.target.style.borderColor = '#3EAEF4'}
+                                                    onBlur={(e) => e.target.style.borderColor = '#ddd'}
                                                 >
                                                     {statusOptions.map(option => (
                                                         <option key={option.value} value={option.value}>
@@ -584,32 +766,23 @@ const AutoValidador = () => {
                                                     ))}
                                                 </select>
                                             </div>
-                                            <div className="col-md-5 d-grid">
+                                            <div className="col-md-5">
                                                 <button
                                                     type="button"
-                                                    className="btn"
-                                                    style={{
-                                                        backgroundColor: '#3EAEF4',
-                                                        color: '#0A0F1E',
-                                                        fontWeight: 'bold',
-                                                        borderRadius: '12px',
-                                                        padding: '0.6rem',
-                                                        border: 'none',
-                                                        transition: 'all 0.3s ease',
-                                                    }}
+                                                    style={styles.btnPrimary}
                                                     onClick={() => handleValidar(solicitud)}
                                                     disabled={isSaving}
                                                     onMouseEnter={(e) => {
-                                                        e.target.style.transform = 'translateY(-2px)';
-                                                        e.target.style.boxShadow = '0 4px 12px rgba(255,215,0,0.3)';
+                                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                                        e.currentTarget.style.boxShadow = '0 4px 16px rgba(62,174,244,0.3)';
                                                     }}
                                                     onMouseLeave={(e) => {
-                                                        e.target.style.transform = 'translateY(0)';
-                                                        e.target.style.boxShadow = 'none';
+                                                        e.currentTarget.style.transform = 'translateY(0)';
+                                                        e.currentTarget.style.boxShadow = 'none';
                                                     }}
                                                 >
                                                     <FaSave className="me-1" />
-                                                    {isSaving ? 'Guardando...' : 'Guardar'}
+                                                    {isSaving ? 'Guardando...' : 'Guardar Validación'}
                                                 </button>
                                             </div>
                                         </div>
@@ -624,21 +797,36 @@ const AutoValidador = () => {
             {/* Paginador */}
             {totalPaginas > 1 && (
                 <nav className="mt-4">
-                    <ul className="pagination justify-content-center">
+                    <ul className="pagination justify-content-center" style={{ gap: '0.3rem' }}>
                         <li className={`page-item ${paginaSegura === 1 ? 'disabled' : ''}`}>
-                            <button className="page-link rounded-pill" onClick={() => setPaginaActual(Math.max(1, paginaSegura - 1))}>
+                            <button 
+                                className="page-link rounded-pill" 
+                                style={{ border: 'none', background: 'rgba(255,255,255,0.8)', fontWeight: '500' }}
+                                onClick={() => setPaginaActual(Math.max(1, paginaSegura - 1))}
+                            >
                                 Anterior
                             </button>
                         </li>
                         {Array.from({ length: totalPaginas }, (_, i) => i + 1).map(num => (
                             <li key={num} className={`page-item ${paginaSegura === num ? 'active' : ''}`}>
-                                <button className="page-link rounded-pill" style={paginaSegura === num ? { backgroundColor: '#3EAEF4', borderColor: '#3EAEF4', color: '#0A0F1E' } : {}} onClick={() => setPaginaActual(num)}>
+                                <button 
+                                    className="page-link rounded-pill" 
+                                    style={paginaSegura === num ? 
+                                        { backgroundColor: '#3EAEF4', borderColor: '#3EAEF4', color: '#0A0F1E', fontWeight: 'bold' } : 
+                                        { border: 'none', background: 'rgba(255,255,255,0.8)', color: '#0A0F1E' }
+                                    }
+                                    onClick={() => setPaginaActual(num)}
+                                >
                                     {num}
                                 </button>
                             </li>
                         ))}
                         <li className={`page-item ${paginaSegura === totalPaginas ? 'disabled' : ''}`}>
-                            <button className="page-link rounded-pill" onClick={() => setPaginaActual(Math.min(totalPaginas, paginaSegura + 1))}>
+                            <button 
+                                className="page-link rounded-pill" 
+                                style={{ border: 'none', background: 'rgba(255,255,255,0.8)', fontWeight: '500' }}
+                                onClick={() => setPaginaActual(Math.min(totalPaginas, paginaSegura + 1))}
+                            >
                                 Siguiente
                             </button>
                         </li>

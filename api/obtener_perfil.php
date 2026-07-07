@@ -2,7 +2,7 @@
 /*
   Perfil completo del trabajador.
   Lee datos actuales de usuarios, calcula edad desde CURP y busca documentos
-  subidos durante el registro inicial.
+  subidos durante el registro inicial. Ahora con la nueva estructura de roles.
 */
 require_once 'config.php';
 
@@ -50,7 +50,7 @@ if (empty($matricula)) {
 try {
     $stmt = $pdo->prepare(
         'SELECT id, matricula, nombre, adscripcion, categoria, curp, sexo,
-                telefono, correo, idRol, fecha_registro, status, antiguedad
+                telefono, correo, fecha_registro, status, antiguedad
          FROM usuarios
          WHERE matricula = :matricula
          LIMIT 1'
@@ -64,6 +64,35 @@ try {
         exit;
     }
 
+    // 🔥 OBTENER ROLES DESDE usuario_roles
+    $roles = [];
+    $roleIds = [];
+    $roleNames = [];
+
+    $rolesStmt = $pdo->prepare(
+        "SELECT r.id, r.evento
+         FROM usuario_roles ur
+         JOIN roles r ON ur.rol_id = r.id
+         WHERE ur.usuario_matricula = :matricula AND r.activo = 1"
+    );
+    $rolesStmt->execute([':matricula' => $matricula]);
+    
+    while ($row = $rolesStmt->fetch(PDO::FETCH_ASSOC)) {
+        $name = trim($row['evento']);
+        if ($name !== '') {
+            $roles[] = ['id' => (int) $row['id'], 'name' => $name];
+            $roleIds[] = (int) $row['id'];
+            $roleNames[] = $name;
+        }
+    }
+
+    // Agregar roles al usuario
+    $usuario['roles'] = $roles;
+    $usuario['roleIds'] = $roleIds;
+    $usuario['roleNames'] = $roleNames;
+    $usuario['roleName'] = $roleNames[0] ?? null;
+
+    // Castear tipos
     $usuario['id'] = (int) $usuario['id'];
     $usuario['status'] = (int) $usuario['status'];
     $usuario['edad'] = calcularEdadDesdeCurp($usuario['curp']);
@@ -71,7 +100,9 @@ try {
     $usuario['foto_path'] = findUploadedDocument($matricula, 6);
 
     echo json_encode(['success' => true, 'usuario' => $usuario]);
+    
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Error en la base de datos: ' . $e->getMessage()]);
 }
+?>
