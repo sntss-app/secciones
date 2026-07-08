@@ -1,81 +1,331 @@
 import React, { useState } from 'react';
+import { FaCalculator, FaFileContract, FaMoneyBillWave, FaInfoCircle, FaCalendarAlt } from 'react-icons/fa';
 
 const Clausula97 = () => {
-    const [c02, setC02] = useState('');
-    const [c11, setC11] = useState('');
+    const [sueldoMensual, setSueldoMensual] = useState('');
+    const [meses, setMeses] = useState(4);
     const [resultado, setResultado] = useState(null);
 
     const calcular = () => {
-        const c02Num = parseFloat(c02);
-        const c11Num = parseFloat(c11);
+        const sueldo = parseFloat(sueldoMensual);
         
-        if (isNaN(c02Num) || isNaN(c11Num)) {
-            alert('Por favor ingresa ambos conceptos (002 y 011).');
+        if (isNaN(sueldo) || sueldo <= 0) {
+            alert('Ingresa un sueldo mensual válido.');
             return;
         }
 
-        const baseMensual = (c02Num + c11Num) * 2;
+        const monto = sueldo * meses;
         setResultado({
-            mes1: baseMensual * 1,
-            mes2: baseMensual * 2,
-            mes3: baseMensual * 3,
-            mes4: baseMensual * 4
+            sueldo: sueldo,
+            meses: meses,
+            monto: monto,
+            pagoMensual: monto / 12 // Suponiendo 12 meses de plazo
         });
     };
 
     const formatter = new Intl.NumberFormat('es-MX', {
         style: 'currency',
-        currency: 'MXN'
+        currency: 'MXN',
+        minimumFractionDigits: 2
     });
 
     const styles = {
-        container: { padding: '1rem' },
-        inputGroup: { marginBottom: '1rem' },
-        label: { display: 'block', fontWeight: 'bold', marginBottom: '0.3rem' },
-        input: { width: '100%', padding: '0.5rem', borderRadius: '8px', border: '1px solid #ddd' },
-        button: { backgroundColor: '#3EAEF4', color: '#0A0F1E', border: 'none', padding: '0.5rem 1.5rem', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' },
-        resultado: { marginTop: '1rem', padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px' },
-        monto: { fontSize: '1.2rem', fontWeight: 'bold', color: '#003c82' },
+        container: {
+            padding: '1.5rem',
+            background: 'rgba(255,255,255,0.9)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255,255,255,0.5)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+        },
+        header: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.8rem',
+            marginBottom: '1.5rem',
+            paddingBottom: '0.5rem',
+            borderBottom: '3px solid #8E44AD',
+        },
+        headerIcon: {
+            fontSize: '2rem',
+            color: '#8E44AD',
+        },
+        headerTitle: {
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            background: 'linear-gradient(135deg, #0A0F1E, #8E44AD)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            margin: 0,
+        },
+        headerSubtitle: {
+            color: '#6c757d',
+            fontSize: '0.85rem',
+            marginTop: '0.2rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.3rem',
+        },
+        infoBox: {
+            backgroundColor: 'rgba(142,68,173,0.08)',
+            borderLeft: '4px solid #8E44AD',
+            padding: '0.8rem 1rem',
+            borderRadius: '8px',
+            marginBottom: '1.5rem',
+            fontSize: '0.85rem',
+            color: '#495057',
+        },
+        grid: {
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '1rem',
+            marginBottom: '1rem',
+        },
+        inputGroup: {
+            marginBottom: '1rem',
+        },
+        label: {
+            display: 'block',
+            fontWeight: '600',
+            fontSize: '0.85rem',
+            color: '#0A0F1E',
+            marginBottom: '0.3rem',
+        },
+        labelIcon: {
+            marginRight: '0.3rem',
+            color: '#8E44AD',
+        },
+        input: {
+            width: '100%',
+            padding: '0.6rem 1rem',
+            fontSize: '0.95rem',
+            border: '1px solid #ddd',
+            borderRadius: '10px',
+            outline: 'none',
+            transition: 'all 0.3s ease',
+            backgroundColor: 'white',
+        },
+        inputFull: {
+            gridColumn: '1 / -1',
+        },
+        select: {
+            width: '100%',
+            padding: '0.6rem 1rem',
+            fontSize: '0.95rem',
+            border: '1px solid #ddd',
+            borderRadius: '10px',
+            outline: 'none',
+            transition: 'all 0.3s ease',
+            backgroundColor: 'white',
+            cursor: 'pointer',
+        },
+        button: {
+            backgroundColor: '#8E44AD',
+            color: 'white',
+            border: 'none',
+            padding: '0.7rem 1.5rem',
+            borderRadius: '12px',
+            fontWeight: 'bold',
+            fontSize: '0.95rem',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem',
+            width: '100%',
+            marginTop: '0.5rem',
+        },
+        resultadoContainer: {
+            marginTop: '1.5rem',
+            padding: '1.25rem',
+            backgroundColor: '#f8fafc',
+            borderRadius: '12px',
+            border: '1px solid #e9ecef',
+        },
+        resultadoTitle: {
+            fontWeight: 'bold',
+            textAlign: 'center',
+            marginBottom: '1rem',
+            color: '#0A0F1E',
+            fontSize: '1rem',
+        },
+        resultadoItem: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '0.6rem 1rem',
+            borderBottom: '1px solid #e9ecef',
+            alignItems: 'center',
+        },
+        resultadoItemLast: {
+            borderBottom: 'none',
+        },
+        resultadoLabel: {
+            color: '#495057',
+            fontSize: '0.9rem',
+        },
+        resultadoMonto: {
+            fontWeight: 'bold',
+            fontSize: '1.1rem',
+            color: '#003c82',
+        },
+        resultadoMontoVerde: {
+            fontWeight: 'bold',
+            fontSize: '1.1rem',
+            color: '#28a745',
+        },
+        resultadoTotal: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '0.8rem 1rem',
+            backgroundColor: 'rgba(142,68,173,0.08)',
+            borderRadius: '8px',
+            marginTop: '0.5rem',
+            alignItems: 'center',
+        },
+        resultadoTotalLabel: {
+            fontWeight: 'bold',
+            color: '#0A0F1E',
+            fontSize: '1rem',
+        },
+        resultadoTotalMonto: {
+            fontWeight: 'bold',
+            fontSize: '1.2rem',
+            color: '#8E44AD',
+        },
+        smallText: {
+            display: 'block',
+            textAlign: 'center',
+            color: '#6c757d',
+            fontSize: '0.75rem',
+            marginTop: '0.8rem',
+            fontStyle: 'italic',
+        },
+        '@media (max-width: 480px)': {
+            grid: {
+                gridTemplateColumns: '1fr',
+            },
+        },
     };
 
     return (
         <div style={styles.container}>
-            <h3>Cláusula 97 CCT</h3>
-            <p className="text-muted">Anticipo de sueldo de hasta 4 meses, sin intereses.</p>
-            
-            <div style={styles.inputGroup}>
-                <label style={styles.label}>Concepto 002</label>
-                <input type="number" style={styles.input} value={c02} onChange={(e) => setC02(e.target.value)} placeholder="Ej: 2437.73" />
+            {/* Header */}
+            <div style={styles.header}>
+                <FaFileContract style={styles.headerIcon} />
+                <div>
+                    <h3 style={styles.headerTitle}>Cláusula 97 CCT</h3>
+                    <div style={styles.headerSubtitle}>
+                        <FaInfoCircle size={12} /> Préstamo de hasta 4 meses de sueldo
+                    </div>
+                </div>
             </div>
-            <div style={styles.inputGroup}>
-                <label style={styles.label}>Concepto 011</label>
-                <input type="number" style={styles.input} value={c11} onChange={(e) => setC11(e.target.value)} placeholder="Ej: 2002.60" />
+
+            {/* Info Box */}
+            <div style={styles.infoBox}>
+                <FaInfoCircle style={{ color: '#8E44AD', marginRight: '0.5rem' }} />
+                La Cláusula 97 del Contrato Colectivo de Trabajo permite solicitar 
+                un préstamo de hasta 4 meses de sueldo, con descuentos quincenales.
             </div>
-            
-            <button style={styles.button} onClick={calcular}>Calcular Préstamos</button>
-            
+
+            {/* Formulario */}
+            <div style={styles.grid}>
+                <div style={styles.inputGroup}>
+                    <label style={styles.label}>
+                        <FaMoneyBillWave style={styles.labelIcon} /> Sueldo mensual
+                    </label>
+                    <input 
+                        type="number" 
+                        style={styles.input} 
+                        value={sueldoMensual} 
+                        onChange={(e) => setSueldoMensual(e.target.value)} 
+                        placeholder="Ej: 15000.00"
+                        onFocus={(e) => {
+                            e.target.style.borderColor = '#8E44AD';
+                            e.target.style.boxShadow = '0 0 0 3px rgba(142,68,173,0.15)';
+                        }}
+                        onBlur={(e) => {
+                            e.target.style.borderColor = '#ddd';
+                            e.target.style.boxShadow = 'none';
+                        }}
+                    />
+                </div>
+                <div style={styles.inputGroup}>
+                    <label style={styles.label}>
+                        <FaCalendarAlt style={styles.labelIcon} /> Meses a solicitar
+                    </label>
+                    <select
+                        style={styles.select}
+                        value={meses}
+                        onChange={(e) => setMeses(Number(e.target.value))}
+                        onFocus={(e) => {
+                            e.target.style.borderColor = '#8E44AD';
+                            e.target.style.boxShadow = '0 0 0 3px rgba(142,68,173,0.15)';
+                        }}
+                        onBlur={(e) => {
+                            e.target.style.borderColor = '#ddd';
+                            e.target.style.boxShadow = 'none';
+                        }}
+                    >
+                        <option value={1}>1 mes</option>
+                        <option value={2}>2 meses</option>
+                        <option value={3}>3 meses</option>
+                        <option value={4}>4 meses</option>
+                    </select>
+                </div>
+            </div>
+
+            {/* Botón Calcular */}
+            <button 
+                style={styles.button}
+                onClick={calcular}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(142,68,173,0.3)';
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                }}
+            >
+                <FaCalculator /> Calcular Préstamo
+            </button>
+
+            {/* Resultados */}
             {resultado && (
-                <div style={styles.resultado}>
-                    <div className="bg-light p-2 rounded text-center border mb-2">
-                        <span className="d-block text-primary fw-bold">1 mes</span>
-                        <span style={styles.monto}>{formatter.format(resultado.mes1)}</span>
-                        <span className="d-block text-primary">Pagar a 10 quincenas</span>
+                <div style={styles.resultadoContainer}>
+                    <div style={styles.resultadoTitle}>
+                        <FaFileContract style={{ color: '#8E44AD', marginRight: '0.5rem' }} />
+                        Detalles del Préstamo
                     </div>
-                    <div className="bg-light p-2 rounded text-center border mb-2">
-                        <span className="d-block text-primary fw-bold">2 meses</span>
-                        <span style={styles.monto}>{formatter.format(resultado.mes2)}</span>
-                        <span className="d-block text-primary">Pagar a 20 quincenas</span>
+
+                    <div style={styles.resultadoItem}>
+                        <span style={styles.resultadoLabel}>Sueldo mensual</span>
+                        <span style={styles.resultadoMonto}>{formatter.format(resultado.sueldo)}</span>
                     </div>
-                    <div className="bg-light p-2 rounded text-center border mb-2">
-                        <span className="d-block text-primary fw-bold">3 meses</span>
-                        <span style={styles.monto}>{formatter.format(resultado.mes3)}</span>
-                        <span className="d-block text-primary">Pagar a 30 quincenas</span>
+
+                    <div style={styles.resultadoItem}>
+                        <span style={styles.resultadoLabel}>Meses solicitados</span>
+                        <span style={styles.resultadoMonto}>{resultado.meses}</span>
                     </div>
-                    <div className="bg-light p-2 rounded text-center border">
-                        <span className="d-block text-primary fw-bold">4 meses</span>
-                        <span style={styles.monto}>{formatter.format(resultado.mes4)}</span>
-                        <span className="d-block text-primary">Pagar a 40 quincenas</span>
+
+                    <div style={{ ...styles.resultadoItem, ...styles.resultadoItemLast }}>
+                        <span style={styles.resultadoLabel}>Monto del préstamo</span>
+                        <span style={styles.resultadoMontoVerde}>{formatter.format(resultado.monto)}</span>
                     </div>
+
+                    <div style={styles.resultadoTotal}>
+                        <span style={styles.resultadoTotalLabel}>Pago mensual estimado (12 meses)</span>
+                        <span style={styles.resultadoTotalMonto}>
+                            {formatter.format(resultado.pagoMensual)}
+                        </span>
+                    </div>
+
+                    <small style={styles.smallText}>
+                        * El pago mensual es estimado. Los descuentos se realizan de forma quincenal 
+                        y pueden variar según las tasas de interés vigentes.
+                    </small>
                 </div>
             )}
         </div>

@@ -7,6 +7,8 @@ import {
 } from 'react-icons/fa';
 import { apiUrl } from '../config';
 import AvisoPrivacidad from '../components/AvisoPrivacidad';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 // Estilos en línea para el componente
 const styles = {
@@ -16,11 +18,12 @@ const styles = {
         padding: '2rem 1rem',
     },
     card: {
-        backgroundColor: 'white',
+        backgroundColor: 'rgba(255,255,255,0.95)',
+        backdropFilter: 'blur(10px)',
         borderRadius: '20px',
         boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06)',
         overflow: 'hidden',
-        border: 'none',
+        border: '1px solid rgba(255,255,255,0.5)',
     },
     cardHeader: {
         background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%)',
@@ -154,6 +157,7 @@ const styles = {
         transition: 'all 0.3s ease',
         outline: 'none',
         backgroundColor: 'white',
+        color: '#0A0F1E',
     },
     inputFocus: {
         borderColor: '#3EAEF4',
@@ -373,13 +377,25 @@ const Registro = () => {
         curp = curp.replace(/[^A-Z0-9]/g, '');
 
         if (!validarMatricula(matricula)) {
-            setErrorMsg('La matrícula debe tener entre 8 y 9 dígitos numéricos.');
+            await Swal.fire({
+                title: '⚠️ Matrícula inválida',
+                text: 'La matrícula debe tener entre 8 y 9 dígitos numéricos.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
 
         if (!validarCURP(curp)) {
-            setErrorMsg('La CURP debe tener exactamente 18 caracteres con el formato correcto.');
+            await Swal.fire({
+                title: '⚠️ CURP inválida',
+                text: 'La CURP debe tener exactamente 18 caracteres con el formato correcto.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
@@ -398,8 +414,14 @@ const Registro = () => {
             }
 
             if (data.usuario && data.usuario.contrasena !== undefined && data.usuario.contrasena !== null && data.usuario.contrasena !== '') {
-                setErrorMsg('Este usuario ya se encuentra registrado. Por favor, inicia sesión.');
-                setTimeout(() => navigate('/login'), 3000);
+                await Swal.fire({
+                    title: '⚠️ Usuario ya registrado',
+                    text: 'Este usuario ya se encuentra registrado. Por favor, inicia sesión.',
+                    icon: 'warning',
+                    confirmButtonColor: '#ffc107',
+                    confirmButtonText: 'Ir a iniciar sesión',
+                });
+                navigate('/login');
                 setLoading(false);
                 return;
             }
@@ -407,7 +429,14 @@ const Registro = () => {
             setUsuarioValidado(data.usuario);
             setStep(2);
         } catch (err) {
-            setErrorMsg(err.message || 'Ocurrió un error. Comunícate con soporte@sntss-secciones.org');
+            await Swal.fire({
+                title: '❌ Error',
+                text: err.message || 'Ocurrió un error. Comunícate con soporte@sntss-secciones.org',
+                icon: 'error',
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'Entendido',
+            });
+            setErrorMsg(err.message);
         } finally {
             setLoading(false);
         }
@@ -420,45 +449,101 @@ const Registro = () => {
 
         const { antiguedad, telefono, correo, password, confirmar_password } = registroData;
 
-        if (!antiguedad || !telefono || !correo || !password || !confirmar_password) {
-            setErrorMsg('Todos los campos son obligatorios.');
+        // Validación de antigüedad - solo números
+        if (!antiguedad || !/^\d+$/.test(antiguedad)) {
+            await Swal.fire({
+                title: '⚠️ Antigüedad inválida',
+                text: 'La antigüedad debe ser un número válido (ej: 5, 10, 15).',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
 
-        if (!/^\d+$/.test(antiguedad)) {
-            setErrorMsg('La antigüedad debe ser un número válido.');
+        if (!telefono) {
+            await Swal.fire({
+                title: '⚠️ Teléfono requerido',
+                text: 'El teléfono es obligatorio.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
 
+        // Validación de teléfono - solo 10 dígitos
         if (!/^\d{10}$/.test(telefono)) {
-            setErrorMsg('El teléfono debe tener exactamente 10 dígitos numéricos.');
+            await Swal.fire({
+                title: '⚠️ Teléfono inválido',
+                text: 'El teléfono debe tener exactamente 10 dígitos numéricos (ej: 5512345678).',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
+            setLoading(false);
+            return;
+        }
+
+        if (!correo) {
+            await Swal.fire({
+                title: '⚠️ Correo requerido',
+                text: 'El correo electrónico es obligatorio.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(correo)) {
-            setErrorMsg('Ingresa un correo electrónico válido.');
+            await Swal.fire({
+                title: '⚠️ Correo inválido',
+                text: 'Ingresa un correo electrónico válido (ej: usuario@dominio.com).',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
 
-        if (password.length < 6) {
-            setErrorMsg('La contraseña debe tener al menos 6 caracteres.');
+        if (!password || password.length < 8) {
+            await Swal.fire({
+                title: '⚠️ Contraseña insegura',
+                text: 'La contraseña debe tener al menos 8 caracteres.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
 
         if (password !== confirmar_password) {
-            setErrorMsg('Las contraseñas no coinciden.');
+            await Swal.fire({
+                title: '⚠️ Contraseñas no coinciden',
+                text: 'Las contraseñas no coinciden. Por favor verifica.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
 
         if (!aceptaInformacion || !aceptaPrivacidad) {
-            setErrorMsg('Debes aceptar la veracidad de la información y el aviso de privacidad.');
+            await Swal.fire({
+                title: '⚠️ Aceptación requerida',
+                text: 'Debes aceptar la veracidad de la información y el aviso de privacidad.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
@@ -493,6 +578,13 @@ const Registro = () => {
 
             setStep(3);
         } catch (err) {
+            await Swal.fire({
+                title: '❌ Error',
+                text: err.message,
+                icon: 'error',
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'Entendido',
+            });
             setErrorMsg(err.message);
         } finally {
             setLoading(false);
@@ -513,38 +605,74 @@ const Registro = () => {
         setLoading(true);
 
         if (!tarjetonFile) {
-            setErrorMsg('Por favor, selecciona tu último tarjetón de pago (PDF).');
+            await Swal.fire({
+                title: '⚠️ Documento requerido',
+                text: 'Por favor, selecciona tu último tarjetón de pago (PDF).',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
 
         if (!fotoFile) {
-            setErrorMsg('Por favor, selecciona una foto de busto para tu perfil.');
+            await Swal.fire({
+                title: '⚠️ Foto requerida',
+                text: 'Por favor, selecciona una foto de busto para tu perfil.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
 
         if (tarjetonFile.type !== 'application/pdf') {
-            setErrorMsg('El tarjetón debe ser un archivo PDF.');
+            await Swal.fire({
+                title: '⚠️ Formato incorrecto',
+                text: 'El tarjetón debe ser un archivo PDF.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
 
         if (tarjetonFile.size > 5 * 1024 * 1024) {
-            setErrorMsg('El tarjetón no debe superar los 5MB.');
+            await Swal.fire({
+                title: '⚠️ Archivo muy grande',
+                text: 'El tarjetón no debe superar los 5MB.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
 
         const fotoTipos = ['image/jpeg', 'image/png', 'image/webp'];
         if (!fotoTipos.includes(fotoFile.type)) {
-            setErrorMsg('La foto debe ser JPG, PNG o WEBP.');
+            await Swal.fire({
+                title: '⚠️ Formato incorrecto',
+                text: 'La foto debe ser JPG, PNG o WEBP.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
 
         if (fotoFile.size > 5 * 1024 * 1024) {
-            setErrorMsg('La foto no debe superar los 5MB.');
+            await Swal.fire({
+                title: '⚠️ Archivo muy grande',
+                text: 'La foto no debe superar los 5MB.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido',
+            });
             setLoading(false);
             return;
         }
@@ -567,9 +695,24 @@ const Registro = () => {
                 throw new Error(data.message || 'Error al subir los documentos.');
             }
 
-            setSuccessMsg('¡Registro completado exitosamente! Redirigiendo al inicio de sesión...');
-            setTimeout(() => navigate('/login'), 3000);
+            await Swal.fire({
+                title: '✅ ¡Registro completado!',
+                text: 'Tu cuenta ha sido creada exitosamente. Ahora puedes iniciar sesión.',
+                icon: 'success',
+                confirmButtonColor: '#28a745',
+                confirmButtonText: 'Ir a iniciar sesión',
+                timer: 3000,
+                timerProgressBar: true,
+            });
+            navigate('/login');
         } catch (err) {
+            await Swal.fire({
+                title: '❌ Error',
+                text: err.message,
+                icon: 'error',
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'Entendido',
+            });
             setErrorMsg(err.message);
         } finally {
             setLoading(false);
@@ -588,7 +731,10 @@ const Registro = () => {
                     style={styles.input}
                     placeholder="Ej. 97123456"
                     value={formData.matricula}
-                    onChange={(e) => setFormData({ ...formData, matricula: e.target.value })}
+                    onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '');
+                        setFormData({ ...formData, matricula: value.slice(0, 9) });
+                    }}
                     disabled={loading}
                     required
                 />
@@ -627,7 +773,6 @@ const Registro = () => {
 
     const renderStep2 = () => (
         <>
-            {/* Card de datos verificados con estilo fachero */}
             <div style={styles.userCard}>
                 <div style={styles.userCardHeader}>
                     <FaCheckCircle style={{ color: '#28a745' }} />
@@ -665,11 +810,14 @@ const Registro = () => {
                 <div style={styles.inputGroup}>
                     <label style={styles.label}>Antigüedad (años)</label>
                     <input
-                        type="number"
+                        type="text"
                         style={styles.input}
                         placeholder="Ej. 5, 10, 15, 20"
                         value={registroData.antiguedad}
-                        onChange={(e) => setRegistroData({ ...registroData, antiguedad: e.target.value })}
+                        onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '');
+                            setRegistroData({ ...registroData, antiguedad: value });
+                        }}
                         disabled={loading}
                         required
                     />
@@ -681,14 +829,19 @@ const Registro = () => {
                         <FaPhone className="me-2" style={{ color: '#3EAEF4' }} /> Teléfono
                     </label>
                     <input
-                        type="tel"
+                        type="text"
                         style={styles.input}
                         placeholder="10 dígitos numéricos"
                         value={registroData.telefono}
-                        onChange={(e) => setRegistroData({ ...registroData, telefono: e.target.value })}
+                        onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '');
+                            setRegistroData({ ...registroData, telefono: value.slice(0, 10) });
+                        }}
                         disabled={loading}
                         required
+                        maxLength={10}
                     />
+                    <small style={styles.smallText}>10 dígitos numéricos (ej: 5512345678)</small>
                 </div>
 
                 <div style={styles.inputGroup}>
@@ -877,7 +1030,6 @@ const Registro = () => {
                     <p style={styles.cardHeaderSubtitle}>SNTSS Sección XXXIII</p>
                 </div>
                 <div style={styles.cardBody}>
-                    {/* Indicador de pasos */}
                     <div style={styles.stepIndicator}>
                         {[1, 2, 3].map((num) => {
                             const active = step === num;
@@ -896,7 +1048,6 @@ const Registro = () => {
                         })}
                     </div>
 
-                    {/* Mensajes de error y éxito */}
                     {errorMsg && (
                         <div style={styles.alertError}>
                             <FaExclamationTriangle /> {errorMsg}
@@ -909,12 +1060,10 @@ const Registro = () => {
                         </div>
                     )}
 
-                    {/* Renderizado de pasos */}
                     {step === 1 && renderStep1()}
                     {step === 2 && renderStep2()}
                     {step === 3 && renderStep3()}
 
-                    {/* Enlace a login */}
                     {step === 1 && (
                         <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
                             <p style={{ margin: 0, fontSize: '0.9rem' }}>

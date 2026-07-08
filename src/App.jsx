@@ -14,7 +14,6 @@ import AutoValidador from './pages/AutoValidador';
 import NoticiasCrear from './pages/NoticiasCrear';
 import Noticias from './pages/Noticias';
 import NoticiasPapelera from './pages/NoticiasPapelera';
-import Herramientas from './pages/Herramientas';
 import Conceptos from './pages/Conceptos';
 
 // Importar componentes
@@ -51,7 +50,6 @@ function App() {
                         <Route path="/noticias/crear" element={<RutaProtegida><NoticiasCrear /></RutaProtegida>} />
                         <Route path="/noticias" element={<Noticias />} />
                         <Route path="/noticias/papelera" element={<RutaProtegida><NoticiasPapelera /></RutaProtegida>} />
-                        <Route path="/herramientas" element={<Herramientas />} />
                         <Route path="/conceptos" element={<Conceptos />} />
                     </Routes>
                 </main>

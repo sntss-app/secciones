@@ -81,10 +81,20 @@ const Perfil = () => {
                     setFotoPreview(data.usuario.foto_path);
                 }
             } else {
-                setErrorMsg(data.message || 'Error al cargar perfil');
+                Swal.fire({
+                    title: '❌ Error',
+                    text: data.message || 'Error al cargar perfil',
+                    icon: 'error',
+                    confirmButtonColor: '#dc3545',
+                });
             }
         } catch (error) {
-            setErrorMsg('Error de conexión con el servidor');
+            Swal.fire({
+                title: '❌ Error de conexión',
+                text: 'No se pudo conectar con el servidor',
+                icon: 'error',
+                confirmButtonColor: '#dc3545',
+            });
         } finally {
             setLoading(false);
         }
@@ -191,19 +201,34 @@ const Perfil = () => {
         const { nueva_password, confirmar_password } = passData;
 
         if (!nueva_password || !confirmar_password) {
-            setPassError('Todos los campos son obligatorios.');
+            Swal.fire({
+                title: '⚠️ Campos incompletos',
+                text: 'Todos los campos son obligatorios.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+            });
             setPassLoading(false);
             return;
         }
 
         if (nueva_password.length < 8) {
-            setPassError('La contraseña debe tener al menos 8 caracteres.');
+            Swal.fire({
+                title: '⚠️ Contraseña corta',
+                text: 'La contraseña debe tener al menos 8 caracteres.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+            });
             setPassLoading(false);
             return;
         }
 
         if (nueva_password !== confirmar_password) {
-            setPassError('Las contraseñas no coinciden.');
+            Swal.fire({
+                title: '⚠️ No coinciden',
+                text: 'Las contraseñas no coinciden.',
+                icon: 'warning',
+                confirmButtonColor: '#ffc107',
+            });
             setPassLoading(false);
             return;
         }
@@ -252,7 +277,7 @@ const Perfil = () => {
         }
     };
 
-    // ========== ESTILOS MODERNOS ==========
+    // ========== ESTILOS MODERNOS CON RESPONSIVE ==========
     const styles = {
         container: {
             maxWidth: '1200px',
@@ -260,7 +285,11 @@ const Perfil = () => {
             padding: '2rem 1.5rem',
             background: '#f0f4f8',
             minHeight: 'calc(100vh - 200px)',
+            '@media (max-width: 768px)': {
+                padding: '1rem 0.8rem',
+            },
         },
+        // Header
         header: {
             background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
             borderRadius: '20px',
@@ -270,6 +299,12 @@ const Perfil = () => {
             boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
             position: 'relative',
             overflow: 'hidden',
+            '@media (max-width: 768px)': {
+                padding: '1.5rem 1.2rem',
+            },
+            '@media (max-width: 480px)': {
+                padding: '1.2rem 0.8rem',
+            },
         },
         headerGlow: {
             position: 'absolute',
@@ -289,11 +324,20 @@ const Perfil = () => {
             gap: '1rem',
             position: 'relative',
             zIndex: 2,
+            '@media (max-width: 768px)': {
+                flexDirection: 'column',
+                textAlign: 'center',
+                gap: '0.8rem',
+            },
         },
         headerLeft: {
             display: 'flex',
             alignItems: 'center',
             gap: '1rem',
+            '@media (max-width: 768px)': {
+                flexDirection: 'column',
+                justifyContent: 'center',
+            },
         },
         backButton: {
             color: 'white',
@@ -309,6 +353,10 @@ const Perfil = () => {
             fontWeight: '500',
             border: 'none',
             cursor: 'pointer',
+            '@media (max-width: 768px)': {
+                width: '100%',
+                justifyContent: 'center',
+            },
         },
         title: {
             fontSize: '2rem',
@@ -321,11 +369,21 @@ const Perfil = () => {
             display: 'flex',
             alignItems: 'center',
             gap: '0.8rem',
+            '@media (max-width: 768px)': {
+                fontSize: '1.5rem',
+                justifyContent: 'center',
+            },
+            '@media (max-width: 480px)': {
+                fontSize: '1.2rem',
+            },
         },
         subtitle: {
             color: '#aab',
             fontSize: '0.95rem',
             margin: 0,
+            '@media (max-width: 768px)': {
+                fontSize: '0.85rem',
+            },
         },
         headerBadge: {
             display: 'inline-block',
@@ -346,6 +404,9 @@ const Perfil = () => {
         },
         cardBody: {
             padding: '2rem',
+            '@media (max-width: 480px)': {
+                padding: '1rem',
+            },
         },
         // Foto de perfil
         fotoContainer: {
@@ -364,6 +425,10 @@ const Perfil = () => {
             border: '4px solid #3EAEF4',
             boxShadow: '0 4px 20px rgba(62,174,244,0.3)',
             transition: 'all 0.3s ease',
+            '@media (max-width: 480px)': {
+                width: '120px',
+                height: '120px',
+            },
         },
         fotoPlaceholder: {
             width: '160px',
@@ -375,6 +440,10 @@ const Perfil = () => {
             justifyContent: 'center',
             border: '4px solid #3EAEF4',
             boxShadow: '0 4px 20px rgba(62,174,244,0.3)',
+            '@media (max-width: 480px)': {
+                width: '120px',
+                height: '120px',
+            },
         },
         fotoCamera: {
             position: 'absolute',
@@ -387,15 +456,28 @@ const Perfil = () => {
             transition: 'all 0.3s ease',
             border: '2px solid white',
             boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            '@media (max-width: 480px)': {
+                padding: '8px',
+            },
         },
         fotoInput: {
             display: 'none',
         },
-        // Grid de datos
+        // ===== GRID RESPONSIVE CON FLEXBOX =====
         grid2cols: {
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
+            display: 'flex',
+            flexWrap: 'wrap',
             gap: '1rem',
+        },
+        colCampo: {
+            flex: '1 1 calc(50% - 0.5rem)',
+            minWidth: '200px',
+            '@media (max-width: 768px)': {
+                flex: '1 1 100%',
+            },
+        },
+        colFull: {
+            flex: '1 1 100%',
         },
         campo: {
             marginBottom: '0.5rem',
@@ -423,11 +505,15 @@ const Perfil = () => {
             width: '100%',
             padding: '0.6rem 1rem',
             fontSize: '0.95rem',
+            color: '#0A0F1E', // ← Color de texto visible
             border: '1px solid #ddd',
             borderRadius: '10px',
             outline: 'none',
             transition: 'all 0.3s ease',
             backgroundColor: 'white',
+            '&::placeholder': {
+                color: '#adb5bd',
+            },
         },
         inputEditable: {
             borderLeft: '3px solid #3EAEF4',
@@ -446,6 +532,11 @@ const Perfil = () => {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '0.5rem',
+            '@media (max-width: 480px)': {
+                width: '100%',
+                fontSize: '0.85rem',
+                padding: '0.6rem 1rem',
+            },
         },
         btnSuccess: {
             backgroundColor: '#28a745',
@@ -474,16 +565,22 @@ const Perfil = () => {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.5rem',
-        },
-        btnDangerHover: {
-            backgroundColor: '#dc3545',
-            color: 'white',
+            '@media (max-width: 480px)': {
+                width: '100%',
+                justifyContent: 'center',
+                fontSize: '0.85rem',
+                padding: '0.6rem 1rem',
+            },
         },
         flexRow: {
             display: 'flex',
             gap: '1rem',
             marginTop: '1.5rem',
             flexWrap: 'wrap',
+            '@media (max-width: 480px)': {
+                flexDirection: 'column',
+                gap: '0.5rem',
+            },
         },
         // Modal
         modalOverlay: {
@@ -498,6 +595,9 @@ const Perfil = () => {
             alignItems: 'center',
             justifyContent: 'center',
             padding: '2rem',
+            '@media (max-width: 480px)': {
+                padding: '1rem',
+            },
         },
         modalContent: {
             backgroundColor: 'white',
@@ -506,6 +606,9 @@ const Perfil = () => {
             width: '100%',
             overflow: 'hidden',
             boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            '@media (max-width: 480px)': {
+                margin: '1rem',
+            },
         },
         modalHeader: {
             background: 'linear-gradient(135deg, #0A0F1E, #1a1f2e)',
@@ -645,60 +748,78 @@ const Perfil = () => {
                     <form onSubmit={handleSubmit}>
                         <div style={styles.grid2cols}>
                             {/* Datos fijos */}
-                            <div style={styles.campo}>
-                                <label style={styles.label}><FaIdCard /> Matrícula</label>
-                                <div style={styles.value}>{perfil.matricula || ''}</div>
+                            <div style={styles.colCampo}>
+                                <div style={styles.campo}>
+                                    <label style={styles.label}><FaIdCard /> Matrícula</label>
+                                    <div style={styles.value}>{perfil.matricula || ''}</div>
+                                </div>
                             </div>
-                            <div style={styles.campo}>
-                                <label style={styles.label}><FaUser /> Nombre</label>
-                                <div style={styles.value}>{perfil.nombre || ''}</div>
+                            <div style={styles.colCampo}>
+                                <div style={styles.campo}>
+                                    <label style={styles.label}><FaUser /> Nombre</label>
+                                    <div style={styles.value}>{perfil.nombre || ''}</div>
+                                </div>
                             </div>
-                            <div style={styles.campo}>
-                                <label style={styles.label}><FaBuilding /> Adscripción</label>
-                                <div style={styles.value}>{perfil.adscripcion || 'N/A'}</div>
+                            <div style={styles.colCampo}>
+                                <div style={styles.campo}>
+                                    <label style={styles.label}><FaBuilding /> Adscripción</label>
+                                    <div style={styles.value}>{perfil.adscripcion || 'N/A'}</div>
+                                </div>
                             </div>
-                            <div style={styles.campo}>
-                                <label style={styles.label}>Categoría</label>
-                                <div style={styles.value}>{perfil.categoria || 'N/A'}</div>
+                            <div style={styles.colCampo}>
+                                <div style={styles.campo}>
+                                    <label style={styles.label}>Categoría</label>
+                                    <div style={styles.value}>{perfil.categoria || 'N/A'}</div>
+                                </div>
                             </div>
-                            <div style={styles.campo}>
-                                <label style={styles.label}>CURP</label>
-                                <div style={styles.value}>{perfil.curp || ''}</div>
+                            <div style={styles.colCampo}>
+                                <div style={styles.campo}>
+                                    <label style={styles.label}>CURP</label>
+                                    <div style={styles.value}>{perfil.curp || ''}</div>
+                                </div>
                             </div>
-                            <div style={styles.campo}>
-                                <label style={styles.label}>Edad</label>
-                                <div style={styles.value}>{perfil.edad ? `${perfil.edad} años` : 'N/A'}</div>
+                            <div style={styles.colCampo}>
+                                <div style={styles.campo}>
+                                    <label style={styles.label}>Edad</label>
+                                    <div style={styles.value}>{perfil.edad ? `${perfil.edad} años` : 'N/A'}</div>
+                                </div>
                             </div>
 
                             {/* Datos editables */}
-                            <div style={{ gridColumn: '1 / -1', marginTop: '0.5rem' }}>
-                                <p style={{ fontSize: '0.8rem', color: '#6c757d', borderBottom: '2px dashed #3EAEF4', paddingBottom: '0.5rem' }}>
-                                    <FaEdit style={{ color: '#3EAEF4' }} /> Campos editables
-                                </p>
+                            <div style={styles.colFull}>
+                                <div style={{ marginTop: '0.5rem' }}>
+                                    <p style={{ fontSize: '0.8rem', color: '#6c757d', borderBottom: '2px dashed #3EAEF4', paddingBottom: '0.5rem' }}>
+                                        <FaEdit style={{ color: '#3EAEF4' }} /> Campos editables
+                                    </p>
+                                </div>
                             </div>
-                            <div style={styles.campo}>
-                                <label style={styles.label}><FaPhone /> Teléfono</label>
-                                <input
-                                    type="tel"
-                                    style={{ ...styles.input, ...styles.inputEditable }}
-                                    placeholder="10 dígitos numéricos"
-                                    value={editData.telefono}
-                                    onChange={(e) => setEditData({ ...editData, telefono: e.target.value })}
-                                    disabled={loading}
-                                    required
-                                />
+                            <div style={styles.colCampo}>
+                                <div style={styles.campo}>
+                                    <label style={styles.label}><FaPhone /> Teléfono</label>
+                                    <input
+                                        type="tel"
+                                        style={{ ...styles.input, ...styles.inputEditable }}
+                                        placeholder="10 dígitos numéricos"
+                                        value={editData.telefono}
+                                        onChange={(e) => setEditData({ ...editData, telefono: e.target.value })}
+                                        disabled={loading}
+                                        required
+                                    />
+                                </div>
                             </div>
-                            <div style={styles.campo}>
-                                <label style={styles.label}><FaEnvelope /> Correo</label>
-                                <input
-                                    type="email"
-                                    style={{ ...styles.input, ...styles.inputEditable }}
-                                    placeholder="tu@email.com"
-                                    value={editData.correo}
-                                    onChange={(e) => setEditData({ ...editData, correo: e.target.value })}
-                                    disabled={loading}
-                                    required
-                                />
+                            <div style={styles.colCampo}>
+                                <div style={styles.campo}>
+                                    <label style={styles.label}><FaEnvelope /> Correo</label>
+                                    <input
+                                        type="email"
+                                        style={{ ...styles.input, ...styles.inputEditable }}
+                                        placeholder="tu@email.com"
+                                        value={editData.correo}
+                                        onChange={(e) => setEditData({ ...editData, correo: e.target.value })}
+                                        disabled={loading}
+                                        required
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -790,7 +911,7 @@ const Perfil = () => {
                                         required
                                     />
                                 </div>
-                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                                     <button 
                                         type="submit" 
                                         style={styles.btnSuccess}

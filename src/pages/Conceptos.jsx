@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { 
     FaArrowLeft, FaSearch, FaPlusCircle, FaMinusCircle, 
     FaFileAlt, FaTimes, FaInfoCircle, FaRocket, FaStar,
-    FaListAlt, FaTag, FaBookOpen
+    FaListAlt, FaTag, FaBookOpen, FaDownload, FaFilePdf
 } from 'react-icons/fa';
 import { apiUrl } from '../config';
 import { Modal } from 'react-bootstrap';
@@ -257,14 +257,31 @@ const Conceptos = () => {
                 justifyContent: 'center',
             },
         },
-        // Grid de 2 columnas - RESPONSIVE
+        // ===== CONTENEDOR FLEX RESPONSIVE =====
         grid2cols: {
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
+            display: 'flex',
+            flexWrap: 'wrap',
             gap: '2rem',
             '@media (max-width: 992px)': {
-                gridTemplateColumns: '1fr',
                 gap: '1.5rem',
+            },
+        },
+        colAportaciones: {
+            flex: '1 1 calc(50% - 1rem)',
+            minWidth: '250px',
+            order: 1,
+            '@media (max-width: 992px)': {
+                flex: '1 1 100%',
+                order: 1,
+            },
+        },
+        colDescuentos: {
+            flex: '1 1 calc(50% - 1rem)',
+            minWidth: '250px',
+            order: 2,
+            '@media (max-width: 992px)': {
+                flex: '1 1 100%',
+                order: 2,
             },
         },
         sectionTitle: {
@@ -348,7 +365,7 @@ const Conceptos = () => {
             borderRadius: '16px',
             border: '1px solid rgba(255,255,255,0.5)',
         },
-        // Modal
+        // ===== MODAL MODERNO =====
         modalHeader: {
             background: 'linear-gradient(135deg, #0A0F1E, #1a1f2e)',
             color: 'white',
@@ -359,12 +376,14 @@ const Conceptos = () => {
         modalBody: {
             padding: '2rem',
             background: '#f8fafc',
+            borderRadius: '0 0 16px 16px',
         },
         modalNumero: {
             fontSize: '0.85rem',
             color: '#6c757d',
             fontWeight: '600',
             letterSpacing: '0.5px',
+            marginBottom: '0.2rem',
         },
         modalTitulo: {
             fontSize: '1.8rem',
@@ -376,7 +395,9 @@ const Conceptos = () => {
             },
         },
         modalCategoria: {
-            display: 'inline-block',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.3rem',
             padding: '0.25rem 0.75rem',
             borderRadius: '12px',
             fontSize: '0.75rem',
@@ -387,9 +408,29 @@ const Conceptos = () => {
             fontSize: '1rem',
             lineHeight: '1.8',
             color: '#333',
+            whiteSpace: 'pre-wrap',
             '@media (max-width: 480px)': {
                 fontSize: '0.9rem',
             },
+        },
+        // ===== BOTÓN DE DESCARGA =====
+        downloadButton: {
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            backgroundColor: '#28a745',
+            color: 'white',
+            border: 'none',
+            padding: '0.6rem 1.5rem',
+            borderRadius: '12px',
+            fontWeight: 'bold',
+            fontSize: '0.9rem',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            textDecoration: 'none',
+            marginTop: '1.5rem',
+            width: '100%',
+            justifyContent: 'center',
         },
     };
 
@@ -466,10 +507,10 @@ const Conceptos = () => {
                 )}
             </div>
 
-            {/* Grid de 2 columnas - RESPONSIVE: en móvil se apilan */}
+            {/* ===== GRID FLEX RESPONSIVE ===== */}
             <div style={styles.grid2cols}>
-                {/* Columna izquierda: Aportaciones */}
-                <div>
+                {/* Columna: Aportaciones */}
+                <div style={styles.colAportaciones}>
                     <h3 style={styles.sectionTitle}>
                         <FaPlusCircle style={{ color: '#28a745' }} /> Conceptos de Aportación
                     </h3>
@@ -508,8 +549,8 @@ const Conceptos = () => {
                     )}
                 </div>
 
-                {/* Columna derecha: Descuentos */}
-                <div>
+                {/* Columna: Descuentos */}
+                <div style={styles.colDescuentos}>
                     <h3 style={styles.sectionTitle}>
                         <FaMinusCircle style={{ color: '#dc3545' }} /> Conceptos de Descuento
                     </h3>
@@ -565,7 +606,7 @@ const Conceptos = () => {
                 </div>
             )}
 
-            {/* Modal de detalle */}
+            {/* ===== MODAL DE DETALLE MODERNO ===== */}
             <Modal show={showModal} onHide={cerrarDetalle} centered size="lg">
                 <Modal.Header closeButton style={styles.modalHeader}>
                     <Modal.Title>
@@ -585,15 +626,35 @@ const Conceptos = () => {
                                 }}
                             >
                                 {conceptoSeleccionado.categoria === 'aportacion' ? 
-                                    <><FaPlusCircle className="me-1" /> Aportación</> : 
-                                    <><FaMinusCircle className="me-1" /> Descuento</>
+                                    <><FaPlusCircle /> Aportación</> : 
+                                    <><FaMinusCircle /> Descuento</>
                                 }
                             </span>
                             {conceptoSeleccionado.descripcion ? (
-                                <p style={styles.modalDescripcion}>{conceptoSeleccionado.descripcion}</p>
+                                <div style={styles.modalDescripcion}>{conceptoSeleccionado.descripcion}</div>
                             ) : (
                                 <p className="text-muted">No hay descripción disponible para este concepto.</p>
                             )}
+
+                            {/* ===== BOTÓN DE DESCARGA PDF ===== */}
+                            <a 
+                                href="/recursos/conceptos.pdf" 
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={styles.downloadButton}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = '#218838';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(40,167,69,0.3)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = '#28a745';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = 'none';
+                                }}
+                            >
+                                <FaFilePdf /> Descargar PDF completo de conceptos
+                            </a>
                         </>
                     )}
                 </Modal.Body>

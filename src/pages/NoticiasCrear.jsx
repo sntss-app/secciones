@@ -12,7 +12,7 @@ import { apiUrl } from '../config';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
-// ========== ESTILOS  ==========
+// ========== ESTILOS MODERNOS CON RESPONSIVE ==========
 const styles = {
     container: {
         maxWidth: '1400px',
@@ -20,16 +20,26 @@ const styles = {
         padding: '2rem 1.5rem',
         background: '#f0f4f8',
         minHeight: 'calc(100vh - 200px)',
+        '@media (max-width: 768px)': {
+            padding: '1rem 0.8rem',
+        },
     },
+    // Header con glow
     header: {
         background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
         borderRadius: '20px',
-        padding: '2rem 2rem',
+        padding: '2.5rem 2rem',
         marginBottom: '2rem',
         borderBottom: '4px solid #3EAEF4',
         boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
         position: 'relative',
         overflow: 'hidden',
+        '@media (max-width: 768px)': {
+            padding: '1.5rem 1.2rem',
+        },
+        '@media (max-width: 480px)': {
+            padding: '1.2rem 0.8rem',
+        },
     },
     headerGlow: {
         position: 'absolute',
@@ -49,6 +59,20 @@ const styles = {
         gap: '1rem',
         position: 'relative',
         zIndex: 2,
+        '@media (max-width: 768px)': {
+            flexDirection: 'column',
+            textAlign: 'center',
+            gap: '0.8rem',
+        },
+    },
+    headerLeft: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '1rem',
+        '@media (max-width: 768px)': {
+            flexDirection: 'column',
+            justifyContent: 'center',
+        },
     },
     headerTitle: {
         fontSize: '2rem',
@@ -61,11 +85,21 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         gap: '0.8rem',
+        '@media (max-width: 768px)': {
+            fontSize: '1.5rem',
+            justifyContent: 'center',
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '1.2rem',
+        },
     },
     headerSubtitle: {
         color: '#aab',
-        fontSize: '0.9rem',
+        fontSize: '0.95rem',
         margin: 0,
+        '@media (max-width: 768px)': {
+            fontSize: '0.85rem',
+        },
     },
     headerBadge: {
         display: 'inline-block',
@@ -80,12 +114,39 @@ const styles = {
         display: 'flex',
         gap: '0.5rem',
         flexWrap: 'wrap',
+        '@media (max-width: 768px)': {
+            justifyContent: 'center',
+            width: '100%',
+        },
     },
+    // ===== GRID RESPONSIVE CON FLEXBOX =====
     grid2cols: {
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
+        display: 'flex',
+        flexWrap: 'wrap',
         gap: '2rem',
+        '@media (max-width: 992px)': {
+            gap: '1.5rem',
+        },
     },
+    colFormulario: {
+        flex: '1 1 calc(50% - 1rem)',
+        minWidth: '300px',
+        order: 1,
+        '@media (max-width: 992px)': {
+            flex: '1 1 100%',
+            order: 1,
+        },
+    },
+    colLista: {
+        flex: '1 1 calc(50% - 1rem)',
+        minWidth: '300px',
+        order: 2,
+        '@media (max-width: 992px)': {
+            flex: '1 1 100%',
+            order: 2,
+        },
+    },
+    // Card
     card: {
         backgroundColor: 'rgba(255,255,255,0.9)',
         backdropFilter: 'blur(10px)',
@@ -105,6 +166,11 @@ const styles = {
         flexWrap: 'wrap',
         gap: '0.5rem',
         borderBottom: '4px solid #3EAEF4',
+        '@media (max-width: 480px)': {
+            padding: '1rem',
+            flexDirection: 'column',
+            alignItems: 'stretch',
+        },
     },
     cardHeaderTitle: {
         fontSize: '1.2rem',
@@ -117,12 +183,24 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         gap: '0.5rem',
+        '@media (max-width: 480px)': {
+            fontSize: '1rem',
+            justifyContent: 'center',
+        },
     },
     cardBody: {
         padding: '1.5rem',
         maxHeight: 'calc(100vh - 200px)',
         overflowY: 'auto',
+        '@media (max-width: 768px)': {
+            maxHeight: 'none',
+            padding: '1rem',
+        },
+        '@media (max-width: 480px)': {
+            padding: '0.8rem',
+        },
     },
+    // Formulario
     inputGroup: {
         marginBottom: '1rem',
     },
@@ -163,6 +241,9 @@ const styles = {
         cursor: 'pointer',
         transition: 'all 0.3s ease',
         backgroundColor: '#f8f9fa',
+        '@media (max-width: 480px)': {
+            padding: '1rem',
+        },
     },
     dropzoneActive: {
         borderColor: '#3EAEF4',
@@ -178,6 +259,9 @@ const styles = {
         gap: '0.5rem',
         marginBottom: '1rem',
         flexWrap: 'wrap',
+        '@media (max-width: 480px)': {
+            flexDirection: 'column',
+        },
     },
     toggleBtn: (active) => ({
         padding: '0.4rem 1rem',
@@ -192,6 +276,10 @@ const styles = {
         alignItems: 'center',
         gap: '0.3rem',
         fontSize: '0.8rem',
+        '@media (max-width: 480px)': {
+            justifyContent: 'center',
+            width: '100%',
+        },
     }),
     btnPrimary: {
         backgroundColor: '#3EAEF4',
@@ -208,6 +296,10 @@ const styles = {
         justifyContent: 'center',
         gap: '0.5rem',
         width: '100%',
+        '@media (max-width: 480px)': {
+            fontSize: '0.85rem',
+            padding: '0.6rem 1rem',
+        },
     },
     btnDanger: {
         backgroundColor: '#dc3545',
@@ -222,6 +314,10 @@ const styles = {
         display: 'inline-flex',
         alignItems: 'center',
         gap: '0.3rem',
+        '@media (max-width: 480px)': {
+            justifyContent: 'center',
+            width: '100%',
+        },
     },
     btnOutline: {
         backgroundColor: 'transparent',
@@ -238,6 +334,11 @@ const styles = {
         justifyContent: 'center',
         gap: '0.5rem',
         textDecoration: 'none',
+        '@media (max-width: 480px)': {
+            fontSize: '0.8rem',
+            padding: '0.5rem 1rem',
+            width: '100%',
+        },
     },
     noticiaItem: {
         backgroundColor: 'white',
@@ -246,12 +347,18 @@ const styles = {
         marginBottom: '1rem',
         border: '1px solid #e9ecef',
         transition: 'all 0.3s ease',
+        '@media (max-width: 480px)': {
+            padding: '0.8rem',
+        },
     },
     noticiaTitulo: {
         fontSize: '1rem',
         fontWeight: 'bold',
         margin: 0,
         color: '#0A0F1E',
+        '@media (max-width: 480px)': {
+            fontSize: '0.9rem',
+        },
     },
     noticiaMeta: {
         fontSize: '0.75rem',
@@ -260,12 +367,19 @@ const styles = {
         gap: '0.5rem 1rem',
         flexWrap: 'wrap',
         marginTop: '0.3rem',
+        '@media (max-width: 480px)': {
+            fontSize: '0.7rem',
+            gap: '0.3rem 0.8rem',
+        },
     },
     noticiaActions: {
         display: 'flex',
         gap: '0.3rem',
         flexWrap: 'wrap',
         marginTop: '0.5rem',
+        '@media (max-width: 480px)': {
+            gap: '0.2rem',
+        },
     },
     noticiaActionBtn: {
         display: 'inline-flex',
@@ -282,6 +396,12 @@ const styles = {
         backgroundColor: 'transparent',
         minWidth: '70px',
         height: '28px',
+        '@media (max-width: 480px)': {
+            fontSize: '0.65rem',
+            padding: '0.2rem 0.4rem',
+            minWidth: '60px',
+            height: '24px',
+        },
     },
     badge: (color) => ({
         display: 'inline-flex',
@@ -293,6 +413,10 @@ const styles = {
         fontWeight: 'bold',
         backgroundColor: color,
         color: 'white',
+        '@media (max-width: 480px)': {
+            fontSize: '0.6rem',
+            padding: '0.15rem 0.4rem',
+        },
     }),
     alertError: {
         backgroundColor: '#fee2e2',
@@ -304,6 +428,10 @@ const styles = {
         alignItems: 'center',
         gap: '0.5rem',
         fontSize: '0.9rem',
+        '@media (max-width: 480px)': {
+            fontSize: '0.8rem',
+            padding: '0.6rem 0.8rem',
+        },
     },
     alertSuccess: {
         backgroundColor: '#d4edda',
@@ -315,6 +443,10 @@ const styles = {
         alignItems: 'center',
         gap: '0.5rem',
         fontSize: '0.9rem',
+        '@media (max-width: 480px)': {
+            fontSize: '0.8rem',
+            padding: '0.6rem 0.8rem',
+        },
     },
     modalOverlay: {
         position: 'fixed',
@@ -329,6 +461,9 @@ const styles = {
         justifyContent: 'center',
         padding: '2rem',
         overflowY: 'auto',
+        '@media (max-width: 768px)': {
+            padding: '1rem',
+        },
     },
     modalContent: {
         backgroundColor: 'white',
@@ -340,6 +475,14 @@ const styles = {
         padding: '2rem',
         position: 'relative',
         boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+        '@media (max-width: 768px)': {
+            padding: '1.5rem',
+            maxHeight: '95vh',
+        },
+        '@media (max-width: 480px)': {
+            padding: '1rem',
+            borderRadius: '12px',
+        },
     },
     modalClose: {
         position: 'sticky',
@@ -364,12 +507,19 @@ const styles = {
         objectFit: 'cover',
         borderRadius: '12px',
         marginBottom: '1.5rem',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
     },
     modalTitle: {
         fontSize: '1.8rem',
         fontWeight: 'bold',
         marginBottom: '0.5rem',
         color: '#0A0F1E',
+        '@media (max-width: 768px)': {
+            fontSize: '1.4rem',
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '1.2rem',
+        },
     },
     modalMeta: {
         display: 'flex',
@@ -380,11 +530,18 @@ const styles = {
         marginBottom: '1.5rem',
         borderBottom: '1px solid #e9ecef',
         paddingBottom: '1rem',
+        '@media (max-width: 480px)': {
+            fontSize: '0.8rem',
+            gap: '0.8rem',
+        },
     },
     modalBody: {
         fontSize: '1rem',
         lineHeight: '1.8',
         color: '#333',
+        '@media (max-width: 480px)': {
+            fontSize: '0.9rem',
+        },
     },
     loadingSpinner: {
         display: 'flex',
@@ -393,6 +550,10 @@ const styles = {
         padding: '2rem',
         gap: '1rem',
         color: '#6c757d',
+        '@media (max-width: 480px)': {
+            padding: '1rem',
+            flexDirection: 'column',
+        },
     },
     flexRow: {
         display: 'flex',
@@ -1044,84 +1205,78 @@ const NoticiasCrear = () => {
     };
 
     const eliminarNoticia = async (id, titulo) => {
-    // 🔥 Reemplazo de window.confirm por SweetAlert2
-    const result = await Swal.fire({
-        title: '🗑️ ¿Eliminar noticia?',
-        html: `¿Estás seguro de que deseas eliminar <strong>"${titulo}"</strong>?<br><small style="color:#6c757d;">Esta acción no se puede deshacer. La noticia se moverá a la papelera.</small>`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: '✅ Sí, eliminar',
-        cancelButtonText: '❌ Cancelar',
-        reverseButtons: true,
-        background: '#fff',
-        backdrop: 'rgba(0,0,0,0.6)',
-        showClass: {
-            popup: 'animate__animated animate__fadeInDown'
-        },
-        hideClass: {
-            popup: 'animate__animated animate__fadeOutUp'
-        }
-    });
-
-    // Si el usuario cancela, no hacer nada
-    if (!result.isConfirmed) return;
-
-    // Mostrar loading
-    Swal.fire({
-        title: 'Eliminando...',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
-
-    try {
-        const response = await fetch(apiUrl('/eliminar_noticia.php'), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id })
+        const result = await Swal.fire({
+            title: '🗑️ ¿Eliminar noticia?',
+            html: `¿Estás seguro de que deseas eliminar <strong>"${titulo}"</strong>?<br><small style="color:#6c757d;">Esta acción no se puede deshacer. La noticia se moverá a la papelera.</small>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '✅ Sí, eliminar',
+            cancelButtonText: '❌ Cancelar',
+            reverseButtons: true,
+            background: '#fff',
+            backdrop: 'rgba(0,0,0,0.6)',
+            showClass: {
+                popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutUp'
+            }
         });
-        const data = await response.json();
-        
-        if (data.success) {
-            // ✅ Éxito
-            await Swal.fire({
-                title: '✅ ¡Eliminada!',
-                text: 'La noticia ha sido eliminada correctamente.',
-                icon: 'success',
-                confirmButtonColor: '#28a745',
-                confirmButtonText: 'Perfecto',
-                timer: 3000,
-                timerProgressBar: true,
+
+        if (!result.isConfirmed) return;
+
+        Swal.fire({
+            title: 'Eliminando...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        try {
+            const response = await fetch(apiUrl('/eliminar_noticia.php'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
             });
-            setSuccessMsg('Noticia eliminada correctamente.');
-            cargarNoticias();
-            if (noticiaId === id) cancelarEdicion();
-        } else {
-            // ❌ Error del servidor
+            const data = await response.json();
+            
+            if (data.success) {
+                await Swal.fire({
+                    title: '✅ ¡Eliminada!',
+                    text: 'La noticia ha sido eliminada correctamente.',
+                    icon: 'success',
+                    confirmButtonColor: '#28a745',
+                    confirmButtonText: 'Perfecto',
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+                setSuccessMsg('Noticia eliminada correctamente.');
+                cargarNoticias();
+                if (noticiaId === id) cancelarEdicion();
+            } else {
+                await Swal.fire({
+                    title: '❌ Error',
+                    text: data.message || 'Error al eliminar noticia.',
+                    icon: 'error',
+                    confirmButtonColor: '#dc3545',
+                    confirmButtonText: 'Entendido',
+                });
+                setErrorMsg(data.message || 'Error al eliminar noticia.');
+            }
+        } catch (error) {
             await Swal.fire({
-                title: '❌ Error',
-                text: data.message || 'Error al eliminar noticia.',
+                title: '❌ Error de conexión',
+                text: 'No se pudo conectar con el servidor. Intenta de nuevo.',
                 icon: 'error',
                 confirmButtonColor: '#dc3545',
                 confirmButtonText: 'Entendido',
             });
-            setErrorMsg(data.message || 'Error al eliminar noticia.');
+            setErrorMsg('Error de conexión.');
         }
-    } catch (error) {
-        // ❌ Error de conexión
-        await Swal.fire({
-            title: '❌ Error de conexión',
-            text: 'No se pudo conectar con el servidor. Intenta de nuevo.',
-            icon: 'error',
-            confirmButtonColor: '#dc3545',
-            confirmButtonText: 'Entendido',
-        });
-        setErrorMsg('Error de conexión.');
-    }
-};
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -1193,15 +1348,10 @@ const NoticiasCrear = () => {
 
     // Botones de acción con estilos
     const btnEdit = { borderColor: '#0d6efd', color: '#0d6efd' };
-    const btnEditHover = { backgroundColor: '#0d6efd', color: 'white' };
     const btnPreview = { borderColor: '#0dcaf0', color: '#0dcaf0' };
-    const btnPreviewHover = { backgroundColor: '#0dcaf0', color: 'white' };
     const btnToggle = { borderColor: '#ffc107', color: '#ffc107' };
-    const btnToggleHover = { backgroundColor: '#ffc107', color: '#0A0F1E' };
     const btnPin = { borderColor: '#6f42c1', color: '#6f42c1' };
-    const btnPinHover = { backgroundColor: '#6f42c1', color: 'white' };
     const btnDelete = { borderColor: '#dc3545', color: '#dc3545' };
-    const btnDeleteHover = { backgroundColor: '#dc3545', color: 'white' };
 
     return (
         <div style={styles.container}>
@@ -1209,18 +1359,20 @@ const NoticiasCrear = () => {
             <div style={styles.header}>
                 <div style={styles.headerGlow} />
                 <div style={styles.headerContent}>
-                    <div>
-                        <h2 style={styles.headerTitle}>
-                            <FaRocket style={{ color: '#3EAEF4' }} /> 
-                            {editando ? ' Editar Noticia' : ' Crear Noticia'}
-                        </h2>
-                        <p style={styles.headerSubtitle}>
-                            {editando ? 'Actualiza la información de la noticia' : 'Publica nuevas noticias para los agremiados'}
-                        </p>
-                        <span style={styles.headerBadge}>
-                            <FaStar style={{ marginRight: '5px' }} /> 
-                            {editando ? 'Modo Edición' : 'Nueva Publicación'}
-                        </span>
+                    <div style={styles.headerLeft}>
+                        <div>
+                            <h2 style={styles.headerTitle}>
+                                <FaRocket style={{ color: '#3EAEF4' }} /> 
+                                {editando ? ' Editar Noticia' : ' Crear Noticia'}
+                            </h2>
+                            <p style={styles.headerSubtitle}>
+                                {editando ? 'Actualiza la información de la noticia' : 'Publica nuevas noticias para los agremiados'}
+                            </p>
+                            <span style={styles.headerBadge}>
+                                <FaStar style={{ marginRight: '5px' }} /> 
+                                {editando ? 'Modo Edición' : 'Nueva Publicación'}
+                            </span>
+                        </div>
                     </div>
                     <div style={styles.headerButtons}>
                         <Link to="/dashboard" style={styles.btnOutline}>
@@ -1247,260 +1399,264 @@ const NoticiasCrear = () => {
                 </div>
             )}
 
-            {/* Grid de 2 columnas - Responsive */}
+            {/* ===== GRID RESPONSIVE CON FLEXBOX ===== */}
             <div style={styles.grid2cols}>
-                {/* Columna izquierda: Formulario */}
-                <div style={styles.card}>
-                    <div style={styles.cardHeader}>
-                        <h4 style={styles.cardHeaderTitle}>
-                            {editando ? <FaEdit /> : <FaPlus />}
-                            {editando ? ' Editar' : ' Crear'}
-                        </h4>
-                        {editando && (
-                            <button type="button" style={styles.btnDanger} onClick={cancelarEdicion}>
-                                Cancelar
-                            </button>
-                        )}
-                    </div>
-                    <div style={styles.cardBody}>
-                        <form onSubmit={handleSubmit}>
-                            <div style={styles.inputGroup}>
-                                <label style={styles.label}>Título *</label>
-                                <input
-                                    type="text"
-                                    style={styles.input}
-                                    placeholder="Título de la noticia"
-                                    value={formData.titulo}
-                                    onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
-                                    disabled={loading}
-                                    required
-                                />
-                            </div>
-
-                            <div style={styles.inputGroup}>
-                                <label style={styles.label}>Resumen corto *</label>
-                                <textarea
-                                    style={styles.textarea}
-                                    rows="2"
-                                    placeholder="Breve resumen de la noticia (se muestra en la tarjeta)"
-                                    value={formData.resumen}
-                                    onChange={(e) => setFormData({ ...formData, resumen: e.target.value })}
-                                    disabled={loading}
-                                    required
-                                />
-                            </div>
-
-                            <div style={styles.inputGroup}>
-                                <label style={styles.label}>Cuerpo de la noticia *</label>
-                                <textarea
-                                    style={styles.textarea}
-                                    rows="6"
-                                    placeholder="Contenido completo de la noticia"
-                                    value={formData.contenido}
-                                    onChange={(e) => setFormData({ ...formData, contenido: e.target.value })}
-                                    disabled={loading}
-                                    required
-                                />
-                            </div>
-
-                            <div style={styles.inputGroup}>
-                                <label style={styles.label}>URL de YouTube (opcional)</label>
-                                <input
-                                    type="text"
-                                    style={styles.input}
-                                    placeholder="https://www.youtube.com/watch?v=..."
-                                    value={formData.youtubeUrl}
-                                    onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
-                                    disabled={loading}
-                                />
-                            </div>
-
-                            <div style={styles.toggleGroup}>
-                                <button
-                                    type="button"
-                                    style={styles.toggleBtn(formData.visible)}
-                                    onClick={() => setFormData({ ...formData, visible: !formData.visible })}
-                                >
-                                    {formData.visible ? <FaEye /> : <FaEyeSlash />}
-                                    {formData.visible ? 'Visible' : 'Oculta'}
+                {/* Columna: Formulario */}
+                <div style={styles.colFormulario}>
+                    <div style={styles.card}>
+                        <div style={styles.cardHeader}>
+                            <h4 style={styles.cardHeaderTitle}>
+                                {editando ? <FaEdit /> : <FaPlus />}
+                                {editando ? ' Editar' : ' Crear'}
+                            </h4>
+                            {editando && (
+                                <button type="button" style={styles.btnDanger} onClick={cancelarEdicion}>
+                                    Cancelar
                                 </button>
-                                <button
-                                    type="button"
-                                    style={styles.toggleBtn(formData.fijada)}
-                                    onClick={() => setFormData({ ...formData, fijada: !formData.fijada })}
-                                >
-                                    <FaThumbtack />
-                                    {formData.fijada ? 'Fijada' : 'Fijar'}
-                                </button>
-                            </div>
-
-                            <div style={styles.inputGroup}>
-                                <label style={styles.label}><FaImage className="me-1" /> Imagen destacada</label>
-                                <input
-                                    type="file"
-                                    style={styles.input}
-                                    accept="image/jpeg,image/png,image/webp"
-                                    onChange={handleImagenChange}
-                                    disabled={loading}
-                                />
-                                <small style={{ color: '#6c757d', fontSize: '0.7rem' }}>JPG, PNG o WEBP. Máx 5MB.</small>
-                                {imagenPreview && (
-                                    <div style={{ marginTop: '0.3rem' }}>
-                                        <img src={imagenPreview} alt="Vista previa" style={{ maxHeight: '100px', borderRadius: '8px' }} />
-                                        <p style={{ fontSize: '0.75rem', color: '#28a745' }}>✅ {imagenName}</p>
-                                    </div>
-                                )}
-                            </div>
-
-                            <div style={styles.inputGroup}>
-                                <label style={styles.label}><FaFilePdf className="me-1" /> PDF adjunto</label>
-                                <input
-                                    type="file"
-                                    style={styles.input}
-                                    accept=".pdf"
-                                    onChange={handlePdfChange}
-                                    disabled={loading}
-                                />
-                                <small style={{ color: '#6c757d', fontSize: '0.7rem' }}>PDF. Máx 10MB.</small>
-                                {pdfName && <p style={{ fontSize: '0.75rem', color: '#28a745' }}>✅ {pdfName}</p>}
-                            </div>
-
-                            <div style={styles.inputGroup}>
-                                <label style={styles.label}><FaVideo className="me-1" /> Video local</label>
-                                <input
-                                    type="file"
-                                    style={styles.input}
-                                    accept="video/mp4,video/webm,video/ogg,video/quicktime"
-                                    onChange={handleVideoChange}
-                                    disabled={loading}
-                                />
-                                <small style={{ color: '#6c757d', fontSize: '0.7rem' }}>MP4, WEBM, OGG o MOV. Máx 100MB.</small>
-                                {videoName && <p style={{ fontSize: '0.75rem', color: '#28a745' }}>✅ {videoName}</p>}
-                            </div>
-
-                            <div style={styles.inputGroup}>
-                                <label style={styles.label}><FaImages className="me-1" /> Galería (hasta 10 archivos)</label>
-                                <div 
-                                    {...getRootProps()} 
-                                    style={{ ...styles.dropzone, ...(isDragActive ? styles.dropzoneActive : {}) }}
-                                >
-                                    <input {...getInputProps()} />
-                                    <div style={styles.dropzoneIcon}><FaUpload /></div>
-                                    {isDragActive ? (
-                                        <p>Suelta los archivos aquí...</p>
-                                    ) : (
-                                        <p style={{ fontSize: '0.85rem' }}>Arrastra imágenes o videos, o haz clic para seleccionarlos</p>
-                                    )}
-                                    <small style={{ color: '#6c757d', fontSize: '0.7rem' }}>Máx 10 archivos. Imágenes: JPG, PNG, WEBP. Videos: MP4, WEBM, OGG, MOV.</small>
-                                </div>
-                                {galeriaPreviews.length > 0 && (
-                                    <GaleriaCarrusel 
-                                        items={galeriaFiles.map((file, index) => ({
-                                            ...file,
-                                            preview: galeriaPreviews[index]
-                                        }))}
-                                        onRemove={removerGaleria}
+                            )}
+                        </div>
+                        <div style={styles.cardBody}>
+                            <form onSubmit={handleSubmit}>
+                                <div style={styles.inputGroup}>
+                                    <label style={styles.label}>Título *</label>
+                                    <input
+                                        type="text"
+                                        style={styles.input}
+                                        placeholder="Título de la noticia"
+                                        value={formData.titulo}
+                                        onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
+                                        disabled={loading}
+                                        required
                                     />
-                                )}
-                            </div>
+                                </div>
 
-                            <div style={styles.flexRow}>
-                                <button
-                                    type="submit"
-                                    style={{ ...styles.btnPrimary, ...styles.flexGrow }}
-                                    disabled={loading}
-                                >
-                                    {loading ? 'Guardando...' : <><FaSave className="me-1" /> Guardar</>}
-                                </button>
-                            </div>
-                        </form>
+                                <div style={styles.inputGroup}>
+                                    <label style={styles.label}>Resumen corto *</label>
+                                    <textarea
+                                        style={styles.textarea}
+                                        rows="2"
+                                        placeholder="Breve resumen de la noticia (se muestra en la tarjeta)"
+                                        value={formData.resumen}
+                                        onChange={(e) => setFormData({ ...formData, resumen: e.target.value })}
+                                        disabled={loading}
+                                        required
+                                    />
+                                </div>
+
+                                <div style={styles.inputGroup}>
+                                    <label style={styles.label}>Cuerpo de la noticia *</label>
+                                    <textarea
+                                        style={styles.textarea}
+                                        rows="6"
+                                        placeholder="Contenido completo de la noticia"
+                                        value={formData.contenido}
+                                        onChange={(e) => setFormData({ ...formData, contenido: e.target.value })}
+                                        disabled={loading}
+                                        required
+                                    />
+                                </div>
+
+                                <div style={styles.inputGroup}>
+                                    <label style={styles.label}>URL de YouTube (opcional)</label>
+                                    <input
+                                        type="text"
+                                        style={styles.input}
+                                        placeholder="https://www.youtube.com/watch?v=..."
+                                        value={formData.youtubeUrl}
+                                        onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
+                                        disabled={loading}
+                                    />
+                                </div>
+
+                                <div style={styles.toggleGroup}>
+                                    <button
+                                        type="button"
+                                        style={styles.toggleBtn(formData.visible)}
+                                        onClick={() => setFormData({ ...formData, visible: !formData.visible })}
+                                    >
+                                        {formData.visible ? <FaEye /> : <FaEyeSlash />}
+                                        {formData.visible ? 'Visible' : 'Oculta'}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        style={styles.toggleBtn(formData.fijada)}
+                                        onClick={() => setFormData({ ...formData, fijada: !formData.fijada })}
+                                    >
+                                        <FaThumbtack />
+                                        {formData.fijada ? 'Fijada' : 'Fijar'}
+                                    </button>
+                                </div>
+
+                                <div style={styles.inputGroup}>
+                                    <label style={styles.label}><FaImage className="me-1" /> Imagen destacada</label>
+                                    <input
+                                        type="file"
+                                        style={styles.input}
+                                        accept="image/jpeg,image/png,image/webp"
+                                        onChange={handleImagenChange}
+                                        disabled={loading}
+                                    />
+                                    <small style={{ color: '#6c757d', fontSize: '0.7rem' }}>JPG, PNG o WEBP. Máx 5MB.</small>
+                                    {imagenPreview && (
+                                        <div style={{ marginTop: '0.3rem' }}>
+                                            <img src={imagenPreview} alt="Vista previa" style={{ maxHeight: '100px', borderRadius: '8px' }} />
+                                            <p style={{ fontSize: '0.75rem', color: '#28a745' }}>✅ {imagenName}</p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div style={styles.inputGroup}>
+                                    <label style={styles.label}><FaFilePdf className="me-1" /> PDF adjunto</label>
+                                    <input
+                                        type="file"
+                                        style={styles.input}
+                                        accept=".pdf"
+                                        onChange={handlePdfChange}
+                                        disabled={loading}
+                                    />
+                                    <small style={{ color: '#6c757d', fontSize: '0.7rem' }}>PDF. Máx 10MB.</small>
+                                    {pdfName && <p style={{ fontSize: '0.75rem', color: '#28a745' }}>✅ {pdfName}</p>}
+                                </div>
+
+                                <div style={styles.inputGroup}>
+                                    <label style={styles.label}><FaVideo className="me-1" /> Video local</label>
+                                    <input
+                                        type="file"
+                                        style={styles.input}
+                                        accept="video/mp4,video/webm,video/ogg,video/quicktime"
+                                        onChange={handleVideoChange}
+                                        disabled={loading}
+                                    />
+                                    <small style={{ color: '#6c757d', fontSize: '0.7rem' }}>MP4, WEBM, OGG o MOV. Máx 100MB.</small>
+                                    {videoName && <p style={{ fontSize: '0.75rem', color: '#28a745' }}>✅ {videoName}</p>}
+                                </div>
+
+                                <div style={styles.inputGroup}>
+                                    <label style={styles.label}><FaImages className="me-1" /> Galería (hasta 10 archivos)</label>
+                                    <div 
+                                        {...getRootProps()} 
+                                        style={{ ...styles.dropzone, ...(isDragActive ? styles.dropzoneActive : {}) }}
+                                    >
+                                        <input {...getInputProps()} />
+                                        <div style={styles.dropzoneIcon}><FaUpload /></div>
+                                        {isDragActive ? (
+                                            <p>Suelta los archivos aquí...</p>
+                                        ) : (
+                                            <p style={{ fontSize: '0.85rem' }}>Arrastra imágenes o videos, o haz clic para seleccionarlos</p>
+                                        )}
+                                        <small style={{ color: '#6c757d', fontSize: '0.7rem' }}>Máx 10 archivos. Imágenes: JPG, PNG, WEBP. Videos: MP4, WEBM, OGG, MOV.</small>
+                                    </div>
+                                    {galeriaPreviews.length > 0 && (
+                                        <GaleriaCarrusel 
+                                            items={galeriaFiles.map((file, index) => ({
+                                                ...file,
+                                                preview: galeriaPreviews[index]
+                                            }))}
+                                            onRemove={removerGaleria}
+                                        />
+                                    )}
+                                </div>
+
+                                <div style={styles.flexRow}>
+                                    <button
+                                        type="submit"
+                                        style={{ ...styles.btnPrimary, ...styles.flexGrow }}
+                                        disabled={loading}
+                                    >
+                                        {loading ? 'Guardando...' : <><FaSave className="me-1" /> Guardar</>}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
-                {/* Columna derecha: Listado de noticias */}
-                <div style={styles.card}>
-                    <div style={styles.cardHeader}>
-                        <h4 style={styles.cardHeaderTitle}>
-                            <FaNewspaper /> Lista de Noticias
-                        </h4>
-                        <button type="button" style={styles.btnPrimary} onClick={cargarNoticias} disabled={loadingNoticias}>
-                            <FaSync className="me-1" /> Actualizar
-                        </button>
-                    </div>
-                    <div style={styles.cardBody}>
-                        {loadingNoticias ? (
-                            <div style={styles.loadingSpinner}>
-                                <div className="spinner-border text-warning" role="status" style={{ width: '1.5rem', height: '1.5rem' }}></div>
-                                <span>Cargando noticias...</span>
-                            </div>
-                        ) : noticias.length === 0 ? (
-                            <div style={{ textAlign: 'center', padding: '2rem', color: '#6c757d' }}>
-                                <FaNewspaper style={{ fontSize: '3rem', color: '#ddd', marginBottom: '1rem' }} />
-                                <p>No hay noticias creadas aún.</p>
-                            </div>
-                        ) : (
-                            noticias.map((noticia) => (
-                                <div key={noticia.id} style={styles.noticiaItem}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                        <div>
-                                            <p style={styles.noticiaTitulo}>{noticia.titulo}</p>
-                                            <div style={styles.noticiaMeta}>
-                                                <span>{noticia.autor || 'Sin autor'}</span>
-                                                <span>{noticia.fecha}</span>
-                                                <span>👁️ {noticia.vistas} vistas</span>
-                                                <span style={styles.badge(getBadgeColor(noticia.visible, noticia.fijada))}>
-                                                    {getBadgeLabel(noticia.visible, noticia.fijada)}
-                                                </span>
+                {/* Columna: Lista de Noticias */}
+                <div style={styles.colLista}>
+                    <div style={styles.card}>
+                        <div style={styles.cardHeader}>
+                            <h4 style={styles.cardHeaderTitle}>
+                                <FaNewspaper /> Lista de Noticias
+                            </h4>
+                            <button type="button" style={styles.btnPrimary} onClick={cargarNoticias} disabled={loadingNoticias}>
+                                <FaSync className="me-1" /> Actualizar
+                            </button>
+                        </div>
+                        <div style={styles.cardBody}>
+                            {loadingNoticias ? (
+                                <div style={styles.loadingSpinner}>
+                                    <div className="spinner-border text-warning" role="status" style={{ width: '1.5rem', height: '1.5rem' }} />
+                                    <span>Cargando noticias...</span>
+                                </div>
+                            ) : noticias.length === 0 ? (
+                                <div style={{ textAlign: 'center', padding: '2rem', color: '#6c757d' }}>
+                                    <FaNewspaper style={{ fontSize: '3rem', color: '#ddd', marginBottom: '1rem' }} />
+                                    <p>No hay noticias creadas aún.</p>
+                                </div>
+                            ) : (
+                                noticias.map((noticia) => (
+                                    <div key={noticia.id} style={styles.noticiaItem}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                            <div>
+                                                <p style={styles.noticiaTitulo}>{noticia.titulo}</p>
+                                                <div style={styles.noticiaMeta}>
+                                                    <span>{noticia.autor || 'Sin autor'}</span>
+                                                    <span>{noticia.fecha}</span>
+                                                    <span>👁️ {noticia.vistas} vistas</span>
+                                                    <span style={styles.badge(getBadgeColor(noticia.visible, noticia.fijada))}>
+                                                        {getBadgeLabel(noticia.visible, noticia.fijada)}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div style={styles.noticiaActions}>
-                                        <button 
-                                            style={{ ...styles.noticiaActionBtn, ...btnEdit }}
-                                            onMouseEnter={(e) => { e.target.style.backgroundColor = '#0d6efd'; e.target.style.color = 'white'; }}
-                                            onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#0d6efd'; }}
-                                            onClick={() => editarNoticia(noticia)}
-                                        >
-                                            <FaEdit /> Editar
-                                        </button>
-                                        <button 
-                                            style={{ ...styles.noticiaActionBtn, ...btnPreview }}
-                                            onMouseEnter={(e) => { e.target.style.backgroundColor = '#0dcaf0'; e.target.style.color = 'white'; }}
-                                            onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#0dcaf0'; }}
-                                            onClick={() => abrirPreviewNoticia(noticia)}
-                                        >
-                                            <FaEye /> Vista Previa
-                                        </button>
-                                        <button 
-                                            style={{ ...styles.noticiaActionBtn, ...btnToggle }}
-                                            onMouseEnter={(e) => { e.target.style.backgroundColor = '#ffc107'; e.target.style.color = '#0A0F1E'; }}
-                                            onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#ffc107'; }}
-                                            onClick={() => cambiarVisibilidad(noticia.id, !noticia.visible)}
-                                        >
-                                            {noticia.visible ? <FaEyeSlash /> : <FaEye />}
-                                            {noticia.visible ? ' Ocultar' : ' Publicar'}
-                                        </button>
-                                        <button 
-                                            style={{ ...styles.noticiaActionBtn, ...btnPin }}
-                                            onMouseEnter={(e) => { e.target.style.backgroundColor = '#6f42c1'; e.target.style.color = 'white'; }}
-                                            onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#6f42c1'; }}
-                                            onClick={() => cambiarFijada(noticia.id, !noticia.fijada)}
-                                        >
-                                            <FaThumbtack />
-                                            {noticia.fijada ? ' Desfijar' : ' Fijar'}
-                                        </button>
-                                        <button 
+                                        <div style={styles.noticiaActions}>
+                                            <button 
+                                                style={{ ...styles.noticiaActionBtn, ...btnEdit }}
+                                                onMouseEnter={(e) => { e.target.style.backgroundColor = '#0d6efd'; e.target.style.color = 'white'; }}
+                                                onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#0d6efd'; }}
+                                                onClick={() => editarNoticia(noticia)}
+                                            >
+                                                <FaEdit /> Editar
+                                            </button>
+                                            <button 
+                                                style={{ ...styles.noticiaActionBtn, ...btnPreview }}
+                                                onMouseEnter={(e) => { e.target.style.backgroundColor = '#0dcaf0'; e.target.style.color = 'white'; }}
+                                                onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#0dcaf0'; }}
+                                                onClick={() => abrirPreviewNoticia(noticia)}
+                                            >
+                                                <FaEye /> Vista Previa
+                                            </button>
+                                            <button 
+                                                style={{ ...styles.noticiaActionBtn, ...btnToggle }}
+                                                onMouseEnter={(e) => { e.target.style.backgroundColor = '#ffc107'; e.target.style.color = '#0A0F1E'; }}
+                                                onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#ffc107'; }}
+                                                onClick={() => cambiarVisibilidad(noticia.id, !noticia.visible)}
+                                            >
+                                                {noticia.visible ? <FaEyeSlash /> : <FaEye />}
+                                                {noticia.visible ? ' Ocultar' : ' Publicar'}
+                                            </button>
+                                            <button 
+                                                style={{ ...styles.noticiaActionBtn, ...btnPin }}
+                                                onMouseEnter={(e) => { e.target.style.backgroundColor = '#6f42c1'; e.target.style.color = 'white'; }}
+                                                onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#6f42c1'; }}
+                                                onClick={() => cambiarFijada(noticia.id, !noticia.fijada)}
+                                            >
+                                                <FaThumbtack />
+                                                {noticia.fijada ? ' Desfijar' : ' Fijar'}
+                                            </button>
+                                            <button 
                                                 style={{ ...styles.noticiaActionBtn, ...btnDelete }}
                                                 onMouseEnter={(e) => { e.target.style.backgroundColor = '#dc3545'; e.target.style.color = 'white'; }}
                                                 onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#dc3545'; }}
-                                                onClick={() => eliminarNoticia(noticia.id, noticia.titulo)}  // ← PASAS ID Y TÍTULO
+                                                onClick={() => eliminarNoticia(noticia.id, noticia.titulo)}
                                             >
-                                            <FaTrash /> Eliminar
-                                        </button>
+                                                <FaTrash /> Eliminar
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            ))
-                        )}
+                                ))
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

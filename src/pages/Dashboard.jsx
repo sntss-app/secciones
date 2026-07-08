@@ -19,7 +19,7 @@ import FondoAhorro from '../components/calculadoras/FondoAhorro';
 import Aguinaldo from '../components/calculadoras/Aguinaldo';
 import Clausula97 from '../components/calculadoras/Clausula97';
 import HorasExtras from '../components/calculadoras/HorasExtras';
-import Vacaciones from '../components/calculadoras/Vacaciones';
+//import Vacaciones from '../components/calculadoras/Vacaciones';
 
 const Dashboard = () => {
     // ===== ESTADOS =====
@@ -138,7 +138,7 @@ const Dashboard = () => {
             case 'aguinaldo': return <Aguinaldo />;
             case 'clausula97': return <Clausula97 />;
             case 'horas-extras': return <HorasExtras />;
-            case 'vacaciones': return <Vacaciones />;
+            //case 'vacaciones': return <Vacaciones />;
             default: return null;
         }
     };
@@ -156,7 +156,7 @@ const Dashboard = () => {
         { id: 'aguinaldo', icon: <FaGift />, titulo: 'Aguinaldo', descripcion: 'Calcula el monto de tu aguinaldo', color: '#E74C3C', bg: 'linear-gradient(135deg, #E74C3C 0%, #F39C12 100%)' },
         { id: 'clausula97', icon: <FaFileContract />, titulo: 'Cláusula 97 CCT', descripcion: 'Préstamo de hasta 4 meses de sueldo', color: '#8E44AD', bg: 'linear-gradient(135deg, #8E44AD 0%, #9B59B6 100%)' },
         { id: 'horas-extras', icon: <FaClock />, titulo: 'Horas Extras', descripcion: 'Calcula el pago de horas extras', color: '#E67E22', bg: 'linear-gradient(135deg, #E67E22 0%, #F39C12 100%)' },
-        { id: 'vacaciones', icon: <FaUmbrellaBeach />, titulo: 'Pago de Vacaciones', descripcion: 'Calcula el pago de tus vacaciones', color: '#1ABC9C', bg: 'linear-gradient(135deg, #1ABC9C 0%, #16A085 100%)' },
+        //{ id: 'vacaciones', icon: <FaUmbrellaBeach />, titulo: 'Pago de Vacaciones', descripcion: 'Calcula el pago de tus vacaciones', color: '#1ABC9C', bg: 'linear-gradient(135deg, #1ABC9C 0%, #16A085 100%)' },
     ];
 
     // ===== RECURSOS =====
@@ -183,7 +183,7 @@ const Dashboard = () => {
             titulo: 'Contrato Colectivo', 
             descripcion: 'Descarga el CCT completo', 
             link: '/recursos/Cct.pdf',
-            externo: false
+            externo: true
         },
         { 
             id: 'estatutos', 
@@ -191,7 +191,7 @@ const Dashboard = () => {
             titulo: 'Estatutos SNTSS', 
             descripcion: 'Descarga los Estatutos del SNTSS', 
             link: '/recursos/Estatutos.pdf',
-            externo: false
+            externo: true
         },
         { 
             id: 'conceptos', 
@@ -201,14 +201,14 @@ const Dashboard = () => {
             link: '/conceptos',
             externo: false
         },
-        { 
-            id: 'calendario', 
-            icon: <FaCalendarAlt />, 
-            titulo: 'Calendario de Pagos', 
-            descripcion: 'Fechas de pago quincenal', 
-            link: '/calendario',
-            externo: false
-        },
+        // { 
+        //     id: 'calendario', 
+        //     icon: <FaCalendarAlt />, 
+        //     titulo: 'Calendario de Pagos', 
+        //     descripcion: 'Fechas de pago quincenal', 
+        //     link: '/calendario',
+        //     externo: false
+        // },
     ];
 
     // ===== RENDER DE PESTAÑAS =====
@@ -324,70 +324,77 @@ const Dashboard = () => {
                 )}
             </div>
 
+            {/* ===== GRID RESPONSIVE CON FLEXBOX ===== */}
             <div style={styles.grid2cols}>
-                <div style={styles.card}>
-                    <div style={styles.cardTitle}>
-                        <FaNewspaper style={{ color: '#3EAEF4' }} /> Noticias y Avisos
-                    </div>
-                    <div style={styles.cardBody}>
-                        {loadingNoticias ? (
-                            <p className="text-muted">Cargando noticias...</p>
-                        ) : noticias.length > 0 ? (
-                            noticias.map((noticia, idx) => (
-                                <div key={idx} style={styles.noticiaCard}>
-                                    <div style={styles.noticiaTitulo}>{noticia.titulo}</div>
-                                    <div style={styles.noticiaResumen}>
-                                        {noticia.resumen?.substring(0, 100)}...
+                {/* Columna: Noticias */}
+                <div style={styles.colNoticias}>
+                    <div style={styles.cardNoticias}>
+                        <div style={styles.cardTitleNoticias}>
+                            <FaNewspaper style={{ color: '#3EAEF4' }} /> Noticias y Avisos
+                        </div>
+                        <div style={styles.cardBody}>
+                            {loadingNoticias ? (
+                                <p className="text-muted">Cargando noticias...</p>
+                            ) : noticias.length > 0 ? (
+                                noticias.map((noticia, idx) => (
+                                    <div key={idx} style={styles.noticiaCard}>
+                                        <div style={styles.noticiaTitulo}>{noticia.titulo}</div>
+                                        <div style={styles.noticiaResumen}>
+                                            {noticia.resumen?.substring(0, 100)}...
+                                        </div>
+                                        <div style={styles.noticiaMeta}>
+                                            <span><FaCalendarAlt /> {noticia.fecha}</span>
+                                            <span><FaEye /> {noticia.vistas} vistas</span>
+                                            {noticia.fijada && <span style={styles.noticiaBadge}>📌 Fijada</span>}
+                                        </div>
                                     </div>
-                                    <div style={styles.noticiaMeta}>
-                                        <span><FaCalendarAlt /> {noticia.fecha}</span>
-                                        <span><FaEye /> {noticia.vistas} vistas</span>
-                                        {noticia.fijada && <span style={styles.noticiaBadge}>📌 Fijada</span>}
-                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-muted">No hay noticias disponibles.</p>
+                            )}
+                            {!isLoggedIn && noticias.length > 0 && (
+                                <div style={{ marginTop: '0.5rem', color: '#3EAEF4', fontSize: '0.85rem' }}>
+                                    🔒 Inicia sesión para ver todas las noticias
                                 </div>
-                            ))
-                        ) : (
-                            <p className="text-muted">No hay noticias disponibles.</p>
-                        )}
-                        {!isLoggedIn && noticias.length > 0 && (
-                            <div style={{ marginTop: '0.5rem', color: '#3EAEF4', fontSize: '0.85rem' }}>
-                                🔒 Inicia sesión para ver todas las noticias
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
                 </div>
 
-                <div style={styles.sidebar}>
-                    <div style={styles.sidebarTitle}>
-                        <FaInfoCircle /> ¿Cómo participar?
+                {/* Columna: Sidebar */}
+                <div style={styles.colSidebar}>
+                    <div style={styles.sidebar}>
+                        <div style={styles.sidebarTitle}>
+                            <FaInfoCircle /> ¿Cómo participar?
+                        </div>
+                        <ul style={styles.listaReglas}>
+                            <li style={styles.listaReglasItem}>
+                                <FaShieldAlt style={{ color: '#3EAEF4' }} /> Ser agremiado de base.
+                            </li>
+                            <li style={styles.listaReglasItem}>
+                                <FaChartLine style={{ color: '#3EAEF4' }} /> 5 años de antigüedad
+                            </li>
+                            <li style={styles.listaReglasItem}>
+                                <FaGift style={{ color: '#3EAEF4' }} /> Participar en la rifa de créditos
+                            </li>
+                        </ul>
+                        
+                        {!isLoggedIn ? (
+                            <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(62,174,244,0.12)', borderRadius: '12px', textAlign: 'center' }}>
+                                <p style={{ fontWeight: 'bold', marginBottom: '0.3rem', color: '#0A0F1E' }}>✨ Beneficios exclusivos ✨</p>
+                                <p style={{ fontSize: '0.85rem', color: '#6c757d' }}>Préstamos, rifas, sorteos y más</p>
+                                <Link to="/registro" style={{ ...styles.heroBtn, marginTop: '0.5rem', fontSize: '0.85rem', padding: '0.5rem 1.5rem' }}>
+                                    Regístrate aquí
+                                </Link>
+                            </div>
+                        ) : (
+                            <div style={{ marginTop: '1rem' }}>
+                                <Link to="/registro-credito" style={styles.heroBtn}>
+                                    Solicitar crédito
+                                </Link>
+                            </div>
+                        )}
                     </div>
-                    <ul style={styles.listaReglas}>
-                        <li style={styles.listaReglasItem}>
-                            <FaShieldAlt style={{ color: '#3EAEF4' }} /> Ser agremiado de base.
-                        </li>
-                        <li style={styles.listaReglasItem}>
-                            <FaChartLine style={{ color: '#3EAEF4' }} /> 5 años de antigüedad
-                        </li>
-                        <li style={styles.listaReglasItem}>
-                            <FaGift style={{ color: '#3EAEF4' }} /> Participar en la rifa de créditos
-                        </li>
-                    </ul>
-                    
-                    {!isLoggedIn ? (
-                        <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(62,174,244,0.12)', borderRadius: '12px', textAlign: 'center' }}>
-                            <p style={{ fontWeight: 'bold', marginBottom: '0.3rem', color: '#0A0F1E' }}>✨ Beneficios exclusivos ✨</p>
-                            <p style={{ fontSize: '0.85rem', color: '#6c757d' }}>Préstamos, rifas, sorteos y más</p>
-                            <Link to="/registro" style={{ ...styles.heroBtn, marginTop: '0.5rem', fontSize: '0.85rem', padding: '0.5rem 1.5rem' }}>
-                                Regístrate aquí
-                            </Link>
-                        </div>
-                    ) : (
-                        <div style={{ marginTop: '1rem' }}>
-                            <Link to="/registro-credito" style={styles.heroBtn}>
-                                Solicitar crédito
-                            </Link>
-                        </div>
-                    )}
                 </div>
             </div>
 
@@ -678,6 +685,7 @@ const Dashboard = () => {
             gap: '1.5rem',
             marginBottom: '3rem',
         },
+        // ===== CARD PARA CALCULADORAS =====
         card: {
             backgroundColor: 'rgba(255,255,255,0.9)',
             backdropFilter: 'blur(10px)',
@@ -808,17 +816,35 @@ const Dashboard = () => {
             margin: 0,
             lineHeight: 1.5,
         },
+        // ===== GRID RESPONSIVE CON FLEXBOX =====
         grid2cols: {
-            display: 'grid',
-            gridTemplateColumns: '2fr 1fr',
+            display: 'flex',
+            flexWrap: 'wrap',
             gap: '2rem',
-            marginBottom: '2rem',
             '@media (max-width: 768px)': {
-                gridTemplateColumns: '1fr',
                 gap: '1.5rem',
             },
         },
-        card: {
+        colNoticias: {
+            flex: '1 1 calc(66% - 1rem)',
+            minWidth: '280px',
+            order: 1,
+            '@media (max-width: 992px)': {
+                flex: '1 1 100%',
+                order: 1,
+            },
+        },
+        colSidebar: {
+            flex: '1 1 calc(34% - 1rem)',
+            minWidth: '220px',
+            order: 2,
+            '@media (max-width: 992px)': {
+                flex: '1 1 100%',
+                order: 2,
+            },
+        },
+        // ===== CARD PARA NOTICIAS =====
+        cardNoticias: {
             backgroundColor: 'rgba(255,255,255,0.9)',
             backdropFilter: 'blur(10px)',
             borderRadius: '16px',
@@ -831,7 +857,7 @@ const Dashboard = () => {
                 padding: '1rem',
             },
         },
-        cardTitle: {
+        cardTitleNoticias: {
             fontSize: '1.1rem',
             fontWeight: 'bold',
             marginBottom: '1rem',
