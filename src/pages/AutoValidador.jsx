@@ -203,11 +203,11 @@ const AutoValidador = () => {
 
     const getStatusInfo = (estatus) => {
         const map = {
-            'preregistro': { color: '#6c757d', icon: <FaClock />, label: '1 Preregistro', bg: 'linear-gradient(135deg, #6c757d, #495057)' },
-            'aprobado': { color: '#28a745', icon: <FaCheckCircle />, label: '2 Validado', bg: 'linear-gradient(135deg, #28a745, #20c997)' },
-            'observaciones': { color: '#ffc107', icon: <FaExclamationTriangle />, label: '3 Con observaciones', bg: 'linear-gradient(135deg, #ffc107, #fd7e14)' },
-            'sinconcluir': { color: '#fd7e14', icon: <FaInfoCircle />, label: '4 Registro inconcluso', bg: 'linear-gradient(135deg, #fd7e14, #dc3545)' },
-            'denegado': { color: '#dc3545', icon: <FaTimesCircle />, label: '5 Denegado', bg: 'linear-gradient(135deg, #dc3545, #c82333)' }
+            'preregistro': { color: '#6c757d', icon: <FaClock />, label: 'Preregistro', bg: 'linear-gradient(135deg, #6c757d, #495057)' },
+            'aprobado': { color: '#28a745', icon: <FaCheckCircle />, label: 'Aprobado', bg: 'linear-gradient(135deg, #28a745, #20c997)' },
+            'observaciones': { color: '#ffc107', icon: <FaExclamationTriangle />, label: 'Con observaciones', bg: 'linear-gradient(135deg, #ffc107, #fd7e14)' },
+            'sinconcluir': { color: '#fd7e14', icon: <FaInfoCircle />, label: 'Registro inconcluso', bg: 'linear-gradient(135deg, #fd7e14, #dc3545)' },
+            'denegado': { color: '#dc3545', icon: <FaTimesCircle />, label: 'Denegado', bg: 'linear-gradient(135deg, #dc3545, #c82333)' }
         };
         return map[estatus] || map['preregistro'];
     };
@@ -483,7 +483,7 @@ const AutoValidador = () => {
                     <FaExclamationTriangle style={{ fontSize: '3rem', color: '#dc3545', marginBottom: '1rem' }} />
                     <h3 style={{ color: '#dc3545' }}>Acceso Denegado</h3>
                     <p className="text-muted">No tienes permisos para acceder a esta sección. Solo validadores de crédito automotriz.</p>
-                    <Link to="/dashboard" style={styles.btnOutline}>Volver al Dashboard</Link>
+                    <Link to="/dashboard" style={styles.btnOutline}>Volver</Link>
                 </div>
             </div>
         );
@@ -517,7 +517,7 @@ const AutoValidador = () => {
                     </span>
                 </div>
                 <Link to="/dashboard" style={styles.btnOutline}>
-                    <FaArrowLeft /> Volver al Dashboard
+                    <FaArrowLeft /> Volver
                 </Link>
             </div>
 
@@ -566,9 +566,9 @@ const AutoValidador = () => {
                                 setPaginaActual(1);
                             }}
                         >
-                            <option value="todos">📋 Todos los estatus</option>
+                            <option value="todos">📋 Todos</option>
                             <option value="preregistro">1️⃣ Preregistro</option>
-                            <option value="aprobado">✅ Validado</option>
+                            <option value="aprobado">✅ Aprobado</option>
                             <option value="observaciones">⚠️ Con observaciones</option>
                             <option value="sinconcluir">📝 Incompleto</option>
                             <option value="denegado">❌ Denegado</option>
@@ -634,7 +634,7 @@ const AutoValidador = () => {
                                         <div>
                                             <small className="text-white-50">Solicitud #{indexPrimeroSeguro + idx + 1}</small>
                                             <h6 className="mb-0 text-white" style={{ fontSize: '1rem' }}>
-                                                {solicitud.nombre || 'Sin nombre'}
+                                                {solicitud.nombre ? solicitud.nombre.replace(/\//g, ' ') : 'Sin nombre'}
                                             </h6>
                                         </div>
                                         <span style={styles.badge(statusInfo.bg)}>

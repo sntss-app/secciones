@@ -672,7 +672,7 @@ const Noticias = () => {
                     <h1 style={styles.modalTitle}>{n.titulo}</h1>
 
                     <div style={styles.modalMeta}>
-                        <span><FaUser /> {n.autor || 'SNTSS'}</span>
+                        <span><FaUser /> {n.autor ? n.autor.replace(/\//g, ' ') : 'SNTSS'}</span>
                         <span><FaCalendarAlt /> {n.fecha}</span>
                         <DetallesUsuarios 
                             noticiaId={n.id} 
@@ -968,7 +968,9 @@ const Noticias = () => {
                                     <FaUserCircle />
                                 </div>
                                 <div>
-                                    <div style={styles.autorNombre}>{noticia.autor || 'SNTSS'}</div>
+                                    <div style={styles.autorNombre}>
+                                        {noticia.autor ? noticia.autor.replace(/\//g, ' ') : 'SNTSS'}
+                                    </div>
                                     <div style={styles.autorFecha}>
                                         <FaCalendarAlt /> {noticia.fecha}
                                     </div>

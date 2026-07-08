@@ -301,12 +301,6 @@ const Dashboard = () => {
                     <p style={styles.actionCardDescription}>Mantente informado con las últimas noticias.</p>
                 </Link>
 
-                <div style={{ ...styles.actionCard, cursor: 'pointer' }} onClick={abrirModal}>
-                    <div style={{ ...styles.actionCardIcon, color: '#F2994A' }}><FaCalculator /></div>
-                    <h3 style={styles.actionCardTitle}>💰 Calculadora de auto</h3>
-                    <p style={styles.actionCardDescription}>El cálculo del financiamiento automotriz es aproximado.</p>
-                </div>
-
                 {hasAutoValidatorRole && (
                     <Link to="/validador-auto" style={{ ...styles.actionCard, borderColor: '#FFC107' }}>
                         <div style={{ ...styles.actionCardIcon, color: '#FFC107' }}><FaCheckCircle /></div>
@@ -397,82 +391,6 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-
-            <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-                <Modal.Header closeButton style={styles.modalHeader}>
-                    <Modal.Title>
-                        <FaCar className="me-2" style={{ color: '#3EAEF4' }} /> PRÉSTAMO DE AUTO
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body style={{ padding: '1.5rem', background: '#f8fafc' }}>
-                    <p className="text-muted mb-3" style={{ textAlign: 'justify' }}>
-                        Determina el monto de financiamiento para tu vehículo basado en tu capacidad de pago.
-                        El cálculo considera tu sueldo base (Concepto 002) y otros ingresos reflejados en tu tarjetón.
-                    </p>
-                    
-                    <div className="mb-3">
-                        <button className="btn btn-link text-decoration-none p-0" type="button" data-bs-toggle="collapse" data-bs-target="#reqAuto" style={{ color: '#003c82', fontWeight: '600' }}>
-                            📄 Ver Requisitos
-                        </button>
-                        <div className="collapse mt-2" id="reqAuto">
-                            <div className="card card-body bg-light">
-                                <h6 style={{ color: '#003c82', fontWeight: '700', borderBottom: '2px solid rgba(0, 60, 130, 0.2)', paddingBottom: '5px', marginBottom: '10px' }}>
-                                    ✅ Requisitos:
-                                </h6>
-                                <ul className="mb-0">
-                                    <li>Ser trabajador de base</li>
-                                    <li>Contar con al menos 3 años de antigüedad</li>
-                                    <li>Presentar los 2 últimos tarjetones de pago</li>
-                                    <li>Llenar la solicitud correspondiente</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="mb-3">
-                        <label className="form-label fw-bold">Concepto 002 (quincenal):</label>
-                        <input 
-                            type="number" 
-                            step="0.01" 
-                            className="form-control" 
-                            value={c02}
-                            onChange={(e) => setC02(e.target.value)}
-                            placeholder="Ej: 2437.73"
-                        />
-                    </div>
-                    
-                    <div className="mb-4">
-                        <label className="form-label fw-bold">Concepto 011 (quincenal):</label>
-                        <input 
-                            type="number" 
-                            step="0.01" 
-                            className="form-control" 
-                            value={c11}
-                            onChange={(e) => setC11(e.target.value)}
-                            placeholder="Ej: 2002.60"
-                        />
-                    </div>
-                    
-                    <button type="button" style={styles.btnCalcular} onClick={calcularAuto}>
-                        <FaCalculator /> Calcular Préstamo
-                    </button>
-                    
-                    {mostrarResultado && montoAuto !== null && (
-                        <div className="mt-4">
-                            <p className="fw-bold mb-2 text-center">Monto del préstamo para auto:</p>
-                            <div style={styles.resultadoContainer}>
-                                <span className="d-block text-primary fw-bold fs-5">Por 24 veces el sueldo mensual integrado</span>
-                                <span style={styles.resultadoMonto}>
-                                    {formatter.format(montoAuto)}
-                                </span>
-                                <p className="text-muted text-center mt-3 small mb-0">
-                                    * El cálculo incluye el 20% de prestaciones sobre el sueldo mensual.
-                                </p>
-                            </div>
-                        </div>
-                    )}
-                </Modal.Body>
-            </Modal>
         </div>
     );
 
@@ -1107,19 +1025,6 @@ const Dashboard = () => {
 
             {/* ===== CONTENIDO DE LAS TABS ===== */}
             {tabActiva === 'calculadoras' ? renderTabCalculadoras() : renderTabProceso()}
-
-            {/* ===== MODAL DE CALCULADORA ===== */}
-            <Modal show={showModal} onHide={cerrarCalculadora} centered size="lg">
-                <Modal.Header closeButton style={styles.modalHeader}>
-                    <Modal.Title>
-                        <FaCalculator style={{ marginRight: '10px', color: '#3EAEF4' }} /> 
-                        {calculadoraActiva && calculadoras.find(c => c.id === calculadoraActiva)?.titulo || 'Calculadora'}
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body style={{ padding: '2rem', background: '#f8fafc' }}>
-                    {renderCalculadora()}
-                </Modal.Body>
-            </Modal>
         </div>
     );
 };
