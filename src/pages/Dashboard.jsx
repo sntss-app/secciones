@@ -5,7 +5,8 @@ import {
     FaGift, FaShieldAlt, FaChartLine, FaCheckCircle, FaUser,
     FaThumbtack, FaEye, FaCalendarAlt, FaTools, FaStar, FaRocket,
     FaBuilding, FaHouseUser, FaPiggyBank, FaFileContract, FaClock,
-    FaUmbrellaBeach, FaClipboardList, FaFilePdf, FaExternalLinkAlt, FaFileAlt
+    FaUmbrellaBeach, FaClipboardList, FaFilePdf, FaExternalLinkAlt, FaFileAlt,
+    FaQrcode, FaChartPie  // ← AGREGAR ESTOS
 } from 'react-icons/fa';
 import { apiUrl } from '../config';
 import { Modal } from 'react-bootstrap';
@@ -44,6 +45,11 @@ const Dashboard = () => {
     const [c11, setC11] = useState('');
     const [montoAuto, setMontoAuto] = useState(null);
     const [mostrarResultado, setMostrarResultado] = useState(false);
+    const [hasClausula79BisValidatorRole, setHasClausula79BisValidatorRole] = useState(() => {
+    const roleIds = getStoredRoleIds();
+        return roleIds.includes(3); // ID 3 = clausula79bis
+    });
+
 
     // ===== EFECTOS =====
     useEffect(() => {
@@ -59,8 +65,10 @@ const Dashboard = () => {
                     const roleIds = data.usuario?.roleIds || [];
                     localStorage.setItem('roleIds', JSON.stringify(roleIds));
                     localStorage.setItem('roleNames', JSON.stringify(data.usuario?.roleNames || []));
+                    
                     setHasAutoValidatorRole(roleIds.includes(1));
                     setHasNewsValidatorRole(roleIds.includes(2));
+                    setHasClausula79BisValidatorRole(roleIds.includes(3)); // ← AGREGAR
                 }
             } catch (error) {
                 console.error('Error cargando roles del perfil:', error);
@@ -289,34 +297,70 @@ const Dashboard = () => {
     const renderTabProceso = () => (
         <div>
             <div style={styles.actionGrid}>
-                <Link to="/registro-auto" style={styles.actionCard}>
-                    <div style={{ ...styles.actionCardIcon, color: '#4A90D9' }}><FaCar /></div>
-                    <h3 style={styles.actionCardTitle}>🚗 Preregistro a la rifa de auto</h3>
-                    <p style={styles.actionCardDescription}>Participa en la rifa para obtener un crédito automotriz.</p>
+            {/* ===== CRÉDITO AUTO ===== */}
+            <Link to="/registro-auto" style={styles.actionCard}>
+                <div style={{ ...styles.actionCardIcon, color: '#4A90D9' }}><FaCar /></div>
+                <h3 style={styles.actionCardTitle}>🚗 Preregistro a la rifa de auto</h3>
+                <p style={styles.actionCardDescription}>Participa en la rifa para obtener un crédito automotriz.</p>
+            </Link>
+
+            {/* ===== NOTICIAS ===== */}
+            <Link to="/noticias" style={styles.actionCard}>
+                <div style={{ ...styles.actionCardIcon, color: '#5B86E5' }}><FaNewspaper /></div>
+                <h3 style={styles.actionCardTitle}>📰 Noticias y avisos</h3>
+                <p style={styles.actionCardDescription}>Mantente informado con las últimas noticias.</p>
+            </Link>
+
+            {/* ===== CLÁUSULA 79BIS - Registro (Siempre visible) ===== */}
+            <Link to="/clausula79bis" style={styles.actionCard}>
+                <div style={{ ...styles.actionCardIcon, color: '#8E44AD' }}><FaGift /></div>
+                <h3 style={styles.actionCardTitle}>🎉 Cláusula 79Bis</h3>
+                <p style={styles.actionCardDescription}>Registro para el festejo de Intendencia y Limpieza.</p>
+            </Link>
+
+            {/* ===== VALIDADOR AUTO (solo rol auto) ===== */}
+            {hasAutoValidatorRole && (
+                <Link to="/validador-auto" style={{ ...styles.actionCard, borderColor: '#FFC107' }}>
+                    <div style={{ ...styles.actionCardIcon, color: '#FFC107' }}><FaCheckCircle /></div>
+                    <h3 style={styles.actionCardTitle}>🔍 Validador Auto</h3>
+                    <p style={styles.actionCardDescription}>Gestiona solicitudes de crédito.</p>
                 </Link>
+            )}
 
-                <Link to="/noticias" style={styles.actionCard}>
-                    <div style={{ ...styles.actionCardIcon, color: '#5B86E5' }}><FaNewspaper /></div>
-                    <h3 style={styles.actionCardTitle}>📰 Noticias y avisos</h3>
-                    <p style={styles.actionCardDescription}>Mantente informado con las últimas noticias.</p>
+            {/* ===== CREAR NOTICIA (solo rol noticias) ===== */}
+            {hasNewsValidatorRole && (
+                <Link to="/noticias/crear" style={{ ...styles.actionCard, borderColor: '#28a745' }}>
+                    <div style={{ ...styles.actionCardIcon, color: '#28a745' }}><FaNewspaper /></div>
+                    <h3 style={styles.actionCardTitle}>✍️ Crear Noticia</h3>
+                    <p style={styles.actionCardDescription}>Publica nuevas noticias.</p>
                 </Link>
+            )}
 
-                {hasAutoValidatorRole && (
-                    <Link to="/validador-auto" style={{ ...styles.actionCard, borderColor: '#FFC107' }}>
-                        <div style={{ ...styles.actionCardIcon, color: '#FFC107' }}><FaCheckCircle /></div>
-                        <h3 style={styles.actionCardTitle}>🔍 Validador Auto</h3>
-                        <p style={styles.actionCardDescription}>Gestiona solicitudes de crédito.</p>
+            {/* ===== VALIDADOR 79BIS (solo rol clausula79bis) ===== */}
+            {hasClausula79BisValidatorRole && (
+                <>
+                    <Link to="/clausula79bis/validador" style={{ ...styles.actionCard, borderColor: '#8E44AD' }}>
+                        <div style={{ ...styles.actionCardIcon, color: '#8E44AD' }}><FaShieldAlt /></div>
+                        <h3 style={styles.actionCardTitle}>🔍 Validador 79Bis</h3>
+                        <p style={styles.actionCardDescription}>Gestiona los registros del festejo.</p>
                     </Link>
-                )}
 
-                {hasNewsValidatorRole && (
-                    <Link to="/noticias/crear" style={{ ...styles.actionCard, borderColor: '#28a745' }}>
-                        <div style={{ ...styles.actionCardIcon, color: '#28a745' }}><FaNewspaper /></div>
-                        <h3 style={styles.actionCardTitle}>✍️ Crear Noticia</h3>
-                        <p style={styles.actionCardDescription}>Publica nuevas noticias.</p>
+                    {/* ===== ENTRADA 79BIS (solo rol clausula79bis) ===== */}
+                    <Link to="/clausula79bis/entrada" style={{ ...styles.actionCard, borderColor: '#3EAEF4' }}>
+                        <div style={{ ...styles.actionCardIcon, color: '#3EAEF4' }}><FaQrcode /></div>
+                        <h3 style={styles.actionCardTitle}>🎟️ Entrada 79Bis</h3>
+                        <p style={styles.actionCardDescription}>Control de asistencia del evento.</p>
                     </Link>
-                )}
-            </div>
+
+                    {/* ===== ESTADÍSTICAS 79BIS (solo rol clausula79bis) ===== */}
+                    <Link to="/clausula79bis/estadisticas" style={{ ...styles.actionCard, borderColor: '#28a745' }}>
+                        <div style={{ ...styles.actionCardIcon, color: '#28a745' }}><FaChartPie /></div>
+                        <h3 style={styles.actionCardTitle}>📊 Estadísticas 79Bis</h3>
+                        <p style={styles.actionCardDescription}>Dashboard del evento con gráficas.</p>
+                    </Link>
+                </>
+            )}
+        </div>
 
             {/* ===== GRID RESPONSIVE CON FLEXBOX ===== */}
             <div style={styles.grid2cols}>
@@ -874,7 +918,7 @@ const Dashboard = () => {
             },
         },
         modalHeader: {
-            background: 'linear-gradient(135deg, #0A0F1E, #1a1f2e)',
+            background: 'linear-gradient(135deg, #282b34, #37383d)',
             color: 'white',
             borderBottom: '3px solid #3EAEF4',
             borderRadius: '16px 16px 0 0',
@@ -1025,6 +1069,19 @@ const Dashboard = () => {
 
             {/* ===== CONTENIDO DE LAS TABS ===== */}
             {tabActiva === 'calculadoras' ? renderTabCalculadoras() : renderTabProceso()}
+
+            {/* ===== MODAL DE CALCULADORA ===== */}
+            <Modal show={showModal} onHide={cerrarCalculadora} centered size="lg">
+                <Modal.Header closeButton style={styles.modalHeader}>
+                    <Modal.Title>
+                        <FaCalculator style={{ marginRight: '10px', color: '#3EAEF4' }} /> 
+                        {calculadoraActiva && calculadoras.find(c => c.id === calculadoraActiva)?.titulo || 'Calculadora'}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body style={{ padding: '2rem', background: '#f8fafc' }}>
+                    {renderCalculadora()}
+                </Modal.Body>
+            </Modal>
         </div>
     );
 };

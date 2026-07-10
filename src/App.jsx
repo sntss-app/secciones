@@ -15,6 +15,10 @@ import NoticiasCrear from './pages/NoticiasCrear';
 import Noticias from './pages/Noticias';
 import NoticiasPapelera from './pages/NoticiasPapelera';
 import Conceptos from './pages/Conceptos';
+import Clausula79Bis from './pages/Clausula79Bis';
+import Clausula79BisValidador from './pages/Clausula79BisValidador';
+import Clausula79BisEntrada from './pages/Clausula79BisEntrada';
+import Clausula79BisEstadisticas from './pages/Clausula79BisEstadisticas';
 
 // Importar componentes
 import Navbar from './components/Navbar';
@@ -51,6 +55,10 @@ function App() {
                         <Route path="/noticias" element={<Noticias />} />
                         <Route path="/noticias/papelera" element={<RutaProtegida><NoticiasPapelera /></RutaProtegida>} />
                         <Route path="/conceptos" element={<Conceptos />} />
+                        <Route path="/clausula79bis" element={<Clausula79Bis />} />
+                        <Route path="/clausula79bis/validador" element={<Clausula79BisValidador />} />
+                        <Route path="/clausula79bis/entrada" element={<Clausula79BisEntrada />} />
+                        <Route path="/clausula79bis/estadisticas" element={<Clausula79BisEstadisticas />} />
                     </Routes>
                 </main>
                 <Footer />
