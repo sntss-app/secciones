@@ -8,6 +8,7 @@ import { apiUrl } from '../config';
 import { storeUserSession } from '../utils/roles';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+import { color } from 'chart.js/helpers';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -252,6 +253,7 @@ const Login = () => {
             outline: 'none',
             backgroundColor: 'white',
             boxSizing: 'border-box',
+            color: '#000',
         },
         passwordToggle: {
             position: 'absolute',
