@@ -151,6 +151,17 @@ const Dashboard = () => {
         }
     };
 
+    const getImageUrl = (path) => {
+        if (!path) return null;
+        if (path.startsWith('http://') || path.startsWith('https://')) {
+            return path;
+        }
+        if (path.startsWith('/api')) {
+            return apiUrl(path.replace('/api', ''));
+        }
+        return apiUrl(path);
+    };
+
     const rolesDisponibles = [];
     if (hasAutoValidatorRole) rolesDisponibles.push('Validador Auto');
     if (hasNewsValidatorRole) rolesDisponibles.push('Editor Noticias');
@@ -257,7 +268,7 @@ const Dashboard = () => {
                 ))}
             </div>
 
-            <div style={styles.sectionTitle}>
+            <div style={{ ...styles.sectionTitle}}>
                 <FaFilePdf style={{ color: '#E74C3C' }} /> Recursos y Documentos
                 <span style={styles.sectionTitleLine} />
             </div>
@@ -295,8 +306,169 @@ const Dashboard = () => {
     );
 
     const renderTabProceso = () => (
-        <div>
-            <div style={styles.actionGrid}>
+    <div>
+        {/* ===== GRID RESPONSIVE CON FLEXBOX (Noticias + Sidebar) ===== */}
+        <div style={styles.grid2cols}>
+            {/* Columna: Noticias */}
+            <div style={styles.colNoticias}>
+                <div style={styles.cardNoticias}>
+                    <div style={styles.cardTitleNoticias}>
+                        <FaNewspaper style={{ color: '#3EAEF4' }} /> Noticias y Avisos
+                    </div>
+                    <div style={styles.cardBody}>
+                        {loadingNoticias ? (
+                            <p className="text-muted">Cargando noticias...</p>
+                        ) : noticias.length > 0 ? (
+                            noticias.map((noticia, idx) => (
+                                <div key={idx} style={styles.noticiaCard}>
+                                    {noticia.imagen && (
+                                        <img 
+                                            src={getImageUrl(noticia.imagen)} 
+                                            alt={noticia.titulo} 
+                                            style={{
+                                                width: '100%',
+                                                height: '140px',
+                                                objectFit: 'cover',
+                                                borderRadius: '8px',
+                                                marginBottom: '0.5rem',
+                                                backgroundColor: '#e9ecef',
+                                            }}
+                                            onError={(e) => { 
+                                                e.target.style.display = 'none'; 
+                                            }}
+                                        />
+                                    )}
+                                    <div style={styles.noticiaTitulo}>{noticia.titulo}</div>
+                                    <div style={styles.noticiaResumen}>
+                                        {noticia.resumen?.substring(0, 100)}...
+                                    </div>
+                                    <div style={styles.noticiaMeta}>
+                                        <span><FaCalendarAlt /> {noticia.fecha}</span>
+                                        <span><FaEye /> {noticia.vistas} vistas</span>
+                                        {noticia.fijada && <span style={styles.noticiaBadge}>📌 Fijada</span>}
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-muted">No hay noticias disponibles.</p>
+                        )}
+                        {!isLoggedIn && noticias.length > 0 && (
+                            <div style={{ marginTop: '0.5rem', color: '#3EAEF4', fontSize: '0.85rem' }}>
+                                🔒 Inicia sesión para ver todas las noticias
+                            </div>
+                        )}
+                    </div>
+                    <div style={styles.cardTitleNoticias}>
+                        <FaNewspaper style={{ color: '#3EAEF4' }} /> Las puedes visualizar en la sección de noticias y avisos
+                    </div>
+                </div>
+            </div>
+
+            {/* Columna: Sidebar */}
+            <div style={{ ...styles.colSidebar}}>
+                <div style={styles.sidebar}>
+                    <div style={styles.sidebarTitle}>
+                        <FaInfoCircle /> Convocatorias y Procesos
+                    </div>
+                    <p style={{ 
+                        fontSize: '0.85rem', 
+                        color: '#6c757d', 
+                        marginBottom: '1rem',
+                        lineHeight: '1.5'
+                    }}>
+                        En este espacio podrás consultar y descargar las convocatorias y los requisitos para participar en los procesos de tu sección.
+                    </p>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                        {[
+                            { titulo: 'Convocatoria al crédito hipotecario 2026-1', descripcion: 'Próximamente • Fecha por definir' },
+                            { titulo: 'Convocatoria al festejo de la clausula 78, Personal de enfermería 2026-2', descripcion: 'Próximamente • Fecha por definir' },
+                            { titulo: 'Registro para RIFA DE PROPUESTAS 2026', descripcion: 'Próximamente • Fecha por definir' },
+                        ].map((item, index) => (
+                            <div key={index} style={{
+                                backgroundColor: 'rgba(255,255,255,0.8)',
+                                borderRadius: '12px',
+                                padding: '0.7rem 1rem',
+                                border: '1px solid #e9ecef',
+                                transition: 'all 0.3s ease',
+                                opacity: 0.7,
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                            }}>
+                                <div>
+                                    <div style={{ fontWeight: '600', fontSize: '0.85rem', color: '#0A0F1E' }}>
+                                        {item.titulo}
+                                    </div>
+                                    <div style={{ fontSize: '0.7rem', color: '#6c757d' }}>
+                                        {item.descripcion}
+                                    </div>
+                                </div>
+                                <span style={{
+                                    backgroundColor: '#ffc107',
+                                    color: '#0A0F1E',
+                                    padding: '0.15rem 0.6rem',
+                                    borderRadius: '12px',
+                                    fontSize: '0.55rem',
+                                    fontWeight: 'bold',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px',
+                                }}>
+                                    🚀 Próximo
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div style={{
+                        marginTop: '0.8rem',
+                        padding: '0.5rem 1rem',
+                        backgroundColor: 'rgba(62,174,244,0.05)',
+                        borderRadius: '12px',
+                        border: '1px dashed #3EAEF4',
+                        textAlign: 'center',
+                    }}>
+                        <span style={{ fontSize: '0.7rem', color: '#6c757d' }}>
+                            🔔 <Link to="/contacto" style={{ color: '#3EAEF4', fontWeight: '600', textDecoration: 'none' }}>Contáctanos</Link> para más información
+                        </span>
+                    </div>
+
+                    <div style={styles.sidebarTitle, { marginTop: '1.5rem' }}>
+                        <FaInfoCircle /> ¿Cómo participar?
+                    </div>
+                    <ul style={styles.listaReglas}>
+                        <li style={styles.listaReglasItem}>
+                            <FaShieldAlt style={{ color: '#3EAEF4' }} /> Ser agremiado de base.
+                        </li>
+                        <li style={styles.listaReglasItem}>
+                            <FaChartLine style={{ color: '#3EAEF4' }} /> Se evalua la antiguedad segun el proceso.
+                        </li>
+                        <li style={styles.listaReglasItem}>
+                            <FaGift style={{ color: '#3EAEF4' }} /> Inscribirse en las rifas.
+                        </li>
+                    </ul>
+                    
+                    {!isLoggedIn ? (
+                        <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(62,174,244,0.12)', borderRadius: '12px', textAlign: 'center' }}>
+                            <p style={{ fontWeight: 'bold', marginBottom: '0.3rem', color: '#0A0F1E' }}>✨ Beneficios exclusivos ✨</p>
+                            <p style={{ fontSize: '0.85rem', color: '#6c757d' }}>Préstamos, rifas, sorteos y más</p>
+                            <Link to="/registro" style={{ ...styles.heroBtn, marginTop: '0.5rem', fontSize: '0.85rem', padding: '0.5rem 1.5rem' }}>
+                                Regístrate aquí
+                            </Link>
+                        </div>
+                    ) : (
+                        <div style={{ marginTop: '1rem' }}>
+                            <Link to="/registro-credito" style={styles.heroBtn}>
+                                Solicitar crédito
+                            </Link>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>  
+
+        {/* ===== CARDS DE ACCIÓN (DESPUÉS) ===== */}
+        <div style={{ ...styles.actionGrid, marginTop: '2rem' }}>
             {/* ===== CRÉDITO AUTO ===== */}
             <Link to="/registro-auto" style={styles.actionCard}>
                 <div style={{ ...styles.actionCardIcon, color: '#4A90D9' }}><FaCar /></div>
@@ -361,82 +533,10 @@ const Dashboard = () => {
                 </>
             )}
         </div>
+    </div>
+);
 
-            {/* ===== GRID RESPONSIVE CON FLEXBOX ===== */}
-            <div style={styles.grid2cols}>
-                {/* Columna: Noticias */}
-                <div style={styles.colNoticias}>
-                    <div style={styles.cardNoticias}>
-                        <div style={styles.cardTitleNoticias}>
-                            <FaNewspaper style={{ color: '#3EAEF4' }} /> Noticias y Avisos
-                        </div>
-                        <div style={styles.cardBody}>
-                            {loadingNoticias ? (
-                                <p className="text-muted">Cargando noticias...</p>
-                            ) : noticias.length > 0 ? (
-                                noticias.map((noticia, idx) => (
-                                    <div key={idx} style={styles.noticiaCard}>
-                                        <div style={styles.noticiaTitulo}>{noticia.titulo}</div>
-                                        <div style={styles.noticiaResumen}>
-                                            {noticia.resumen?.substring(0, 100)}...
-                                        </div>
-                                        <div style={styles.noticiaMeta}>
-                                            <span><FaCalendarAlt /> {noticia.fecha}</span>
-                                            <span><FaEye /> {noticia.vistas} vistas</span>
-                                            {noticia.fijada && <span style={styles.noticiaBadge}>📌 Fijada</span>}
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <p className="text-muted">No hay noticias disponibles.</p>
-                            )}
-                            {!isLoggedIn && noticias.length > 0 && (
-                                <div style={{ marginTop: '0.5rem', color: '#3EAEF4', fontSize: '0.85rem' }}>
-                                    🔒 Inicia sesión para ver todas las noticias
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Columna: Sidebar */}
-                <div style={styles.colSidebar}>
-                    <div style={styles.sidebar}>
-                        <div style={styles.sidebarTitle}>
-                            <FaInfoCircle /> ¿Cómo participar?
-                        </div>
-                        <ul style={styles.listaReglas}>
-                            <li style={styles.listaReglasItem}>
-                                <FaShieldAlt style={{ color: '#3EAEF4' }} /> Ser agremiado de base.
-                            </li>
-                            <li style={styles.listaReglasItem}>
-                                <FaChartLine style={{ color: '#3EAEF4' }} /> 5 años de antigüedad
-                            </li>
-                            <li style={styles.listaReglasItem}>
-                                <FaGift style={{ color: '#3EAEF4' }} /> Participar en la rifa de créditos
-                            </li>
-                        </ul>
-                        
-                        {!isLoggedIn ? (
-                            <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(62,174,244,0.12)', borderRadius: '12px', textAlign: 'center' }}>
-                                <p style={{ fontWeight: 'bold', marginBottom: '0.3rem', color: '#0A0F1E' }}>✨ Beneficios exclusivos ✨</p>
-                                <p style={{ fontSize: '0.85rem', color: '#6c757d' }}>Préstamos, rifas, sorteos y más</p>
-                                <Link to="/registro" style={{ ...styles.heroBtn, marginTop: '0.5rem', fontSize: '0.85rem', padding: '0.5rem 1.5rem' }}>
-                                    Regístrate aquí
-                                </Link>
-                            </div>
-                        ) : (
-                            <div style={{ marginTop: '1rem' }}>
-                                <Link to="/registro-credito" style={styles.heroBtn}>
-                                    Solicitar crédito
-                                </Link>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+    
 
     // ===== ESTILOS =====
     const styles = {

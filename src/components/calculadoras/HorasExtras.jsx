@@ -115,6 +115,7 @@ const HorasExtras = () => {
             outline: 'none',
             transition: 'all 0.3s ease',
             backgroundColor: 'white',
+            color: '#0A0F1E',
         },
         select: {
             width: '100%',

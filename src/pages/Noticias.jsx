@@ -136,6 +136,7 @@ const styles = {
         outline: 'none',
         transition: 'all 0.3s ease',
         backgroundColor: '#f0f2f5',
+        color: '#0A0F1E',
         height: '46px',
     },
     searchInputFocus: {

@@ -103,6 +103,7 @@ const PrestamoAuto = () => {
             outline: 'none',
             transition: 'all 0.3s ease',
             backgroundColor: 'white',
+            color: '#0A0F1E',
         },
         button: {
             backgroundColor: '#F2994A',

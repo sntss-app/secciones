@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+// 🔥 IMPORTAR ANALYTICS
+import { initAnalytics, PageTracker } from './components/Analytics';
 
 // Importar páginas
 import Registro from './pages/Registro';
@@ -34,8 +37,16 @@ const RutaProtegida = ({ children }) => {
 };
 
 function App() {
+    // 🔥 INICIALIZAR ANALYTICS AL MONTAR LA APP
+    useEffect(() => {
+        initAnalytics();
+    }, []);
+
     return (
         <BrowserRouter>
+            {/* 🔥 TRACKER DE PÁGINAS - Siempre visible */}
+            <PageTracker />
+            
             <div className="d-flex flex-column min-vh-100">
                 <Navbar />
                 <main className="flex-grow-1">
@@ -47,7 +58,6 @@ function App() {
                         <Route path="/verificar-2fa" element={<Verificar2FA />} />
                         <Route path="/perfil" element={<RutaProtegida><Perfil /></RutaProtegida>} />
                         <Route path="/registro-auto" element={<RutaProtegida><AutoCredito /></RutaProtegida>} />
-                        {/* 👇 Agrega esta línea para el validador */}
                         <Route path="/validador-auto" element={<RutaProtegida><AutoValidador /></RutaProtegida>} />
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
                         <Route path="*" element={<Navigate to="/dashboard" replace />} />

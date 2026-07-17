@@ -108,6 +108,7 @@ const CreditoHipotecario = () => {
             outline: 'none',
             transition: 'all 0.3s ease',
             backgroundColor: 'white',
+            color: '#0A0F1E',
         },
         inputFull: {
             gridColumn: '1 / -1',
@@ -302,7 +303,7 @@ const CreditoHipotecario = () => {
 
                     <small style={styles.smallText}>
                         <FaChartLine style={{ marginRight: '0.3rem' }} />
-                        El monto final depende de la evaluación crediticia y disponibilidad de recursos.
+                        El monto final depende de la liquidez del trabajador.
                     </small>
                 </div>
             )}

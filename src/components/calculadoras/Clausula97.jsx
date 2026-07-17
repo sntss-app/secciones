@@ -1,26 +1,35 @@
 import React, { useState } from 'react';
-import { FaCalculator, FaFileContract, FaMoneyBillWave, FaInfoCircle, FaCalendarAlt } from 'react-icons/fa';
+import { 
+    FaCalculator, FaFileContract, FaMoneyBillWave, FaInfoCircle, 
+    FaCalendarAlt, FaCheckCircle, FaRegClock
+} from 'react-icons/fa';
 
 const Clausula97 = () => {
-    const [sueldoMensual, setSueldoMensual] = useState('');
-    const [meses, setMeses] = useState(4);
+    const [c02, setC02] = useState('');
+    const [c11, setC11] = useState('');
     const [resultado, setResultado] = useState(null);
+    const [mostrarResultados, setMostrarResultados] = useState(false);
 
     const calcular = () => {
-        const sueldo = parseFloat(sueldoMensual);
+        const c02Num = parseFloat(c02);
+        const c11Num = parseFloat(c11);
         
-        if (isNaN(sueldo) || sueldo <= 0) {
-            alert('Ingresa un sueldo mensual válido.');
+        if (isNaN(c02Num) || isNaN(c11Num)) {
+            alert('Por favor ingresa ambos conceptos (002 y 011).');
             return;
         }
 
-        const monto = sueldo * meses;
+        // 🔥 CORRECCIÓN: Calcular base mensual como en PHP
+        const baseMensual = (c02Num + c11Num) * 2;
+
         setResultado({
-            sueldo: sueldo,
-            meses: meses,
-            monto: monto,
-            pagoMensual: monto / 12 // Suponiendo 12 meses de plazo
+            baseMensual: baseMensual,
+            monto1: baseMensual * 1,  // 1 mes
+            monto2: baseMensual * 2,  // 2 meses
+            monto3: baseMensual * 3,  // 3 meses
+            monto4: baseMensual * 4   // 4 meses
         });
+        setMostrarResultados(true);
     };
 
     const formatter = new Intl.NumberFormat('es-MX', {
@@ -105,20 +114,7 @@ const Clausula97 = () => {
             outline: 'none',
             transition: 'all 0.3s ease',
             backgroundColor: 'white',
-        },
-        inputFull: {
-            gridColumn: '1 / -1',
-        },
-        select: {
-            width: '100%',
-            padding: '0.6rem 1rem',
-            fontSize: '0.95rem',
-            border: '1px solid #ddd',
-            borderRadius: '10px',
-            outline: 'none',
-            transition: 'all 0.3s ease',
-            backgroundColor: 'white',
-            cursor: 'pointer',
+            color: '#0A0F1E',
         },
         button: {
             backgroundColor: '#8E44AD',
@@ -151,48 +147,33 @@ const Clausula97 = () => {
             color: '#0A0F1E',
             fontSize: '1rem',
         },
+        resultadoGrid: {
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '0.5rem',
+        },
         resultadoItem: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '0.6rem 1rem',
-            borderBottom: '1px solid #e9ecef',
-            alignItems: 'center',
+            padding: '0.8rem 1rem',
+            borderRadius: '8px',
+            textAlign: 'center',
+            border: '1px solid #e9ecef',
+            backgroundColor: 'white',
         },
-        resultadoItemLast: {
-            borderBottom: 'none',
-        },
-        resultadoLabel: {
-            color: '#495057',
-            fontSize: '0.9rem',
+        resultadoItemTitle: {
+            fontSize: '0.8rem',
+            color: '#6c757d',
+            fontWeight: '600',
         },
         resultadoMonto: {
+            fontSize: '1.2rem',
             fontWeight: 'bold',
-            fontSize: '1.1rem',
             color: '#003c82',
         },
-        resultadoMontoVerde: {
-            fontWeight: 'bold',
-            fontSize: '1.1rem',
+        resultadoPlazo: {
+            fontSize: '0.7rem',
             color: '#28a745',
-        },
-        resultadoTotal: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '0.8rem 1rem',
-            backgroundColor: 'rgba(142,68,173,0.08)',
-            borderRadius: '8px',
-            marginTop: '0.5rem',
-            alignItems: 'center',
-        },
-        resultadoTotalLabel: {
-            fontWeight: 'bold',
-            color: '#0A0F1E',
-            fontSize: '1rem',
-        },
-        resultadoTotalMonto: {
-            fontWeight: 'bold',
-            fontSize: '1.2rem',
-            color: '#8E44AD',
+            fontWeight: '500',
+            marginTop: '0.2rem',
         },
         smallText: {
             display: 'block',
@@ -206,8 +187,19 @@ const Clausula97 = () => {
             grid: {
                 gridTemplateColumns: '1fr',
             },
+            resultadoGrid: {
+                gridTemplateColumns: '1fr',
+            },
         },
     };
+
+    // 🔥 Info de plazos
+    const plazos = [
+        { meses: 1, quincenas: 10, label: '1 mes' },
+        { meses: 2, quincenas: 20, label: '2 meses' },
+        { meses: 3, quincenas: 30, label: '3 meses' },
+        { meses: 4, quincenas: 40, label: '4 meses' },
+    ];
 
     return (
         <div style={styles.container}>
@@ -225,22 +217,27 @@ const Clausula97 = () => {
             {/* Info Box */}
             <div style={styles.infoBox}>
                 <FaInfoCircle style={{ color: '#8E44AD', marginRight: '0.5rem' }} />
-                La Cláusula 97 del Contrato Colectivo de Trabajo permite solicitar 
-                un préstamo de hasta 4 meses de sueldo, con descuentos quincenales.
+                <strong>Anticipo de sueldo</strong>
+                <p style={{ margin: '0.3rem 0 0 0', fontSize: '0.85rem' }}>
+                    Permite solicitar un anticipo de hasta cuatro meses de sueldo, una vez al año.
+                    El trabajador de base puede ejercer este derecho en una sola exhibición o de forma fraccionada.
+                    <strong style={{ display: 'block', marginTop: '0.3rem' }}>Estos anticipos no generan intereses.</strong>
+                </p>
             </div>
 
             {/* Formulario */}
             <div style={styles.grid}>
                 <div style={styles.inputGroup}>
                     <label style={styles.label}>
-                        <FaMoneyBillWave style={styles.labelIcon} /> Sueldo mensual
+                        <FaMoneyBillWave style={styles.labelIcon} /> Concepto 002
                     </label>
                     <input 
                         type="number" 
+                        step="0.01"
                         style={styles.input} 
-                        value={sueldoMensual} 
-                        onChange={(e) => setSueldoMensual(e.target.value)} 
-                        placeholder="Ej: 15000.00"
+                        value={c02} 
+                        onChange={(e) => setC02(e.target.value)} 
+                        placeholder="Ej: 2437.73"
                         onFocus={(e) => {
                             e.target.style.borderColor = '#8E44AD';
                             e.target.style.boxShadow = '0 0 0 3px rgba(142,68,173,0.15)';
@@ -253,12 +250,15 @@ const Clausula97 = () => {
                 </div>
                 <div style={styles.inputGroup}>
                     <label style={styles.label}>
-                        <FaCalendarAlt style={styles.labelIcon} /> Meses a solicitar
+                        <FaMoneyBillWave style={styles.labelIcon} /> Concepto 011
                     </label>
-                    <select
-                        style={styles.select}
-                        value={meses}
-                        onChange={(e) => setMeses(Number(e.target.value))}
+                    <input 
+                        type="number" 
+                        step="0.01"
+                        style={styles.input} 
+                        value={c11} 
+                        onChange={(e) => setC11(e.target.value)} 
+                        placeholder="Ej: 2002.60"
                         onFocus={(e) => {
                             e.target.style.borderColor = '#8E44AD';
                             e.target.style.boxShadow = '0 0 0 3px rgba(142,68,173,0.15)';
@@ -267,12 +267,7 @@ const Clausula97 = () => {
                             e.target.style.borderColor = '#ddd';
                             e.target.style.boxShadow = 'none';
                         }}
-                    >
-                        <option value={1}>1 mes</option>
-                        <option value={2}>2 meses</option>
-                        <option value={3}>3 meses</option>
-                        <option value={4}>4 meses</option>
-                    </select>
+                    />
                 </div>
             </div>
 
@@ -289,42 +284,41 @@ const Clausula97 = () => {
                     e.currentTarget.style.boxShadow = 'none';
                 }}
             >
-                <FaCalculator /> Calcular Préstamo
+                <FaCalculator /> Calcular Préstamos
             </button>
 
             {/* Resultados */}
-            {resultado && (
+            {mostrarResultados && resultado && (
                 <div style={styles.resultadoContainer}>
                     <div style={styles.resultadoTitle}>
                         <FaFileContract style={{ color: '#8E44AD', marginRight: '0.5rem' }} />
-                        Detalles del Préstamo
+                        Montos del Préstamo
                     </div>
 
-                    <div style={styles.resultadoItem}>
-                        <span style={styles.resultadoLabel}>Sueldo mensual</span>
-                        <span style={styles.resultadoMonto}>{formatter.format(resultado.sueldo)}</span>
-                    </div>
-
-                    <div style={styles.resultadoItem}>
-                        <span style={styles.resultadoLabel}>Meses solicitados</span>
-                        <span style={styles.resultadoMonto}>{resultado.meses}</span>
-                    </div>
-
-                    <div style={{ ...styles.resultadoItem, ...styles.resultadoItemLast }}>
-                        <span style={styles.resultadoLabel}>Monto del préstamo</span>
-                        <span style={styles.resultadoMontoVerde}>{formatter.format(resultado.monto)}</span>
-                    </div>
-
-                    <div style={styles.resultadoTotal}>
-                        <span style={styles.resultadoTotalLabel}>Pago mensual estimado (12 meses)</span>
-                        <span style={styles.resultadoTotalMonto}>
-                            {formatter.format(resultado.pagoMensual)}
-                        </span>
+                    <div style={styles.resultadoGrid}>
+                        {plazos.map((plazo, index) => {
+                            const montos = [resultado.monto1, resultado.monto2, resultado.monto3, resultado.monto4];
+                            return (
+                                <div key={index} style={styles.resultadoItem}>
+                                    <div style={styles.resultadoItemTitle}>
+                                        <FaCalendarAlt style={{ marginRight: '0.3rem', fontSize: '0.7rem' }} />
+                                        {plazo.label}
+                                    </div>
+                                    <div style={styles.resultadoMonto}>
+                                        {formatter.format(montos[index])}
+                                    </div>
+                                    <div style={styles.resultadoPlazo}>
+                                        <FaRegClock style={{ marginRight: '0.2rem', fontSize: '0.6rem' }} />
+                                        Pagar a {plazo.quincenas} quincenas
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
 
                     <small style={styles.smallText}>
-                        * El pago mensual es estimado. Los descuentos se realizan de forma quincenal 
-                        y pueden variar según las tasas de interés vigentes.
+                        * Los descuentos se realizan de forma quincenal según el plazo elegido.
+                        No generan intereses.
                     </small>
                 </div>
             )}

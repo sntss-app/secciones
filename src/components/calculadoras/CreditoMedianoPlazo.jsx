@@ -277,7 +277,6 @@ const CreditoMedianoPlazo = () => {
                     <small style={styles.smallText}>
                         <FaChartLine style={{ marginRight: '0.3rem' }} />
                         El monto final depende de la evaluación crediticia y disponibilidad de recursos.
-                        Plazo de pago: hasta 5 años.
                     </small>
                 </div>
             )}

@@ -885,6 +885,32 @@ const Clausula79Bis = () => {
                     </div>
                 </div>
 
+                {/* 🔥 UNA SOLA SECCIÓN DE OBSERVACIONES (unificada) */}
+                {registroExistente.observaciones && (
+                    <div style={{
+                        backgroundColor: '#fff3cd',
+                        padding: '0.8rem 1rem',
+                        borderRadius: '12px',
+                        fontSize: '0.85rem',
+                        borderLeft: '4px solid #ffc107',
+                        margin: '0 0 1.5rem 0',
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '0.5rem'
+                    }}>
+                        <FaExclamationTriangle style={{ color: '#856404', marginTop: '0.15rem', flexShrink: 0 }} />
+                        <div>
+                            <strong>📝 Observaciones del validador:</strong>
+                            <p style={{ margin: '0.3rem 0 0 0' }}>{registroExistente.observaciones}</p>
+                            {isObservaciones && (
+                                <p style={{ margin: '0.3rem 0 0 0', fontSize: '0.8rem', color: '#856404' }}>
+                                    ⚠️ Corrige los documentos y vuelve a enviar tu registro.
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                )}
+
                 <div style={styles.card}>
                     <div style={styles.cardBody}>
                         <div style={styles.statusCard}>
@@ -904,13 +930,6 @@ const Clausula79Bis = () => {
                                 </>
                             )}
                         </div>
-
-                        {registroExistente.observaciones && isObservaciones && (
-                            <div style={styles.observacionesBox}>
-                                <strong>📝 Observaciones del validador:</strong>
-                                <p style={{ margin: '0.5rem 0 0 0' }}>{registroExistente.observaciones}</p>
-                            </div>
-                        )}
 
                         <div style={styles.grid2cols}>
                             <div style={styles.inputGroup}>

@@ -165,6 +165,7 @@ const styles = {
         transition: 'all 0.3s ease',
         outline: 'none',
         backgroundColor: 'white',
+        color: '#0A0F1E',
     },
     inputFocus: {
         borderColor: '#3EAEF4',

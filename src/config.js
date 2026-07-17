@@ -1,4 +1,3 @@
-// src/config.js
 export const apiUrl = (endpoint) => {
     const baseUrl = 'https://sntss-secciones.org';
     
@@ -23,3 +22,5 @@ export const apiUrl = (endpoint) => {
     // Si no empieza con /, agregarlo
     return `${baseUrl}/api/${endpoint}`;
 };
+
+export const GA_MEASUREMENT_ID = 'G-D0FPD0NC2W';
