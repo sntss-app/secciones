@@ -13,7 +13,6 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@rollup/rollup-darwin-arm64": "^4.62.2",
     "bootstrap": "^5.3.8",
     "chart.js": "^4.5.1",
     "qrcode.react": "^4.2.0",
