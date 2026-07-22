@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "cross-env ROLLUP_WATCH_FORCE_WASM=true vite",
     "start": "react-scripts start",
-    "build": "vite build",
+    "build": "cross-env ROLLUP_WATCH_FORCE_WASM=true vite build",
     "build:cra": "react-scripts build",
     "preview": "vite preview",
     "test": "react-scripts test",
@@ -29,9 +29,11 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@rollup/wasm-node": "^4.62.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.3.0",
+    "cross-env": "^10.1.0",
     "esbuild-wasm": "^0.28.1",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
@@ -50,5 +52,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "overrides": {
+    "rollup": "npm:@rollup/wasm-node@^4.28.1"
   }
 }
