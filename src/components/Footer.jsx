@@ -52,7 +52,7 @@ const Footer = () => {
     const getTitulo = () => {
         const isLoggedIn = Boolean(localStorage.getItem('matricula'));
         if (!isLoggedIn) {
-            return 'SNTSS - CEN';
+            return 'SNTSS';
         }
         
         const seccion = getSeccionUsuario();
@@ -80,7 +80,7 @@ const Footer = () => {
 
     const getCopyright = () => {
         const isLoggedIn = Boolean(localStorage.getItem('matricula'));
-        let seccionTexto = 'CEN';
+        let seccionTexto = 'SNTSS';
         
         if (isLoggedIn) {
             const seccion = getSeccionUsuario();
@@ -290,7 +290,7 @@ const Footer = () => {
                         ) : (
                             // ✅ FALLBACK: Redes sociales por defecto (CEN)
                             <>
-                                <a href="https://www.facebook.com/profile.php?id=61583448263870&locale=es_LA" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
+                                <a href="https://www.facebook.com/SNTSSOFICIAL" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
                                     <FaFacebook size={24} />
                                 </a>
                                 <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tw">
@@ -321,7 +321,7 @@ const Footer = () => {
                     
                     <p style={styles.copy}>
                         {getCopyright()} 
-                        <strong style={styles.legend}> espineza.dev</strong>
+                        <strong style={styles.legend}> espigar.dev</strong>
                     </p>
                     <AvisoPrivacidad show={showAvisoPrivacidad} onHide={() => setShowAvisoPrivacidad(false)} />
                 </div>

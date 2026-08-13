@@ -313,16 +313,16 @@ const Navbar = () => {
     // ✅ Determinar el título y badge según la sesión
     const getTitulo = () => {
         if (!isLoggedIn) {
-            return 'SNTSS-CEN';
+            return 'SNTSS';
         }
         return `SNTSS Sección ${seccionUsuario?.romano || 'XXXIII'}`;
     };
 
     const getBadge = () => {
         if (!isLoggedIn) {
-            return '"Comite Ejecutivo Nacional"';
+            return '"Sindicato Nacional de Trabajadores del Seguro Social"';
         }
-        return seccionUsuario?.nombre || 'Comite Ejecutivo Nacional';
+        return seccionUsuario?.nombre || 'Sindicato Nacional de Trabajadores del Seguro Social';
     };
 
     // ✅ REDES SOCIALES DEL NAVBAR (dinámicas o fallback)
@@ -374,7 +374,7 @@ const Navbar = () => {
                         ) : (
                             // ✅ FALLBACK: Redes del CEN (sección 39)
                             <>
-                                <a href="https://www.facebook.com/search/top?q=secci%C3%B3n%2033%20sntss&locale=es_LA" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
+                                <a href="https://www.facebook.com/SNTSSOFICIAL" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
                                     <FaFacebook size={20} />
                                 </a>
                                 <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tw">

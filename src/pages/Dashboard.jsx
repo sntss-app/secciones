@@ -1161,7 +1161,7 @@ const Dashboard = () => {
                 <div style={styles.heroContent}>
                     <div style={styles.heroLeft}>
                         <h1 style={styles.heroTitle}>
-                            {isLoggedIn ? `¡Bienvenido, ${userName}!` : 'SNTSS - CEN'}
+                            {isLoggedIn ? `¡Bienvenido, ${userName}!` : 'SNTSS'}
                         </h1>
                         <p style={styles.heroSubtitle}>
                             Comité Ejecutivo Seccional al Servicio de los trabajadores
