@@ -26,6 +26,10 @@ const Perfil = () => {
 
     const getImageUrl = (path) => {
         if (!path) return null;
+        // Vista previa local creada con URL.createObjectURL al elegir una foto.
+        if (path.startsWith('blob:') || path.startsWith('data:')) {
+            return path;
+        }
         if (path.startsWith('http://') || path.startsWith('https://')) {
             return path;
         }
@@ -78,7 +82,10 @@ const Perfil = () => {
                     correo: data.usuario.correo || ''
                 });
                 if (data.usuario.foto_path) {
-                    setFotoPreview(data.usuario.foto_path);
+                    // La foto conserva el nombre 6.ext al reemplazarse. El
+                    // parámetro evita que el navegador muestre una copia en caché.
+                    const separador = data.usuario.foto_path.includes('?') ? '&' : '?';
+                    setFotoPreview(`${data.usuario.foto_path}${separador}v=${Date.now()}`);
                 }
             } else {
                 Swal.fire({
@@ -740,12 +747,12 @@ const Perfil = () => {
                             </label>
                         </div>
                         <p style={{ fontSize: '0.8rem', color: '#6c757d', marginTop: '0.5rem' }}>
-                            <FaEdit style={{ marginRight: '5px' }} /> Haz clic en la cámara para cambiar tu foto
+                            <FaEdit style={{ marginRight: '5px' }} /> Haz clic en la cámara para cambiar tu foto y recuerda dar al boton de guardar cambios al finalizar.
                         </p>
                     </div>
 
                     {/* Formulario */}
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={(e) => e.preventDefault()}>
                         <div style={styles.grid2cols}>
                             {/* Datos fijos */}
                             <div style={styles.colCampo}>
@@ -825,9 +832,10 @@ const Perfil = () => {
 
                         <div style={styles.flexRow}>
                             <button 
-                                type="submit" 
+                                type="button"
                                 style={styles.btnPrimary}
                                 disabled={loading}
+                                onClick={handleSubmit}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = 'translateY(-2px)';
                                     e.currentTarget.style.boxShadow = '0 4px 16px rgba(62,174,244,0.3)';

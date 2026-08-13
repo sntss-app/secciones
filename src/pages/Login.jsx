@@ -6,9 +6,9 @@ import {
 } from 'react-icons/fa';
 import { apiUrl } from '../config';
 import { storeUserSession } from '../utils/roles';
+import { getSectionAssets } from '../utils/sectionAssets';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
-import { color } from 'chart.js/helpers';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -17,7 +17,7 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [intentos, setIntentos] = useState(0);
     const [bloqueado, setBloqueado] = useState(false);
-    const matriculaRef = useRef(null); // ← REF para la matrícula
+    const matriculaRef = useRef(null);
     
     const [formData, setFormData] = useState({
         matricula: '',
@@ -28,12 +28,9 @@ const Login = () => {
         return /^\d{8,9}$/.test(matricula);
     };
 
-    // 🔥 FUNCIÓN PARA FILTRAR SOLO NÚMEROS
     const handleMatriculaChange = (e) => {
         const rawValue = e.target.value;
-        // Solo permitir números
         const numericValue = rawValue.replace(/\D/g, '');
-        // Limitar a 9 dígitos
         const finalValue = numericValue.slice(0, 9);
         setFormData({ ...formData, matricula: finalValue });
     };
@@ -125,16 +122,100 @@ const Login = () => {
                 timerProgressBar: true,
             });
 
-            if (data.usuario.requires_2fa === true) {
-                storeUserSession(sessionStorage, data.usuario);
+            // ✅ GUARDAR TODOS LOS DATOS DEL USUARIO
+            const usuario = data.usuario;
+
+            // 🔥 DEBUG: Ver qué viene del backend
+            console.log('🔍 usuario completo:', usuario);
+            console.log('🔍 idSeccion:', usuario.idSeccion);
+            console.log('🔍 idTipo:', usuario.idTipo);
+            console.log('🔍 seccion_banner:', usuario.seccion_banner);
+            console.log('🔍 seccion_logo:', usuario.seccion_logo);
+
+            // ============================================
+            // ✅ 1. GUARDAR DATOS BÁSICOS
+            // ============================================
+            localStorage.setItem('matricula', usuario.matricula);
+            localStorage.setItem('nombre', usuario.nombre || usuario.matricula);
+            localStorage.setItem('correo', usuario.correo || '');
+            localStorage.setItem('status', usuario.status || '2');
+            localStorage.setItem('isLoggedIn', 'true');
+
+            // ============================================
+            // ✅ 2. GUARDAR idTipo y tipoUsuario
+            // ============================================
+            if (usuario.idTipo) {
+                localStorage.setItem('idTipo', usuario.idTipo.toString());
+                const tipoMap = {
+                    1: 'activo',
+                    2: 'jubilado',
+                    3: 'confianza'
+                };
+                const tipoUsuario = tipoMap[usuario.idTipo] || 'activo';
+                localStorage.setItem('tipoUsuario', tipoUsuario);
+                console.log('✅ Tipo de usuario guardado:', tipoUsuario, '(ID:', usuario.idTipo, ')');
+            } else {
+                // Si no viene idTipo, por defecto es activo
+                localStorage.setItem('idTipo', '1');
+                localStorage.setItem('tipoUsuario', 'activo');
+                console.warn('⚠️ idTipo no encontrado, se asignó "activo" por defecto');
+            }
+
+            // ============================================
+            // ✅ 3. GUARDAR LA SECCIÓN
+            // ============================================
+            if (usuario.idSeccion) {
+                const assets = getSectionAssets(usuario.idSeccion);
+                const seccionData = {
+                    id: usuario.idSeccion,
+                    romano: usuario.seccion_romano || 'N/A',
+                    nombre: usuario.seccion_nombre || 'Sin sección',
+                    slogan: usuario.seccion_slogan || null,
+                    direccion: usuario.seccion_direccion || null,
+                    color: usuario.seccion_color || '#3EAEF4',
+                    logo: usuario.seccion_logo || assets.logo,
+                    banner: usuario.seccion_banner || assets.banner,
+                    redes: usuario.redes_sociales || {}
+                };
+                localStorage.setItem('seccionUsuario', JSON.stringify(seccionData));
+                console.log('✅ Sección guardada:', seccionData);
+            } else {
+                console.warn('⚠️ usuario.idSeccion es null o undefined, NO se guardó la sección');
+            }
+
+            // ============================================
+            // ✅ 4. GUARDAR FOTO Y OTROS DATOS
+            // ============================================
+            if (usuario.foto_path) {
+                localStorage.setItem('foto', usuario.foto_path);
+            }
+
+            if (usuario.userId) {
+                localStorage.setItem('userId', usuario.userId);
+            }
+
+            if (usuario.curp) {
+                localStorage.setItem('curp', usuario.curp);
+            }
+
+            // ============================================
+            // ✅ 5. GUARDAR ROLES
+            // ============================================
+            if (usuario.roleIds && usuario.roleIds.length > 0) {
+                localStorage.setItem('roleIds', JSON.stringify(usuario.roleIds));
+            }
+            if (usuario.roleNames && usuario.roleNames.length > 0) {
+                localStorage.setItem('roleNames', JSON.stringify(usuario.roleNames));
+            }
+
+            // ============================================
+            // ✅ 6. REDIRIGIR SEGÚN 2FA
+            // ============================================
+            if (usuario.requires_2fa === true) {
+                storeUserSession(sessionStorage, usuario);
                 navigate('/verificar-2fa');
             } else {
-                storeUserSession(localStorage, data.usuario);
-                
-                if (data.usuario.foto_path) {
-                    localStorage.setItem('foto', data.usuario.foto_path);
-                }
-                
+                storeUserSession(localStorage, usuario);
                 navigate('/dashboard');
             }
         } catch (err) {
@@ -349,7 +430,6 @@ const Login = () => {
                     )}
                     
                     <form onSubmit={handleSubmit}>
-                        {/* Matrícula */}
                         <div style={styles.inputGroup}>
                             <label style={styles.label}>
                                 <FaUserAlt style={{ marginRight: '8px', color: '#3EAEF4' }} /> Matrícula
@@ -361,7 +441,7 @@ const Login = () => {
                                     style={styles.input}
                                     placeholder="Ej. 97123456"
                                     value={formData.matricula}
-                                    onChange={handleMatriculaChange} // ← Función separada
+                                    onChange={handleMatriculaChange}
                                     onFocus={(e) => {
                                         e.target.style.borderColor = '#3EAEF4';
                                         e.target.style.boxShadow = '0 0 0 3px rgba(62,174,244,0.15)';
@@ -380,7 +460,6 @@ const Login = () => {
                             </span>
                         </div>
                         
-                        {/* Contraseña */}
                         <div style={styles.inputGroup}>
                             <label style={styles.label}>
                                 <FaLock style={{ marginRight: '8px', color: '#3EAEF4' }} /> Contraseña

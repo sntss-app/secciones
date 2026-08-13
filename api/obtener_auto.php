@@ -1,32 +1,9 @@
 <?php
 /*
-  Obtiene el crédito de auto de una sola matrícula.
-  Lo usa el Dashboard, RegistroCredito y EstatusCredito al cargar o recargar sesión.
+  Obtener registro de crédito auto de un usuario.
+  Devuelve también los datos de la sección y los recursos del proceso.
 */
 require_once 'config.php';
-
-function mapStatus($status) {
-    // La BD guarda números; React trabaja mejor con palabras claras.
-    $map = [
-        1 => 'preregistro',
-        2 => 'aprobado',
-        3 => 'observaciones',
-        4 => 'sinconcluir',
-        5 => 'denegado',
-    ];
-    return $map[(int)$status] ?? 'preregistro';
-}
-
-function findDocumentPath($matricula, $documentId) {
-    // Busca el archivo subido sin importar el año exacto de la carpeta.
-    $patterns = glob(__DIR__ . "/uploads/*/auto/{$matricula}/{$documentId}.*");
-    if (!$patterns || count($patterns) === 0) {
-        return null;
-    }
-    $fullPath = $patterns[0];
-    $relativePath = str_replace('\\', '/', str_replace(__DIR__, '', $fullPath));
-    return '/api' . $relativePath;
-}
 
 $matricula = isset($_GET['matricula']) ? trim($_GET['matricula']) : '';
 if (empty($matricula)) {
@@ -36,41 +13,60 @@ if (empty($matricula)) {
 }
 
 try {
-    $stmt = $pdo->prepare(
-        'SELECT a.id, a.matricula, a.fecha_registro, a.status, a.valido, a.observaciones, a.fecha_validado,
-                u.nombre, u.categoria, u.antiguedad
-         FROM auto a
-         JOIN usuarios u ON u.matricula = a.matricula
-         WHERE a.matricula = :matricula
-         LIMIT 1'
-    );
+    // ✅ Obtener registro de auto con datos de la sección
+    $stmt = $pdo->prepare("
+        SELECT 
+            a.id, 
+            a.matricula, 
+            a.idSeccion,
+            a.fecha_registro, 
+            a.valido, 
+            a.observaciones, 
+            a.fecha_validado, 
+            a.status,
+            s.romano AS seccion_romano,
+            s.nombre AS seccion_nombre,
+            s.color_principal AS seccion_color,
+            spd.logo_url AS logo_auto_url,
+            spd.convocatoria_url AS convocatoria_auto_url
+        FROM auto a
+        LEFT JOIN secciones s ON a.idSeccion = s.id
+        LEFT JOIN secciones_procesos_docs spd ON a.idSeccion = spd.idSeccion AND spd.proceso = 'auto'
+        WHERE a.matricula = :matricula
+        LIMIT 1
+    ");
     $stmt->execute([':matricula' => $matricula]);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $credito = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$row) {
-        echo json_encode(['success' => false, 'message' => 'No existe un registro de crédito de auto para esta matrícula.']);
-        exit;
+    if ($credito) {
+        // Mapear estatus
+        $estatusMap = [
+            1 => 'preregistro',
+            2 => 'aprobado',
+            3 => 'observaciones',
+            4 => 'denegado'
+        ];
+        $credito['estatus'] = $estatusMap[$credito['status']] ?? 'preregistro';
+        
+        // Formatear fechas
+        $credito['fecha'] = date('d/m/Y H:i', strtotime($credito['fecha_registro']));
+        $credito['fecha_validado'] = $credito['fecha_validado'] 
+            ? date('d/m/Y H:i', strtotime($credito['fecha_validado'])) 
+            : null;
+        
+        echo json_encode([
+            'success' => true,
+            'credit' => $credito
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false,
+            'message' => 'No hay registro de crédito para esta matrícula.'
+        ]);
     }
 
-    $credit = [
-        'id' => isset($row['id']) ? (int)$row['id'] : null,
-        'matricula' => $row['matricula'],
-        'nombre' => $row['nombre'],
-        'categoria' => $row['categoria'] ?? '',
-        'antiguedad' => $row['antiguedad'] ?? '',
-        'estatus' => mapStatus($row['status']),
-        'fecha' => $row['fecha_registro'] ? date('Y-m-d', strtotime($row['fecha_registro'])) : null,
-        'observaciones' => $row['observaciones'],
-        'valido' => $row['valido'],
-        'fecha_validado' => $row['fecha_validado'] ? date('Y-m-d', strtotime($row['fecha_validado'])) : null,
-        'tarjetonName' => 'Tarjetón de Pago',
-        'ineName' => 'Identificación Oficial INE',
-        'tarjetonPath' => findDocumentPath($row['matricula'], 1),
-        'inePath' => findDocumentPath($row['matricula'], 2),
-    ];
-
-    echo json_encode(['success' => true, 'credit' => $credit]);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Error en la base de datos: ' . $e->getMessage()]);
 }
+?>

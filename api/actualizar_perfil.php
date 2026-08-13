@@ -4,6 +4,7 @@
   - Teléfono
   - Correo
   - Foto de perfil (opcional)
+  Ahora con tablas separadas: usuarios (datos IMSS) y registros (datos del sistema)
 */
 require_once 'config.php';
 
@@ -41,19 +42,71 @@ try {
     // Iniciar transacción
     $pdo->beginTransaction();
 
-    // 1. Actualizar teléfono y correo
-    $stmt = $pdo->prepare(
-        'UPDATE usuarios SET telefono = :telefono, correo = :correo WHERE matricula = :matricula'
+    // ✅ OBTENER LA SECCIÓN DEL USUARIO DESDE usuarios
+    $usuarioStmt = $pdo->prepare(
+        'SELECT idSeccion FROM usuarios WHERE matricula = :matricula LIMIT 1'
     );
-    $stmt->execute([
-        ':telefono' => $telefono,
-        ':correo' => $correo,
-        ':matricula' => $matricula,
-    ]);
+    $usuarioStmt->execute([':matricula' => $matricula]);
+    $usuario = $usuarioStmt->fetch(PDO::FETCH_ASSOC);
 
-    // 2. Si hay foto, procesarla
+    if (!$usuario) {
+        throw new Exception('No se encontro el usuario.');
+    }
+
+    $idSeccion = (int) $usuario['idSeccion'];
+    if ($idSeccion <= 0) {
+        throw new Exception('El usuario no tiene una seccion asignada.');
+    }
+
+    // ✅ 1. ACTUALIZAR TELÉFONO Y CORREO EN registros
+    // Verificar si existe registro en registros
+    $checkStmt = $pdo->prepare("SELECT id FROM registros WHERE matricula = :matricula");
+    $checkStmt->execute([':matricula' => $matricula]);
+    $existeRegistro = $checkStmt->fetch();
+
+    if ($existeRegistro) {
+        // Actualizar registros existentes
+        $stmt = $pdo->prepare("
+            UPDATE registros 
+            SET telefono = :telefono, 
+                correo = :correo 
+            WHERE matricula = :matricula
+        ");
+        $stmt->execute([
+            ':telefono' => $telefono,
+            ':correo' => $correo,
+            ':matricula' => $matricula
+        ]);
+    } else {
+        // Insertar en registros si no existe
+        $stmt = $pdo->prepare("
+            INSERT INTO registros (
+                matricula, 
+                telefono, 
+                correo,
+                status
+            ) VALUES (
+                :matricula,
+                :telefono,
+                :correo,
+                2
+            )
+        ");
+        $stmt->execute([
+            ':matricula' => $matricula,
+            ':telefono' => $telefono,
+            ':correo' => $correo
+        ]);
+    }
+
+    // ✅ 2. Si hay foto, procesarla (esto no cambia, la foto sigue en la carpeta con sección)
     $fotoActualizada = false;
-    if ($fotoFile && $fotoFile['error'] === UPLOAD_ERR_OK) {
+    $fotoPath = null;
+    if ($fotoFile) {
+        if ($fotoFile['error'] !== UPLOAD_ERR_OK) {
+            throw new Exception('No se pudo recibir la foto. Intenta seleccionar el archivo nuevamente.');
+        }
+
         // Validar tipo de archivo
         $fotoTipos = ['image/jpeg', 'image/png', 'image/webp'];
         if (!in_array($fotoFile['type'], $fotoTipos)) {
@@ -65,9 +118,9 @@ try {
             throw new Exception('La foto no debe superar los 5MB.');
         }
 
-        // Buscar año y carpeta de registro
+        // Buscar año y carpeta de registro con la sección
         $year = date('Y');
-        $targetDir = __DIR__ . "/uploads/$year/registro/$matricula/";
+        $targetDir = __DIR__ . "/uploads/$year/registro/$idSeccion/$matricula/";
         
         // Crear carpeta si no existe
         if (!is_dir($targetDir)) {
@@ -92,6 +145,7 @@ try {
         }
 
         $fotoActualizada = true;
+        $fotoPath = "/api/uploads/$year/registro/$idSeccion/$matricula/$nombreArchivo";
     }
 
     $pdo->commit();
@@ -104,7 +158,8 @@ try {
     echo json_encode([
         'success' => true,
         'message' => $mensaje,
-        'foto_actualizada' => $fotoActualizada
+        'foto_actualizada' => $fotoActualizada,
+        'foto_path' => $fotoPath
     ]);
 
 } catch (PDOException $e) {

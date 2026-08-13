@@ -2,6 +2,7 @@
 /*
   Cambiar contraseña del usuario desde el perfil.
   Solo requiere la nueva contraseña (no pide la actual porque se asume que es temporal o el usuario está logueado).
+  Ahora la contraseña se guarda en la tabla registros.
 */
 require_once 'config.php';
 
@@ -23,7 +24,9 @@ if (strlen($password_nueva) < 8) {
 
 try {
     $password_hashed = password_hash($password_nueva, PASSWORD_DEFAULT);
-    $update = $pdo->prepare("UPDATE usuarios SET contrasena = :password WHERE matricula = :matricula");
+    
+    // ✅ ACTUALIZAR CONTRASEÑA EN registros
+    $update = $pdo->prepare("UPDATE registros SET contrasena = :password WHERE matricula = :matricula");
     $resultado = $update->execute([
         ':password' => $password_hashed,
         ':matricula' => $matricula

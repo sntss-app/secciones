@@ -6,6 +6,7 @@
   Si coinciden, genera una nueva contraseña temporal aleatoria,
   la actualiza hasheada en la base de datos y la envía por correo
   utilizando PHPMailer con SMTP.
+  Ahora con tablas separadas: usuarios (datos IMSS) y registros (datos del sistema)
 */
 require_once 'config.php';
 
@@ -30,8 +31,21 @@ if (empty($matricula) || empty($correo)) {
 }
 
 try {
-    // Buscar al usuario por matrícula y correo (coincidencia exacta)
-    $stmt = $pdo->prepare("SELECT id, matricula, nombre, correo, contrasena FROM usuarios WHERE matricula = :matricula AND LOWER(correo) = LOWER(:correo) LIMIT 1");
+    // ✅ CONSULTA CON JOIN ENTRE usuarios Y registros
+    $stmt = $pdo->prepare("
+        SELECT 
+            u.id, 
+            u.matricula, 
+            REPLACE(u.nombre, '/', ' ') AS nombre, 
+            r.correo, 
+            r.contrasena,
+            r.id AS registro_id
+        FROM usuarios u
+        LEFT JOIN registros r ON u.matricula = r.matricula
+        WHERE u.matricula = :matricula 
+        AND LOWER(r.correo) = LOWER(:correo)
+        LIMIT 1
+    ");
     $stmt->execute([
         ':matricula' => $matricula,
         ':correo' => $correo
@@ -60,11 +74,11 @@ try {
     // Hashear la contraseña temporal
     $password_hashed = password_hash($password_temporal, PASSWORD_DEFAULT);
 
-    // Actualizar la contraseña en la base de datos
-    $updateStmt = $pdo->prepare("UPDATE usuarios SET contrasena = :contrasena WHERE id = :id");
+    // ✅ Actualizar la contraseña en registros
+    $updateStmt = $pdo->prepare("UPDATE registros SET contrasena = :contrasena WHERE matricula = :matricula");
     $resultado = $updateStmt->execute([
         ':contrasena' => $password_hashed,
-        ':id' => $usuario['id']
+        ':matricula' => $matricula
     ]);
 
     if (!$resultado) {

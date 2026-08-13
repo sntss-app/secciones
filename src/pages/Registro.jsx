@@ -340,7 +340,9 @@ const Registro = () => {
         matricula: '',
         curp: ''
     });
+
     const [usuarioValidado, setUsuarioValidado] = useState(null);
+    const [seccionUsuario, setSeccionUsuario] = useState(null);
 
     const [registroData, setRegistroData] = useState({
         antiguedad: '',
@@ -367,6 +369,10 @@ const Registro = () => {
 
     const validarPassword = (password) => password.length >= 8;
 
+    // ============================================
+    // ✅ handleBuscarUsuario
+    // ============================================
+    // ✅ handleBuscarUsuario con la corrección
     const handleBuscarUsuario = async (e) => {
         e.preventDefault();
         setErrorMsg('');
@@ -401,16 +407,40 @@ const Registro = () => {
         }
 
         try {
+            const payload = {
+                matricula: matricula,
+                curp: curp
+            };
+
             const response = await fetch(apiUrl('/buscar_usuario.php'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ matricula, curp })
+                body: JSON.stringify(payload)
             });
 
             const data = await response.json();
 
             if (!response.ok || !data.success) {
                 throw new Error(data.message || 'Error al validar tus datos.');
+            }
+
+            // ✅ Guardamos la sección y actualizamos usuarioValidado
+            if (data.usuario && data.usuario.idSeccion) {
+                const seccionData = {
+                    id: data.usuario.idSeccion,
+                    romano: data.usuario.seccion_romano || 'N/A',
+                    nombre: data.usuario.seccion_nombre || 'Sin nombre',
+                    color: data.usuario.seccion_color || '#3EAEF4'
+                };
+                setSeccionUsuario(seccionData);
+                
+                // ✅ NUEVO: Asignar idSeccion a usuarioValidado
+                setUsuarioValidado({
+                    ...data.usuario,
+                    idSeccion: data.usuario.idSeccion  // Asegurar que tenga idSeccion
+                });
+            } else {
+                setUsuarioValidado(data.usuario);
             }
 
             if (data.usuario && data.usuario.contrasena !== undefined && data.usuario.contrasena !== null && data.usuario.contrasena !== '') {
@@ -426,7 +456,6 @@ const Registro = () => {
                 return;
             }
 
-            setUsuarioValidado(data.usuario);
             setStep(2);
         } catch (err) {
             await Swal.fire({
@@ -442,6 +471,9 @@ const Registro = () => {
         }
     };
 
+    // ============================================
+    // ✅ handleCompletarRegistro
+    // ============================================
     const handleCompletarRegistro = async (e) => {
         e.preventDefault();
         setErrorMsg('');
@@ -449,7 +481,6 @@ const Registro = () => {
 
         const { antiguedad, telefono, correo, password, confirmar_password } = registroData;
 
-        // Validación de antigüedad - solo números
         if (!antiguedad || !/^\d+$/.test(antiguedad)) {
             await Swal.fire({
                 title: '⚠️ Antigüedad inválida',
@@ -474,7 +505,6 @@ const Registro = () => {
             return;
         }
 
-        // Validación de teléfono - solo 10 dígitos
         if (!/^\d{10}$/.test(telefono)) {
             await Swal.fire({
                 title: '⚠️ Teléfono inválido',
@@ -591,14 +621,9 @@ const Registro = () => {
         }
     };
 
-    const handleFotoChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setFotoFile(file);
-            setFotoPreview(URL.createObjectURL(file));
-        }
-    };
-
+    // ============================================
+    // ✅ handleSubirDocumentos (ÚNICA VERSIÓN)
+    // ============================================
     const handleSubirDocumentos = async (e) => {
         e.preventDefault();
         setErrorMsg('');
@@ -677,8 +702,11 @@ const Registro = () => {
             return;
         }
 
+        // ✅ FormData con idSeccion
         const formData = new FormData();
         formData.append('matricula', usuarioValidado.matricula);
+        formData.append('idSeccion', seccionUsuario.id);
+        formData.append('idTipo', usuarioValidado.idTipo || 1);
         formData.append('tarjeton', tarjetonFile);
         formData.append('foto', fotoFile);
         formData.append('process', 'registro');
@@ -719,7 +747,16 @@ const Registro = () => {
         }
     };
 
-    // Renderizado de pasos
+    const handleFotoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFotoFile(file);
+            setFotoPreview(URL.createObjectURL(file));
+        }
+    };
+
+    // ===== RENDER DE PASOS =====
+    
     const renderStep1 = () => (
         <form onSubmit={handleBuscarUsuario}>
             <div style={styles.inputGroup}>
@@ -803,7 +840,37 @@ const Registro = () => {
                         <span style={styles.userDataLabel}><FaCalendarAlt className="me-1" /> Edad</span>
                         <span style={styles.userDataValue}>{usuarioValidado?.edad || 'N/A'} años</span>
                     </div>
+                    {seccionUsuario && (
+                        <div style={styles.userDataItem}>
+                            <span style={styles.userDataLabel}>
+                                <FaBuilding className="me-1" /> Sección Asignada
+                            </span>
+                            <span style={{
+                                ...styles.userDataValue,
+                                color: seccionUsuario.color || '#3EAEF4',
+                                fontWeight: 'bold'
+                            }}>
+                                {seccionUsuario.romano} - {seccionUsuario.nombre}
+                            </span>
+                        </div>
+                    )}
                 </div>
+                {seccionUsuario && (
+                    <div style={{ 
+                        marginTop: '0.8rem', 
+                        padding: '0.8rem', 
+                        backgroundColor: `${seccionUsuario.color || '#3EAEF4'}15`,
+                        borderLeft: `4px solid ${seccionUsuario.color || '#3EAEF4'}`,
+                        borderRadius: '8px'
+                    }}>
+                        <small style={{ color: '#333' }}>
+                            <FaCheckCircle style={{ color: seccionUsuario.color || '#3EAEF4', marginRight: '0.5rem' }} />
+                            Tu sección asignada en el padrón es: <strong style={{ color: seccionUsuario.color || '#3EAEF4' }}>
+                                {seccionUsuario.romano} - {seccionUsuario.nombre}
+                            </strong>
+                        </small>
+                    </div>
+                )}
             </div>
 
             <form onSubmit={handleCompletarRegistro}>

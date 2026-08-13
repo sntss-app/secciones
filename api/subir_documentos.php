@@ -1,15 +1,26 @@
 <?php
 /*
   Subida de documentos del registro inicial.
-  Guarda tarjetón y foto de perfil en carpetas por año/usuario,
+  Guarda tarjetón y foto de perfil en carpetas por año/tipo/sección/usuario,
   usando la configuración de la tabla documentos cuando existe.
+  Tipos: a=activo, j=jubilado, c=confianza
+  Ahora busca en todas las tablas de usuarios (activos, jubilados, confianza).
 */
 require_once 'config.php';
 
 $matricula = isset($_POST['matricula']) ? trim($_POST['matricula']) : '';
+$idSeccion = isset($_POST['idSeccion']) ? (int)$_POST['idSeccion'] : 0;
+$idTipo = isset($_POST['idTipo']) ? (int)$_POST['idTipo'] : 0;
+
 if (empty($matricula)) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'La matrícula es obligatoria.']);
+    exit;
+}
+
+if (empty($idSeccion)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'La sección es obligatoria.']);
     exit;
 }
 
@@ -38,13 +49,56 @@ function getDocumentTypeId(PDO $pdo, array $patterns, int $fallback): int {
 }
 
 try {
-    $userStmt = $pdo->prepare('SELECT matricula FROM usuarios WHERE matricula = :matricula LIMIT 1');
+    // ✅ BUSCAR LA MATRÍCULA EN TODAS LAS TABLAS
+    $usuario = null;
+    $tablaOrigen = '';
+
+    // 1. Buscar en usuarios (activos)
+    $userStmt = $pdo->prepare('SELECT matricula, idSeccion, idTipo FROM usuarios WHERE matricula = :matricula LIMIT 1');
     $userStmt->execute([':matricula' => $matricula]);
-    if (!$userStmt->fetch(PDO::FETCH_ASSOC)) {
+    $usuario = $userStmt->fetch(PDO::FETCH_ASSOC);
+    $tablaOrigen = 'usuarios';
+
+    // 2. Si no se encuentra, buscar en usuariosJ (jubilados)
+    if (!$usuario) {
+        $userStmt = $pdo->prepare('SELECT matricula, idSeccion, idTipo FROM usuariosJ WHERE matricula = :matricula LIMIT 1');
+        $userStmt->execute([':matricula' => $matricula]);
+        $usuario = $userStmt->fetch(PDO::FETCH_ASSOC);
+        $tablaOrigen = 'usuariosJ';
+    }
+
+    // 3. Si no se encuentra, buscar en usuariosC (confianza)
+    if (!$usuario) {
+        $userStmt = $pdo->prepare('SELECT matricula, idSeccion, idTipo FROM usuariosC WHERE matricula = :matricula LIMIT 1');
+        $userStmt->execute([':matricula' => $matricula]);
+        $usuario = $userStmt->fetch(PDO::FETCH_ASSOC);
+        $tablaOrigen = 'usuariosC';
+    }
+
+    // ✅ Si no se encuentra en ninguna tabla
+    if (!$usuario) {
         http_response_code(404);
         echo json_encode(['success' => false, 'message' => 'No se encontró la matrícula en el padrón.']);
         exit;
     }
+
+    // ✅ Verificar que la sección coincida con la del usuario
+    if ($usuario['idSeccion'] != $idSeccion) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'La sección no coincide con la del usuario.']);
+        exit;
+    }
+
+    // ✅ Obtener el tipo del usuario (prioridad: POST > BD > default 1)
+    $idTipo = $idTipo > 0 ? $idTipo : ($usuario['idTipo'] ?? 1);
+
+    // ✅ Mapear idTipo a letra de carpeta
+    $tipoMap = [
+        1 => 'a',  // activo
+        2 => 'j',  // jubilado
+        3 => 'c'   // confianza
+    ];
+    $carpetaTipo = $tipoMap[$idTipo] ?? 'a';
 
     $tarjetonDocumentId = getDocumentTypeId($pdo, ['tarjetón', 'tarjeton', 'Tarjetón', 'Tarjeton'], 1);
     $fotoDocumentId = getDocumentTypeId($pdo, ['foto de usuario', 'foto', 'busto', 'imagen'], 6);
@@ -55,7 +109,9 @@ try {
     if ($process === '') {
         $process = 'registro';
     }
-    $targetDir = __DIR__ . "/uploads/$year/$process/$matricula";
+    
+    // ✅ CARPETA CON TIPO + SECCIÓN + MATRÍCULA
+    $targetDir = __DIR__ . "/uploads/$year/$process/$carpetaTipo/$idSeccion/$matricula";
     if (!is_dir($targetDir) && !mkdir($targetDir, 0777, true)) {
         http_response_code(500);
         echo json_encode(['success' => false, 'message' => 'No se pudo crear la carpeta de destino.']);
@@ -64,6 +120,7 @@ try {
 
     $uploaded = [];
 
+    // ===== PROCESAR TARJETÓN =====
     if ($tarjetonFile['error'] !== UPLOAD_ERR_OK) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Error al recibir el tarjetón.']);
@@ -90,8 +147,10 @@ try {
         echo json_encode(['success' => false, 'message' => 'No se pudo guardar el tarjetón.']);
         exit;
     }
-    $uploaded['tarjeton'] = "/api/uploads/$year/$process/$matricula/$tarjetonFilename";
+    // ✅ RUTA DEL TARJETÓN CON TIPO + SECCIÓN
+    $uploaded['tarjeton'] = "/api/uploads/$year/$process/$carpetaTipo/$idSeccion/$matricula/$tarjetonFilename";
 
+    // ===== PROCESAR FOTO =====
     if ($fotoFile['error'] !== UPLOAD_ERR_OK) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Error al recibir la foto.']);
@@ -118,14 +177,19 @@ try {
         echo json_encode(['success' => false, 'message' => 'No se pudo guardar la foto.']);
         exit;
     }
-    $uploaded['foto'] = "/api/uploads/$year/$process/$matricula/$fotoFilename";
+    // ✅ RUTA DE LA FOTO CON TIPO + SECCIÓN
+    $uploaded['foto'] = "/api/uploads/$year/$process/$carpetaTipo/$idSeccion/$matricula/$fotoFilename";
 
     echo json_encode([
         'success' => true,
         'message' => 'Documentos guardados correctamente.',
-        'paths' => $uploaded
+        'paths' => $uploaded,
+        'tipo' => $carpetaTipo,
+        'idTipo' => $idTipo,
+        'tablaOrigen' => $tablaOrigen
     ]);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Error en la base de datos: ' . $e->getMessage()]);
 }
+?>

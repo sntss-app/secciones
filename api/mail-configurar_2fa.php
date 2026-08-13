@@ -30,16 +30,34 @@ function generarSecretBase32($longitud = 16) {
 }
 
 try {
-    $stmt = $pdo->prepare("SELECT codigo_2fa, two_factor_enabled FROM usuarios WHERE matricula = :matricula");
+    // ✅ CONSULTAR EN registros
+    $stmt = $pdo->prepare("SELECT codigo_2fa, two_factor_enabled FROM registros WHERE matricula = :matricula");
     $stmt->execute([':matricula' => $matricula]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    if (empty($user['codigo_2fa'])) {
+    // Si no existe registro para esta matrícula, crearlo
+    if (!$user) {
+        // Crear registro básico
         $secret = generarSecretBase32(16);
-        $update = $pdo->prepare("UPDATE usuarios SET codigo_2fa = :secret WHERE matricula = :matricula");
-        $update->execute([':secret' => $secret, ':matricula' => $matricula]);
+        $insert = $pdo->prepare("
+            INSERT INTO registros (matricula, codigo_2fa, two_factor_enabled) 
+            VALUES (:matricula, :secret, 0)
+        ");
+        $insert->execute([
+            ':matricula' => $matricula,
+            ':secret' => $secret
+        ]);
+        $twoFactorEnabled = 0;
     } else {
-        $secret = $user['codigo_2fa'];
+        // Si existe pero no tiene código 2FA, generarlo
+        if (empty($user['codigo_2fa'])) {
+            $secret = generarSecretBase32(16);
+            $update = $pdo->prepare("UPDATE registros SET codigo_2fa = :secret WHERE matricula = :matricula");
+            $update->execute([':secret' => $secret, ':matricula' => $matricula]);
+        } else {
+            $secret = $user['codigo_2fa'];
+        }
+        $twoFactorEnabled = (int) $user['two_factor_enabled'];
     }
     
     $issuer = "SNTSS_Seccion_XXXIII";
@@ -49,7 +67,7 @@ try {
         'success' => true,
         'secret' => $secret,
         'qrUrl' => $qrUrl,
-        'already_enabled' => ($user['two_factor_enabled'] == 1)
+        'already_enabled' => ($twoFactorEnabled == 1)
     ]);
     
 } catch (PDOException $e) {

@@ -1,6 +1,7 @@
 <?php
 /*
   Actualizar registro de trabajador para la Cláusula 79Bis
+  También actualiza teléfono y correo en la tabla registros
 */
 require_once 'config.php';
 
@@ -31,6 +32,51 @@ if ($id <= 0 || empty($matricula)) {
 }
 
 try {
+    // Iniciar transacción
+    $pdo->beginTransaction();
+
+    // ✅ 1. ACTUALIZAR TELÉFONO Y CORREO EN registros
+    // Verificar si existe registro en registros
+    $checkRegistro = $pdo->prepare("SELECT id FROM registros WHERE matricula = :matricula");
+    $checkRegistro->execute([':matricula' => $matricula]);
+    $existeRegistro = $checkRegistro->fetch();
+
+    if ($existeRegistro) {
+        // Actualizar registros existentes
+        $updateRegistro = $pdo->prepare("
+            UPDATE registros 
+            SET telefono = :telefono, 
+                correo = :correo 
+            WHERE matricula = :matricula
+        ");
+        $updateRegistro->execute([
+            ':telefono' => $telefono,
+            ':correo' => $correo,
+            ':matricula' => $matricula
+        ]);
+    } else {
+        // Insertar en registros si no existe
+        $insertRegistro = $pdo->prepare("
+            INSERT INTO registros (
+                matricula, 
+                telefono, 
+                correo,
+                status
+            ) VALUES (
+                :matricula,
+                :telefono,
+                :correo,
+                2
+            )
+        ");
+        $insertRegistro->execute([
+            ':matricula' => $matricula,
+            ':telefono' => $telefono,
+            ':correo' => $correo
+        ]);
+    }
+
+    // ✅ 2. ACTUALIZAR REGISTRO EN clausula79bis
     $stmt = $pdo->prepare("
         UPDATE clausula79bis 
         SET telefono = :telefono, 
@@ -58,18 +104,8 @@ try {
         exit;
     }
 
-    // Actualizar teléfono y correo en usuarios
-    $updateUsuario = $pdo->prepare("
-        UPDATE usuarios 
-        SET telefono = :telefono, 
-            correo = :correo 
-        WHERE matricula = :matricula
-    ");
-    $updateUsuario->execute([
-        ':telefono' => $telefono,
-        ':correo' => $correo,
-        ':matricula' => $matricula
-    ]);
+    // Confirmar transacción
+    $pdo->commit();
 
     echo json_encode([
         'success' => true, 
@@ -77,6 +113,7 @@ try {
     ]);
 
 } catch (PDOException $e) {
+    $pdo->rollBack();
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Error en BD: ' . $e->getMessage()]);
 }

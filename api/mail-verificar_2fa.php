@@ -62,18 +62,20 @@ function verificarTOTP($secret, $codigo) {
 }
 
 try {
-    $stmt = $pdo->prepare("SELECT codigo_2fa FROM usuarios WHERE matricula = :matricula");
+    // ✅ CONSULTAR EN registros
+    $stmt = $pdo->prepare("SELECT codigo_2fa FROM registros WHERE matricula = :matricula");
     $stmt->execute([':matricula' => $matricula]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if (!$user || empty($user['codigo_2fa'])) {
-        echo json_encode(['success' => false, 'message' => '2FA no configurado']);
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => '2FA no configurado para esta matrícula']);
         exit;
     }
     
     if (verificarTOTP($user['codigo_2fa'], $codigo)) {
-        // Activar el 2FA (por si no estaba)
-        $update = $pdo->prepare("UPDATE usuarios SET two_factor_enabled = 1 WHERE matricula = :matricula");
+        // ✅ Activar el 2FA en registros (por si no estaba)
+        $update = $pdo->prepare("UPDATE registros SET two_factor_enabled = 1 WHERE matricula = :matricula");
         $update->execute([':matricula' => $matricula]);
         
         echo json_encode(['success' => true, 'message' => 'Código correcto']);
@@ -84,6 +86,6 @@ try {
     
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Error en la base de datos: ' . $e->getMessage()]);
 }
 ?>

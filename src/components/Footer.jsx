@@ -1,10 +1,111 @@
 import React, { useState } from 'react';
 import AvisoPrivacidad from './AvisoPrivacidad';
-import { FaFacebook, FaTwitter, FaInstagram, FaYoutube, FaTiktok, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaFacebook, FaTwitter, FaInstagram, FaYoutube, FaTiktok, FaWhatsapp, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
     const [showAvisoPrivacidad, setShowAvisoPrivacidad] = useState(false);
+
+    // ✅ FUNCIÓN PARA OBTENER LA SECCIÓN DIRECTAMENTE DE localStorage
+    const getSeccionUsuario = () => {
+        try {
+            const seccionData = localStorage.getItem('seccionUsuario');
+            if (seccionData) {
+                return JSON.parse(seccionData);
+            }
+            return null;
+        } catch (error) {
+            console.error('Error obteniendo sección:', error);
+            return null;
+        }
+    };
+
+    // ✅ FUNCIÓN PARA OBTENER REDES SOCIALES
+    const getRedesSociales = () => {
+        const seccion = getSeccionUsuario();
+        return seccion?.redes || {};
+    };
+
+    // ✅ MAPEO DE ICONOS POR RED SOCIAL
+    const iconosRedes = {
+        facebook: <FaFacebook size={24} />,
+        x: <FaTwitter size={24} />,
+        twitter: <FaTwitter size={24} />,
+        instagram: <FaInstagram size={24} />,
+        youtube: <FaYoutube size={24} />,
+        tiktok: <FaTiktok size={24} />,
+        whatsapp: <FaWhatsapp size={24} />
+    };
+
+    // ✅ CLASES CSS PARA CADA RED SOCIAL
+    const clasesRedes = {
+        facebook: 'social-fb',
+        x: 'social-tw',
+        twitter: 'social-tw',
+        instagram: 'social-ig',
+        youtube: 'social-yt',
+        tiktok: 'social-tt',
+        whatsapp: 'social-wa'
+    };
+
+    // ✅ FUNCIONES QUE LEE DIRECTAMENTE DE localStorage
+    const getTitulo = () => {
+        const isLoggedIn = Boolean(localStorage.getItem('matricula'));
+        if (!isLoggedIn) {
+            return 'SNTSS - CEN';
+        }
+        
+        const seccion = getSeccionUsuario();
+        if (!seccion?.romano) {
+            return 'SNTSS';
+        }
+        return `SNTSS Sección ${seccion.romano}`;
+    };
+
+    const getSlogan = () => {
+        const isLoggedIn = Boolean(localStorage.getItem('matricula'));
+        if (!isLoggedIn) {
+            return '"Todos Juntos, Todos Fuertes"';
+        }
+        
+        const seccion = getSeccionUsuario();
+        if (seccion?.slogan) {
+            return `"${seccion.slogan}"`;
+        }
+        if (seccion?.nombre) {
+            return seccion.nombre;
+        }
+        return '"Todos Juntos, Todos Fuertes"';
+    };
+
+    const getCopyright = () => {
+        const isLoggedIn = Boolean(localStorage.getItem('matricula'));
+        let seccionTexto = 'CEN';
+        
+        if (isLoggedIn) {
+            const seccion = getSeccionUsuario();
+            if (seccion?.romano) {
+                seccionTexto = `Sección ${seccion.romano}`;
+            }
+        }
+        
+        return `© ${currentYear} SNTSS ${seccionTexto} /`;
+    };
+
+    const getDireccion = () => {
+        const isLoggedIn = Boolean(localStorage.getItem('matricula'));
+        
+        if (!isLoggedIn) {
+            return 'Zamora 107, Colonia Condesa, Cuauhtémoc, 06140 Ciudad de México, CDMX';
+        }
+        
+        const seccion = getSeccionUsuario();
+        if (seccion?.direccion) {
+            return seccion.direccion;
+        }
+        
+        return 'Zamora 107, Colonia Condesa, Cuauhtémoc, 06140 Ciudad de México, CDMX';
+    };
 
     const styles = {
         footer: {
@@ -58,16 +159,22 @@ const Footer = () => {
             display: 'flex',
             justifyContent: 'center',
             gap: '1.5rem',
+            flexWrap: 'wrap',
             marginBottom: '1.5rem',
         },
         socialLink: {
             color: 'white',
             transition: 'all 0.3s ease',
-            display: 'inline-block',
-            padding: '8px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '10px',
             borderRadius: '50%',
             backgroundColor: 'rgba(255,255,255,0.05)',
             cursor: 'pointer',
+            width: '44px',
+            height: '44px',
+            textDecoration: 'none',
         },
         linksRow: {
             display: 'flex',
@@ -123,10 +230,19 @@ const Footer = () => {
             transform: translateY(-5px) scale(1.1);
             background-color: rgba(0,242,234,0.2) !important;
         }
+        .social-wa:hover {
+            color: #25d366 !important;
+            transform: translateY(-5px) scale(1.1);
+            background-color: rgba(37,211,102,0.2) !important;
+        }
         .footer-link:hover {
             color: #3EAEF4 !important;
         }
     `;
+
+    // ✅ OBTENER REDES SOCIALES (SOLO UNA VEZ)
+    const redes = getRedesSociales();
+    const tieneRedes = Object.keys(redes).length > 0;
 
     return (
         <>
@@ -140,8 +256,8 @@ const Footer = () => {
                 </div>
                 <div style={styles.content}>
                     <div style={styles.mainInfo}>
-                        <h3 style={styles.title}>SNTSS Sección XXXIII</h3>
-                        <p style={styles.slogan}>"Unidad y Fortaleza Sindical"</p>
+                        <h3 style={styles.title}>{getTitulo()}</h3>
+                        <p style={styles.slogan}>✨ {getSlogan()}</p>
                         <div style={styles.contactInfo}>
                             <span style={styles.contactItem}>
                                 <FaPhone /> (55) 0000-0000
@@ -150,27 +266,47 @@ const Footer = () => {
                                 <FaEnvelope /> info@sntss-secciones.org
                             </span>
                             <span style={styles.contactItem}>
-                                <FaMapMarkerAlt /> C. Florines 9, Amp Simón Bolívar, Venustiano Carranza, 15420 Ciudad de México, CDMX
+                                <FaMapMarkerAlt /> {getDireccion()}
                             </span>
                         </div>
                     </div>
                     
+                    {/* ✅ REDES SOCIALES DINÁMICAS */}
                     <div style={styles.socials}>
-                        <a href="https://www.facebook.com/profile.php?id=61583448263870&locale=es_LA" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
-                            <FaFacebook size={24} />
-                        </a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tw">
-                            <FaTwitter size={24} />
-                        </a>
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-ig">
-                            <FaInstagram size={24} />
-                        </a>
-                        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-yt">
-                            <FaYoutube size={24} />
-                        </a>
-                        <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tt">
-                            <FaTiktok size={24} />
-                        </a>
+                        {tieneRedes ? (
+                            Object.entries(redes).map(([red, url]) => (
+                                <a 
+                                    key={red} 
+                                    href={url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    style={styles.socialLink} 
+                                    className={clasesRedes[red] || 'social-fb'}
+                                    aria-label={red}
+                                >
+                                    {iconosRedes[red] || <FaFacebook size={24} />}
+                                </a>
+                            ))
+                        ) : (
+                            // ✅ FALLBACK: Redes sociales por defecto (CEN)
+                            <>
+                                <a href="https://www.facebook.com/profile.php?id=61583448263870&locale=es_LA" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
+                                    <FaFacebook size={24} />
+                                </a>
+                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tw">
+                                    <FaTwitter size={24} />
+                                </a>
+                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-ig">
+                                    <FaInstagram size={24} />
+                                </a>
+                                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-yt">
+                                    <FaYoutube size={24} />
+                                </a>
+                                <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tt">
+                                    <FaTiktok size={24} />
+                                </a>
+                            </>
+                        )}
                     </div>
                     
                     <div style={styles.linksRow}>
@@ -184,7 +320,7 @@ const Footer = () => {
                     </div>
                     
                     <p style={styles.copy}>
-                        © {currentYear} SNTSS Sección XXXIII / 
+                        {getCopyright()} 
                         <strong style={styles.legend}> espineza.dev</strong>
                     </p>
                     <AvisoPrivacidad show={showAvisoPrivacidad} onHide={() => setShowAvisoPrivacidad(false)} />

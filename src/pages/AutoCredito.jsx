@@ -3,11 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { 
     FaCar, FaFilePdf, FaUser, FaCalculator, FaCheckCircle, 
     FaExclamationTriangle, FaArrowLeft, FaInfoCircle, FaSync, 
-    FaTimesCircle, FaClock, FaIdCard, FaBuilding, FaUserAlt 
+    FaTimesCircle, FaClock, FaIdCard, FaBuilding, FaUserAlt,
+    FaDownload
 } from 'react-icons/fa';
 import { apiUrl } from '../config';
 
-// Estilos en línea
+// Estilos en linea
 const styles = {
     container: {
         maxWidth: '900px',
@@ -46,6 +47,59 @@ const styles = {
     cardBody: {
         padding: '2rem',
     },
+    // ✅ BANNER DE SECCIÓN (siempre visible)
+    seccionBanner: (color) => ({
+        display: 'flex',
+        alignItems: 'center',
+        gap: '1.5rem',
+        padding: '1.2rem 1.5rem',
+        backgroundColor: `${color || '#3EAEF4'}10`,
+        borderRadius: '12px',
+        border: `2px solid ${color || '#3EAEF4'}`,
+        marginBottom: '1.5rem',
+        flexWrap: 'wrap',
+    }),
+    seccionLogo: {
+        height: '80px',
+        width: '80px',
+        objectFit: 'contain',
+        borderRadius: '12px',
+        border: '2px solid #e9ecef',
+        padding: '6px',
+        backgroundColor: 'white',
+    },
+    seccionInfo: {
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.2rem',
+    },
+    seccionNombre: (color) => ({
+        fontSize: '1.1rem',
+        fontWeight: 'bold',
+        color: color || '#0A0F1E',
+    }),
+    seccionDetalle: {
+        fontSize: '0.9rem',
+        color: '#6c757d',
+    },
+    // ✅ BOTÓN DE CONVOCATORIA SIEMPRE VISIBLE
+    convocatoriaBtn: (color) => ({
+        backgroundColor: color || '#3EAEF4',
+        color: '#0A0F1E',
+        border: 'none',
+        padding: '0.6rem 1.5rem',
+        borderRadius: '12px',
+        fontWeight: 'bold',
+        fontSize: '0.9rem',
+        transition: 'all 0.3s ease',
+        cursor: 'pointer',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        textDecoration: 'none',
+        whiteSpace: 'nowrap',
+    }),
     userCard: {
         backgroundColor: '#f8f9fa',
         borderRadius: '16px',
@@ -167,15 +221,6 @@ const styles = {
         backgroundColor: 'white',
         color: '#0A0F1E',
     },
-    inputFocus: {
-        borderColor: '#3EAEF4',
-        boxShadow: '0 0 0 3px rgba(255,215,0,0.15)',
-    },
-    inputReadOnly: {
-        backgroundColor: '#e9ecef',
-        color: '#495057',
-        cursor: 'not-allowed',
-    },
     btnPrimary: {
         backgroundColor: '#3EAEF4',
         color: '#0A0F1E',
@@ -221,20 +266,6 @@ const styles = {
         justifyContent: 'center',
         gap: '0.5rem',
         textDecoration: 'none',
-    },
-    btnSecondary: {
-        backgroundColor: '#6c757d',
-        color: 'white',
-        border: 'none',
-        padding: '0.7rem 1.5rem',
-        borderRadius: '12px',
-        fontWeight: 'bold',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.5rem',
     },
     flexRow: {
         display: 'flex',
@@ -288,12 +319,6 @@ const styles = {
         backgroundColor: color,
         color: 'white',
     }),
-    smallText: {
-        fontSize: '0.75rem',
-        color: '#6c757d',
-        marginTop: '0.2rem',
-        display: 'block',
-    },
     resultBox: {
         backgroundColor: '#e9ecef',
         borderRadius: '12px',
@@ -323,6 +348,11 @@ const AutoCredito = () => {
 
     const [registroExistente, setRegistroExistente] = useState(null);
     const [cargandoRegistro, setCargandoRegistro] = useState(true);
+    
+    // ✅ NUEVOS ESTADOS para convocatoria y logo
+    const [convocatoriaUrl, setConvocatoriaUrl] = useState(null);
+    const [logoAutoUrl, setLogoAutoUrl] = useState(null);
+    const [seccionInfo, setSeccionInfo] = useState(null);
 
     const [tarjetonFile, setTarjetonFile] = useState(null);
     const [ineFile, setIneFile] = useState(null);
@@ -334,6 +364,22 @@ const AutoCredito = () => {
     const [montoAuto, setMontoAuto] = useState(null);
     const [mostrarResultado, setMostrarResultado] = useState(false);
 
+    // ✅ Cargar recursos del proceso auto para la sección del usuario
+const cargarRecursosProceso = useCallback(async (idSeccion) => {
+    if (!idSeccion) return;
+    try {
+        const response = await fetch(apiUrl(`/obtener_recursos_proceso.php?idSeccion=${idSeccion}&proceso=auto`));
+        const data = await response.json();
+        if (data.success) {
+            setConvocatoriaUrl(data.convocatoria_url || null);
+            setLogoAutoUrl(data.logo_url || null);
+        }
+    } catch (error) {
+        console.error('Error cargando recursos del proceso:', error);
+    }
+}, []);
+
+    // ✅ cargarDatosUsuario (limpio y sin duplicados)
     const cargarDatosUsuario = useCallback(async (matricula) => {
         try {
             const response = await fetch(apiUrl(`/obtener_perfil.php?matricula=${matricula}`));
@@ -345,11 +391,25 @@ const AutoCredito = () => {
                     adscripcion: data.usuario.adscripcion || '',
                     categoria: data.usuario.categoria || ''
                 });
+                
+                // ✅ Guardar info de la sección
+                if (data.usuario.idSeccion) {
+                    setSeccionInfo({
+                        id: data.usuario.idSeccion,
+                        romano: data.usuario.seccion_romano || 'N/A',
+                        nombre: data.usuario.seccion_nombre || 'Sin sección',
+                        color: data.usuario.seccion_color || '#3EAEF4'
+                    });
+                    
+                    // ✅ Cargar recursos del proceso auto para esta sección
+                    cargarRecursosProceso(data.usuario.idSeccion);
+                }
             }
         } catch (error) {
             console.error('Error cargando datos:', error);
         }
-    }, []);
+    }, [cargarRecursosProceso]); // 👈 IMPORTANTE: agregar dependencia
+
 
     const verificarRegistro = useCallback(async (matricula) => {
         setCargandoRegistro(true);
@@ -557,6 +617,8 @@ const AutoCredito = () => {
         );
     }
 
+    const colorPrincipal = seccionInfo?.color || '#3EAEF4';
+
     return (
         <div style={styles.container}>
             <div style={styles.card}>
@@ -581,6 +643,78 @@ const AutoCredito = () => {
                         </div>
                     )}
 
+                    {/* ✅ BANNER DE SECCIÓN CON LOGO Y CONVOCATORIA - SIEMPRE VISIBLE */}
+                    {seccionInfo && (
+                        <div style={styles.seccionBanner(colorPrincipal)}>
+                            {logoAutoUrl ? (
+                                <img 
+                                    src={logoAutoUrl} 
+                                    alt={`Logo crédito auto ${seccionInfo.nombre}`}
+                                    style={styles.seccionLogo}
+                                    onError={(e) => { 
+                                        e.target.style.display = 'none'; 
+                                        // Mostrar icono de auto como fallback
+                                        const parent = e.target.parentElement;
+                                        const icon = document.createElement('div');
+                                        icon.style.cssText = `
+                                            height: 80px;
+                                            width: 80px;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            border-radius: 12px;
+                                            border: 2px solid #e9ecef;
+                                            background-color: #f0f4f8;
+                                            font-size: 40px;
+                                            color: ${colorPrincipal};
+                                        `;
+                                        icon.innerHTML = '<svg ...>'; // Simplificado, mejor usar el fallback del render
+                                        parent.appendChild(icon);
+                                    }}
+                                />
+                            ) : (
+                                <div style={{ 
+                                    ...styles.seccionLogo, 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center', 
+                                    backgroundColor: '#f0f4f8',
+                                    fontSize: '40px',
+                                    color: colorPrincipal
+                                }}>
+                                    <FaCar />
+                                </div>
+                            )}
+                            <div style={styles.seccionInfo}>
+                                <span style={styles.seccionNombre(colorPrincipal)}>
+                                    Crédito Automotriz - Sección {seccionInfo.romano}
+                                </span>
+                                <span style={styles.seccionDetalle}>
+                                    {seccionInfo.nombre}
+                                </span>
+                            </div>
+                            {/* ✅ BOTÓN DE CONVOCATORIA SIEMPRE VISIBLE */}
+                            <a 
+                                href={convocatoriaUrl || '#'} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                style={convocatoriaUrl ? styles.convocatoriaBtn(colorPrincipal) : { ...styles.convocatoriaBtn(colorPrincipal), opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'none' }}
+                                onMouseEnter={(e) => {
+                                    if (convocatoriaUrl) {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = `0 4px 12px ${colorPrincipal}40`;
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.target.style.transform = 'translateY(0)';
+                                    e.target.style.boxShadow = 'none';
+                                }}
+                            >
+                                <FaDownload /> {convocatoriaUrl ? 'Descargar Convocatoria' : 'Convocatoria no disponible'}
+                            </a>
+                        </div>
+                    )}
+
                     {registroExistente && renderStatus()}
 
                     {(!registroExistente || registroExistente.estatus === 'observaciones') && (
@@ -588,7 +722,7 @@ const AutoCredito = () => {
                             {/* Datos del usuario */}
                             <div style={styles.userCard}>
                                 <div style={styles.userCardHeader}>
-                                    <FaUserAlt style={{ color: '#3EAEF4' }} />
+                                    <FaUserAlt style={{ color: colorPrincipal }} />
                                     <h5 style={styles.userCardTitle}>Tus datos</h5>
                                 </div>
                                 <div style={styles.userDataGrid}>

@@ -2,8 +2,16 @@
 /*
   Guarda el dictamen del validador.
   Cambia el status del crédito en la tabla auto y registra quién validó.
+  Ahora verifica que el validador pertenezca a la misma sección que el solicitante,
+  EXCEPTO para superadmins.
 */
 require_once 'config.php';
+
+// ✅ LISTA DE SUPERADMINS (misma que en listar_auto.php)
+$superAdmins = [
+    '97158643',  // Tu matrícula
+    // Agrega aquí más matrículas de líderes nacionales
+];
 
 $data = json_decode(file_get_contents('php://input'), true);
 $id = isset($data['id']) ? (int)$data['id'] : 0;
@@ -20,8 +28,6 @@ if (empty($matricula) || empty($validatorMatricula) || empty($validatorNombre) |
 }
 
 $estatusMap = [
-    // Equivalencia con la tabla auto:
-    // 1 preregistro, 2 validado, 3 observaciones, 4 sin concluir, 5 denegado.
     'preregistro' => 1,
     'aprobado' => 2,
     'observaciones' => 3,
@@ -36,6 +42,37 @@ if (!array_key_exists($estatus, $estatusMap)) {
 }
 
 try {
+    // VERIFICAR QUE EL VALIDADOR Y EL SOLICITANTE SEAN DE LA MISMA SECCIÓN
+    // EXCEPTO para superadmins
+    $esSuperAdmin = in_array($validatorMatricula, $superAdmins);
+
+    if (!$esSuperAdmin) {
+        $stmtValidador = $pdo->prepare("
+            SELECT idSeccion FROM usuarios WHERE matricula = :matricula LIMIT 1
+        ");
+        $stmtValidador->execute([':matricula' => $validatorMatricula]);
+        $validador = $stmtValidador->fetch(PDO::FETCH_ASSOC);
+
+        $stmtSolicitante = $pdo->prepare("
+            SELECT idSeccion FROM usuarios WHERE matricula = :matricula LIMIT 1
+        ");
+        $stmtSolicitante->execute([':matricula' => $matricula]);
+        $solicitante = $stmtSolicitante->fetch(PDO::FETCH_ASSOC);
+
+        if (!$validador || !$solicitante) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Usuario no encontrado']);
+            exit;
+        }
+
+        if ($validador['idSeccion'] != $solicitante['idSeccion']) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'No tienes permisos para validar esta solicitud (sección diferente).']);
+            exit;
+        }
+    }
+
+    // Obtener el registro de auto
     if ($id > 0) {
         $stmt = $pdo->prepare('SELECT id, matricula FROM auto WHERE id = :id AND matricula = :matricula LIMIT 1');
         $stmt->execute([':id' => $id, ':matricula' => $matricula]);
@@ -79,3 +116,4 @@ try {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Error en la base de datos: ' . $e->getMessage()]);
 }
+?>

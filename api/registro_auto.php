@@ -1,8 +1,9 @@
 <?php
 /*
   Registro de crédito de auto.
-  Recibe tarjetón e INE, guarda archivos en uploads/año/auto/matrícula
+  Recibe tarjetón e INE, guarda archivos en uploads/año/auto/seccion/matrícula
   y crea o reinicia el registro en la tabla auto con status 1.
+  Ahora guarda idSeccion para identificar la sección del usuario.
 */
 require_once 'config.php';
 
@@ -27,13 +28,18 @@ $allowedIne = ['pdf', 'jpg', 'jpeg', 'png', 'webp'];
 $maxSize = 5 * 1024 * 1024;
 
 try {
-    $userStmt = $pdo->prepare('SELECT matricula FROM usuarios WHERE matricula = :matricula LIMIT 1');
+    // ✅ OBTENER idSeccion DEL USUARIO
+    $userStmt = $pdo->prepare('SELECT matricula, idSeccion FROM usuarios WHERE matricula = :matricula LIMIT 1');
     $userStmt->execute([':matricula' => $matricula]);
-    if (!$userStmt->fetch(PDO::FETCH_ASSOC)) {
+    $usuario = $userStmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$usuario) {
         http_response_code(404);
         echo json_encode(['success' => false, 'message' => 'No se encontró la matrícula en el padrón.']);
         exit;
     }
+
+    $idSeccion = $usuario['idSeccion'] ?? 0;
 
     $docStmt = $pdo->prepare('SELECT id, nombre_documento FROM documentos WHERE id IN (1,2) AND status = 2');
     $docStmt->execute();
@@ -52,7 +58,9 @@ try {
     $ineDocumentLabel = $documentos[$ineDocumentId];
 
     $year = date('Y');
-    $targetDir = __DIR__ . "/uploads/$year/auto/$matricula";
+    
+    // ✅ CARPETA CON SECCIÓN
+    $targetDir = __DIR__ . "/uploads/$year/auto/$idSeccion/$matricula";
     if (!is_dir($targetDir) && !mkdir($targetDir, 0777, true)) {
         http_response_code(500);
         echo json_encode(['success' => false, 'message' => 'No se pudo crear la carpeta de destino.']);
@@ -115,7 +123,7 @@ try {
         exit;
     }
 
-    // Insertar o actualizar registro en la tabla auto
+    // ✅ Insertar o actualizar registro en la tabla auto (con idSeccion)
     $stmt = $pdo->prepare('SELECT id FROM auto WHERE matricula = :matricula LIMIT 1');
     $stmt->execute([':matricula' => $matricula]);
     $existing = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -123,28 +131,41 @@ try {
     if ($existing) {
         $update = $pdo->prepare(
             'UPDATE auto
-             SET fecha_registro = NOW(), valido = NULL, observaciones = NULL, fecha_validado = NULL, status = 1
+             SET idSeccion = :idSeccion,
+                 fecha_registro = NOW(), 
+                 valido = NULL, 
+                 observaciones = NULL, 
+                 fecha_validado = NULL, 
+                 status = 1
              WHERE matricula = :matricula'
         );
-        $update->execute([':matricula' => $matricula]);
+        $update->execute([
+            ':idSeccion' => $idSeccion,
+            ':matricula' => $matricula
+        ]);
     } else {
         $insert = $pdo->prepare(
-            'INSERT INTO auto (matricula, fecha_registro, status) VALUES (:matricula, NOW(), 1)'
+            'INSERT INTO auto (matricula, idSeccion, fecha_registro, status) 
+             VALUES (:matricula, :idSeccion, NOW(), 1)'
         );
-        $insert->execute([':matricula' => $matricula]);
+        $insert->execute([
+            ':matricula' => $matricula,
+            ':idSeccion' => $idSeccion
+        ]);
     }
 
     echo json_encode([
         'success' => true,
         'message' => 'Registro de crédito de auto guardado con éxito.',
         'paths' => [
-            'tarjeton' => "/api/uploads/$year/auto/$matricula/$tarjetonFilename",
-            'ine' => "/api/uploads/$year/auto/$matricula/$ineFilename"
+            'tarjeton' => "/api/uploads/$year/auto/$idSeccion/$matricula/$tarjetonFilename",
+            'ine' => "/api/uploads/$year/auto/$idSeccion/$matricula/$ineFilename"
         ],
         'documentNames' => [
             'tarjeton' => $tarjetonDocumentLabel,
             'ine' => $ineDocumentLabel
-        ]
+        ],
+        'idSeccion' => $idSeccion
     ]);
 } catch (PDOException $e) {
     http_response_code(500);

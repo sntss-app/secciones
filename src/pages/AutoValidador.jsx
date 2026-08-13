@@ -29,6 +29,10 @@ const AutoValidador = () => {
     const [filtro, setFiltro] = useState('todos');
     const [busqueda, setBusqueda] = useState('');
     const [validationDrafts, setValidationDrafts] = useState({});
+    const [secciones, setSecciones] = useState([]);
+    const [seccionSeleccionada, setSeccionSeleccionada] = useState(0);
+    const [esSuperAdmin, setEsSuperAdmin] = useState(false);
+    const [colorPrincipal, setColorPrincipal] = useState('#3EAEF4');
 
     const [paginaActual, setPaginaActual] = useState(1);
     const itemsPorPagina = 10;
@@ -43,23 +47,31 @@ const AutoValidador = () => {
         setCargando(true);
         setErrorMsg('');
         try {
-            const response = await fetch(apiUrl('/listar_auto.php'));
+            const matricula = localStorage.getItem('matricula');
+            const url = new URL(apiUrl('/listar_auto.php'));
+            url.searchParams.append('validatorMatricula', matricula);
+            
+            if (esSuperAdmin && seccionSeleccionada > 0) {
+                url.searchParams.append('seccion', seccionSeleccionada);
+            }
+            
+            const response = await fetch(url);
             const data = await response.json();
             
             if (response.ok && data.success) {
-                const requests = data.requests || [];
-                setSolicitudes(requests);
-                setValidationDrafts(prevDrafts => {
-                    const nextDrafts = {};
-                    requests.forEach(solicitud => {
-                        const key = String(solicitud.id || solicitud.matricula);
-                        nextDrafts[key] = prevDrafts[key] || {
-                            estatus: solicitud.estatus || 'preregistro',
-                            observaciones: solicitud.observaciones || ''
-                        };
-                    });
-                    return nextDrafts;
-                });
+                setSolicitudes(data.requests || []);
+                setEsSuperAdmin(data.validador?.esSuperAdmin || false);
+                
+                if (data.secciones) {
+                    setSecciones(data.secciones);
+                }
+
+                if (data.validador?.idSeccion) {
+                    const seccionEncontrada = data.secciones?.find(s => s.id === data.validador.idSeccion);
+                    if (seccionEncontrada?.color_principal) {
+                        setColorPrincipal(seccionEncontrada.color_principal);
+                    }
+                }
             } else {
                 setErrorMsg(data.message || 'Error al cargar las solicitudes.');
             }
@@ -68,7 +80,7 @@ const AutoValidador = () => {
         } finally {
             setCargando(false);
         }
-    }, []);
+    }, [esSuperAdmin, seccionSeleccionada]);
 
     useEffect(() => {
         const matricula = localStorage.getItem('matricula');
@@ -226,7 +238,6 @@ const AutoValidador = () => {
     const indexPrimeroSeguro = indexUltimoSeguro - itemsPorPagina;
     const solicitudesPagina = solicitudesFiltradas.slice(indexPrimeroSeguro, indexUltimoSeguro);
 
-    // ========== ESTILOS MODERNOS ==========
     const styles = {
         container: {
             maxWidth: '1400px',
@@ -248,7 +259,7 @@ const AutoValidador = () => {
             alignItems: 'center',
             flexWrap: 'wrap',
             gap: '1rem',
-            borderBottom: '4px solid #3EAEF4',
+            borderBottom: `4px solid ${colorPrincipal || '#3EAEF4'}`,
             boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
             position: 'relative',
             overflow: 'hidden',
@@ -265,13 +276,13 @@ const AutoValidador = () => {
             width: '400px',
             height: '400px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(62,174,244,0.1) 0%, transparent 70%)',
+            background: `radial-gradient(circle, ${colorPrincipal || '#3EAEF4'}20 0%, transparent 70%)`,
             pointerEvents: 'none',
         },
         headerTitle: {
             fontSize: '2rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+            background: `linear-gradient(135deg, #fff 30%, ${colorPrincipal || '#3EAEF4'} 100%)`,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -298,7 +309,7 @@ const AutoValidador = () => {
         },
         headerBadge: {
             display: 'inline-block',
-            backgroundColor: '#3EAEF4',
+            backgroundColor: colorPrincipal || '#3EAEF4',
             color: '#0A0F1E',
             padding: '0.3rem 1rem',
             borderRadius: '20px',
@@ -310,8 +321,8 @@ const AutoValidador = () => {
         },
         btnOutline: {
             backgroundColor: 'transparent',
-            color: '#3EAEF4',
-            border: '2px solid #3EAEF4',
+            color: colorPrincipal || '#3EAEF4',
+            border: `2px solid ${colorPrincipal || '#3EAEF4'}`,
             padding: '0.5rem 1.5rem',
             borderRadius: '30px',
             fontWeight: 'bold',
@@ -333,10 +344,9 @@ const AutoValidador = () => {
             borderRadius: '16px',
             padding: '1.5rem',
             marginBottom: '2rem',
-            border: '1px solid rgba(255,255,255,0.5)',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+            border: `1px solid ${colorPrincipal || '#3EAEF4'}30`,
+            boxShadow: `0 4px 20px rgba(0,0,0,0.06)`,
         },
-        // Card moderna con glassmorphism
         card: {
             backgroundColor: 'rgba(255,255,255,0.9)',
             backdropFilter: 'blur(10px)',
@@ -344,18 +354,13 @@ const AutoValidador = () => {
             boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
             transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
             height: '100%',
-            border: '1px solid rgba(255,255,255,0.5)',
+            border: `1px solid ${colorPrincipal || '#3EAEF4'}20`,
             overflow: 'hidden',
         },
-        cardHover: {
-            transform: 'translateY(-6px)',
-            boxShadow: '0 16px 40px rgba(0,0,0,0.1)',
-            borderColor: '#3EAEF4',
-        },
         cardHeader: {
-            background: 'linear-gradient(135deg, #0A0F1E, #1a1f2e)',
+            background: `linear-gradient(135deg, #0A0F1E, #1a1f2e)`,
             color: 'white',
-            borderBottom: '3px solid #3EAEF4',
+            borderBottom: `3px solid ${colorPrincipal || '#3EAEF4'}`,
             padding: '1rem 1.25rem',
             display: 'flex',
             justifyContent: 'space-between',
@@ -389,30 +394,11 @@ const AutoValidador = () => {
         infoValue: {
             fontSize: '0.95rem',
             fontWeight: '600',
-            color: '#0A0F1E',
+            color: colorPrincipal || '#0A0F1E',
         },
         btnPrimary: {
-            background: 'linear-gradient(135deg, #3EAEF4, #2d8fd4)',
+            background: `linear-gradient(135deg, ${colorPrincipal || '#3EAEF4'}, ${colorPrincipal || '#3EAEF4'}cc)`,
             color: '#0A0F1E',
-            border: 'none',
-            padding: '0.6rem 1.5rem',
-            borderRadius: '25px',
-            fontWeight: 'bold',
-            transition: 'all 0.3s ease',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            cursor: 'pointer',
-            width: '100%',
-            justifyContent: 'center',
-        },
-        btnPrimaryHover: {
-            transform: 'translateY(-2px)',
-            boxShadow: '0 4px 16px rgba(62,174,244,0.3)',
-        },
-        btnSuccess: {
-            background: 'linear-gradient(135deg, #28a745, #20c997)',
-            color: 'white',
             border: 'none',
             padding: '0.6rem 1.5rem',
             borderRadius: '25px',
@@ -426,7 +412,7 @@ const AutoValidador = () => {
             justifyContent: 'center',
         },
         selectStyled: {
-            border: '1px solid #ddd',
+            border: `1px solid ${colorPrincipal || '#ddd'}40`,
             borderRadius: '12px',
             padding: '0.6rem 1rem',
             width: '100%',
@@ -436,7 +422,7 @@ const AutoValidador = () => {
             transition: 'border-color 0.3s ease',
         },
         textareaStyled: {
-            border: '1px solid #ddd',
+            border: `1px solid ${colorPrincipal || '#ddd'}40`,
             borderRadius: '12px',
             padding: '0.6rem 1rem',
             width: '100%',
@@ -446,13 +432,22 @@ const AutoValidador = () => {
             minHeight: '80px',
         },
         inputSearch: {
-            border: '1px solid #ddd',
+            border: `1px solid ${colorPrincipal || '#ddd'}40`,
             borderRadius: '25px',
             padding: '0.6rem 1.2rem',
             width: '100%',
             outline: 'none',
             transition: 'all 0.3s ease',
             backgroundColor: 'white',
+        },
+        selectorWrapper: {
+            display: 'flex',
+            justifyContent: 'center',
+            marginBottom: '1.5rem',
+        },
+        selectorContainer: {
+            maxWidth: '400px',
+            width: '100%',
         },
     };
 
@@ -478,12 +473,12 @@ const AutoValidador = () => {
                     borderRadius: '16px',
                     padding: '3rem',
                     textAlign: 'center',
-                    border: '1px solid rgba(255,0,0,0.2)',
+                    border: `1px solid ${colorPrincipal || '#dc3545'}40`,
                 }}>
                     <FaExclamationTriangle style={{ fontSize: '3rem', color: '#dc3545', marginBottom: '1rem' }} />
                     <h3 style={{ color: '#dc3545' }}>Acceso Denegado</h3>
                     <p className="text-muted">No tienes permisos para acceder a esta sección. Solo validadores de crédito automotriz.</p>
-                    <Link to="/dashboard" style={styles.btnOutline}>Volver</Link>
+                    <Link to="/dashboard" style={{ ...styles.btnOutline, borderColor: '#dc3545', color: '#dc3545' }}>Volver</Link>
                 </div>
             </div>
         );
@@ -502,12 +497,12 @@ const AutoValidador = () => {
 
     return (
         <div style={styles.container}>
-            {/* Header con glow */}
+            {/* Header */}
             <div style={styles.header}>
                 <div style={styles.headerGlow} />
                 <div>
                     <h2 style={styles.headerTitle}>
-                        <FaShieldAlt style={{ color: '#3EAEF4' }} /> Validador de Crédito Automotriz
+                        <FaShieldAlt style={{ color: colorPrincipal || '#3EAEF4' }} /> Validador de Crédito Automotriz
                     </h2>
                     <p style={styles.headerSubtitle}>
                         Gestiona y valida las solicitudes de los agremiados
@@ -535,13 +530,43 @@ const AutoValidador = () => {
                 </div>
             )}
 
+            {/* Selector de secciones (solo superadmin) */}
+            {esSuperAdmin && secciones.length > 0 && (
+                <div style={styles.selectorWrapper}>
+                    <div style={styles.selectorContainer}>
+                        <select
+                            className="form-select"
+                            style={{
+                                ...styles.selectStyled,
+                                borderRadius: '25px',
+                                textAlign: 'center',
+                                fontWeight: 'bold',
+                                borderColor: colorPrincipal || '#3EAEF4',
+                            }}
+                            value={seccionSeleccionada}
+                            onChange={(e) => {
+                                setSeccionSeleccionada(Number(e.target.value));
+                                setPaginaActual(1);
+                            }}
+                        >
+                            <option value="0">🌐 Todas las secciones</option>
+                            {secciones.map(sec => (
+                                <option key={sec.id} value={sec.id}>
+                                    {sec.romano} - {sec.nombre}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+            )}
+
             {/* Filtros y búsqueda */}
             <div style={styles.filterBar}>
                 <div className="row g-3 align-items-center">
                     <div className="col-md-5">
                         <div className="input-group">
                             <span className="input-group-text bg-white border-0" style={{ borderRadius: '25px 0 0 25px' }}>
-                                <FaSearch style={{ color: '#3EAEF4' }} />
+                                <FaSearch style={{ color: colorPrincipal || '#3EAEF4' }} />
                             </span>
                             <input
                                 type="text"
@@ -559,7 +584,11 @@ const AutoValidador = () => {
                     <div className="col-md-3">
                         <select
                             className="form-select"
-                            style={{ borderRadius: '25px' }}
+                            style={{ 
+                                ...styles.selectStyled, 
+                                borderRadius: '25px',
+                                borderColor: colorPrincipal || '#ddd40',
+                            }}
                             value={filtro}
                             onChange={(e) => {
                                 setFiltro(e.target.value);
@@ -576,7 +605,7 @@ const AutoValidador = () => {
                     </div>
                     <div className="col-md-2">
                         <span className="text-muted" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <FaEye style={{ color: '#3EAEF4' }} /> {solicitudesFiltradas.length} solicitudes
+                            <FaEye style={{ color: colorPrincipal || '#3EAEF4' }} /> {solicitudesFiltradas.length} solicitudes
                         </span>
                     </div>
                     <div className="col-md-2 text-end">
@@ -601,9 +630,9 @@ const AutoValidador = () => {
                             borderRadius: '16px',
                             padding: '4rem 2rem',
                             textAlign: 'center',
-                            border: '1px solid rgba(255,255,255,0.5)',
+                            border: `1px solid ${colorPrincipal || '#3EAEF4'}30`,
                         }}>
-                            <FaInfoCircle style={{ fontSize: '3rem', color: '#3EAEF4', marginBottom: '1rem' }} />
+                            <FaInfoCircle style={{ fontSize: '3rem', color: colorPrincipal || '#3EAEF4', marginBottom: '1rem' }} />
                             <h4 style={{ color: '#0A0F1E' }}>No hay solicitudes para mostrar</h4>
                             <p className="text-muted">Los registros aparecerán aquí cuando los agremiados soliciten su crédito</p>
                         </div>
@@ -613,24 +642,31 @@ const AutoValidador = () => {
                         const draft = getDraft(solicitud);
                         const statusInfo = getStatusInfo(solicitud.estatus);
                         const isSaving = validandoId === getDraftKey(solicitud);
+                        const seccionColor = solicitud.seccion_color || '#3EAEF4';
 
                         return (
                             <div className="col-12 col-xl-6" key={solicitud.id || solicitud.matricula || idx}>
                                 <div 
-                                    style={styles.card}
+                                    style={{
+                                        ...styles.card,
+                                        borderColor: seccionColor,
+                                    }}
                                     onMouseEnter={(e) => {
                                         e.currentTarget.style.transform = 'translateY(-6px)';
-                                        e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,0,0,0.1)';
-                                        e.currentTarget.style.borderColor = '#3EAEF4';
+                                        e.currentTarget.style.boxShadow = `0 16px 40px ${seccionColor}20`;
+                                        e.currentTarget.style.borderColor = seccionColor;
                                     }}
                                     onMouseLeave={(e) => {
                                         e.currentTarget.style.transform = 'translateY(0)';
                                         e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.06)';
-                                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)';
+                                        e.currentTarget.style.borderColor = `${seccionColor}20`;
                                     }}
                                 >
-                                    {/* Card Header */}
-                                    <div style={styles.cardHeader}>
+                                    {/* Card Header con el color del solicitante */}
+                                    <div style={{
+                                        ...styles.cardHeader,
+                                        borderBottom: `3px solid ${seccionColor}`,
+                                    }}>
                                         <div>
                                             <small className="text-white-50">Solicitud #{indexPrimeroSeguro + idx + 1}</small>
                                             <h6 className="mb-0 text-white" style={{ fontSize: '1rem' }}>
@@ -648,33 +684,45 @@ const AutoValidador = () => {
                                         <div className="row g-3 mb-3">
                                             <div className="col-md-6">
                                                 <div style={styles.infoRow}>
-                                                    <FaIdCard /> Matrícula
+                                                    <FaIdCard style={{ color: seccionColor }} /> Matrícula
                                                 </div>
-                                                <div style={styles.infoValue}>{solicitud.matricula}</div>
+                                                <div style={{ ...styles.infoValue, color: seccionColor }}>
+                                                    {solicitud.matricula}
+                                                </div>
                                             </div>
                                             <div className="col-md-6">
                                                 <div style={styles.infoRow}>
-                                                    <FaCalendarAlt /> Fecha registro
+                                                    <FaCalendarAlt style={{ color: seccionColor }} /> Fecha registro
                                                 </div>
-                                                <div style={styles.infoValue}>{solicitud.fecha || 'N/A'}</div>
+                                                <div style={{ ...styles.infoValue, color: seccionColor }}>
+                                                    {solicitud.fecha || 'N/A'}
+                                                </div>
                                             </div>
                                             <div className="col-md-6">
                                                 <div style={styles.infoRow}>
-                                                    <FaBuilding /> Adscripción
+                                                    <FaBuilding style={{ color: seccionColor }} /> Adscripción
                                                 </div>
-                                                <div style={styles.infoValue}>{solicitud.adscripcion || 'N/A'}</div>
+                                                <div style={{ ...styles.infoValue, color: seccionColor }}>
+                                                    {solicitud.adscripcion || 'N/A'}
+                                                </div>
                                             </div>
                                             <div className="col-md-6">
                                                 <div style={styles.infoRow}>
-                                                    <FaUser /> Categoría
+                                                    <FaUser style={{ color: seccionColor }} /> Categoría
                                                 </div>
-                                                <div style={styles.infoValue}>{solicitud.categoria || 'N/A'}</div>
+                                                <div style={{ ...styles.infoValue, color: seccionColor }}>
+                                                    {solicitud.categoria || 'N/A'}
+                                                </div>
                                             </div>
                                         </div>
 
                                         {/* Documentos */}
-                                        <div style={{ borderTop: '1px solid #e9ecef', paddingTop: '1rem', marginBottom: '1rem' }}>
-                                            <div style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#0A0F1E' }}>
+                                        <div style={{ 
+                                            borderTop: `1px solid ${seccionColor}30`, 
+                                            paddingTop: '1rem', 
+                                            marginBottom: '1rem' 
+                                        }}>
+                                            <div style={{ fontWeight: '600', marginBottom: '0.5rem', color: seccionColor }}>
                                                 📄 Documentos
                                             </div>
                                             <div className="d-flex flex-wrap gap-2">
@@ -684,9 +732,13 @@ const AutoValidador = () => {
                                                         target="_blank" 
                                                         rel="noopener noreferrer" 
                                                         className="btn btn-outline-primary btn-sm rounded-pill"
-                                                        style={{ fontWeight: '500' }}
+                                                        style={{ 
+                                                            fontWeight: '500',
+                                                            borderColor: seccionColor,
+                                                            color: seccionColor,
+                                                        }}
                                                     >
-                                                        <FaFilePdf className="me-1" /> Tarjetón
+                                                        <FaFilePdf className="me-1" style={{ color: seccionColor }} /> Tarjetón
                                                     </a>
                                                 )}
                                                 {solicitud.inePath && (
@@ -695,9 +747,13 @@ const AutoValidador = () => {
                                                         target="_blank" 
                                                         rel="noopener noreferrer" 
                                                         className="btn btn-outline-primary btn-sm rounded-pill"
-                                                        style={{ fontWeight: '500' }}
+                                                        style={{ 
+                                                            fontWeight: '500',
+                                                            borderColor: seccionColor,
+                                                            color: seccionColor,
+                                                        }}
                                                     >
-                                                        <FaFilePdf className="me-1" /> INE
+                                                        <FaFilePdf className="me-1" style={{ color: seccionColor }} /> INE
                                                     </a>
                                                 )}
                                                 {!solicitud.tarjetonPath && !solicitud.inePath && (
@@ -709,33 +765,36 @@ const AutoValidador = () => {
                                         {/* Última validación */}
                                         {solicitud.valido && (
                                             <div style={{
-                                                background: '#f8f9fa',
+                                                background: `${seccionColor}10`,
                                                 borderRadius: '10px',
                                                 padding: '0.6rem 1rem',
                                                 marginBottom: '1rem',
                                                 fontSize: '0.85rem',
-                                                border: '1px solid #e9ecef',
+                                                border: `1px solid ${seccionColor}30`,
                                             }}>
-                                                <strong style={{ color: '#0A0F1E' }}>Última validación:</strong> {solicitud.valido}
+                                                <strong style={{ color: seccionColor }}>Última validación:</strong> {solicitud.valido}
                                                 {solicitud.fecha_validado && <span style={{ color: '#6c757d' }}> | {solicitud.fecha_validado}</span>}
                                             </div>
                                         )}
 
                                         {/* Observaciones */}
                                         <div style={{ marginBottom: '1rem' }}>
-                                            <label className="form-label fw-semibold" style={{ color: '#0A0F1E' }}>
+                                            <label className="form-label fw-semibold" style={{ color: seccionColor }}>
                                                 Observaciones
                                             </label>
                                             <textarea
                                                 className="form-control"
                                                 rows="3"
-                                                style={styles.textareaStyled}
+                                                style={{
+                                                    ...styles.textareaStyled,
+                                                    borderColor: `${seccionColor}40`,
+                                                }}
                                                 value={draft.observaciones}
                                                 onChange={(e) => updateDraft(solicitud, 'observaciones', e.target.value)}
                                                 placeholder="Describe qué documento debe corregir el usuario o deja una nota interna de la validación."
                                                 disabled={isSaving}
-                                                onFocus={(e) => e.target.style.borderColor = '#3EAEF4'}
-                                                onBlur={(e) => e.target.style.borderColor = '#ddd'}
+                                                onFocus={(e) => e.target.style.borderColor = seccionColor}
+                                                onBlur={(e) => e.target.style.borderColor = `${seccionColor}40`}
                                             />
                                             {draft.estatus === 'observaciones' && (
                                                 <div className="form-text text-warning mt-1" style={{ fontSize: '0.8rem' }}>
@@ -747,17 +806,20 @@ const AutoValidador = () => {
                                         {/* Selector de estatus y botón guardar */}
                                         <div className="row g-2 align-items-end">
                                             <div className="col-md-7">
-                                                <label className="form-label fw-semibold" style={{ color: '#0A0F1E' }}>
+                                                <label className="form-label fw-semibold" style={{ color: seccionColor }}>
                                                     Validación
                                                 </label>
                                                 <select
                                                     className="form-select"
-                                                    style={styles.selectStyled}
+                                                    style={{
+                                                        ...styles.selectStyled,
+                                                        borderColor: `${seccionColor}40`,
+                                                    }}
                                                     value={draft.estatus}
                                                     onChange={(e) => updateDraft(solicitud, 'estatus', e.target.value)}
                                                     disabled={isSaving}
-                                                    onFocus={(e) => e.target.style.borderColor = '#3EAEF4'}
-                                                    onBlur={(e) => e.target.style.borderColor = '#ddd'}
+                                                    onFocus={(e) => e.target.style.borderColor = seccionColor}
+                                                    onBlur={(e) => e.target.style.borderColor = `${seccionColor}40`}
                                                 >
                                                     {statusOptions.map(option => (
                                                         <option key={option.value} value={option.value}>
@@ -769,12 +831,15 @@ const AutoValidador = () => {
                                             <div className="col-md-5">
                                                 <button
                                                     type="button"
-                                                    style={styles.btnPrimary}
+                                                    style={{
+                                                        ...styles.btnPrimary,
+                                                        background: `linear-gradient(135deg, ${seccionColor}, ${seccionColor}cc)`,
+                                                    }}
                                                     onClick={() => handleValidar(solicitud)}
                                                     disabled={isSaving}
                                                     onMouseEnter={(e) => {
                                                         e.currentTarget.style.transform = 'translateY(-2px)';
-                                                        e.currentTarget.style.boxShadow = '0 4px 16px rgba(62,174,244,0.3)';
+                                                        e.currentTarget.style.boxShadow = `0 4px 16px ${seccionColor}50`;
                                                     }}
                                                     onMouseLeave={(e) => {
                                                         e.currentTarget.style.transform = 'translateY(0)';
@@ -812,7 +877,7 @@ const AutoValidador = () => {
                                 <button 
                                     className="page-link rounded-pill" 
                                     style={paginaSegura === num ? 
-                                        { backgroundColor: '#3EAEF4', borderColor: '#3EAEF4', color: '#0A0F1E', fontWeight: 'bold' } : 
+                                        { backgroundColor: colorPrincipal || '#3EAEF4', borderColor: colorPrincipal || '#3EAEF4', color: '#0A0F1E', fontWeight: 'bold' } : 
                                         { border: 'none', background: 'rgba(255,255,255,0.8)', color: '#0A0F1E' }
                                     }
                                     onClick={() => setPaginaActual(num)}

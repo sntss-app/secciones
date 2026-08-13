@@ -6,11 +6,12 @@ import {
     FaThumbtack, FaEye, FaCalendarAlt, FaTools, FaStar, FaRocket,
     FaBuilding, FaHouseUser, FaPiggyBank, FaFileContract, FaClock,
     FaUmbrellaBeach, FaClipboardList, FaFilePdf, FaExternalLinkAlt, FaFileAlt,
-    FaQrcode, FaChartPie  // ← AGREGAR ESTOS
+    FaQrcode, FaChartPie
 } from 'react-icons/fa';
 import { apiUrl } from '../config';
 import { Modal } from 'react-bootstrap';
 import { hasStoredRole, getStoredRoleIds } from '../utils/roles';
+import { getSectionAssets } from '../utils/sectionAssets';
 
 // ===== IMPORTAR COMPONENTES DE CALCULADORAS =====
 import CreditoHipotecario from '../components/calculadoras/CreditoHipotecario';
@@ -20,12 +21,25 @@ import FondoAhorro from '../components/calculadoras/FondoAhorro';
 import Aguinaldo from '../components/calculadoras/Aguinaldo';
 import Clausula97 from '../components/calculadoras/Clausula97';
 import HorasExtras from '../components/calculadoras/HorasExtras';
-//import Vacaciones from '../components/calculadoras/Vacaciones';
 
 const Dashboard = () => {
     // ===== ESTADOS =====
     const [isLoggedIn] = useState(() => Boolean(localStorage.getItem('matricula')));
     const [userName] = useState(() => localStorage.getItem('nombre') || localStorage.getItem('matricula') || '');
+    
+    // ✅ OBTENER LA SECCIÓN DEL USUARIO DESDE localStorage
+    const [seccionUsuario, setSeccionUsuario] = useState(() => {
+        try {
+            const seccionData = localStorage.getItem('seccionUsuario');
+            if (seccionData) {
+                return JSON.parse(seccionData);
+            }
+            return null;
+        } catch {
+            return null;
+        }
+    });
+    
     const [noticias, setNoticias] = useState([]);
     const [loadingNoticias, setLoadingNoticias] = useState(true);
     const [tabActiva, setTabActiva] = useState('calculadoras');
@@ -46,10 +60,9 @@ const Dashboard = () => {
     const [montoAuto, setMontoAuto] = useState(null);
     const [mostrarResultado, setMostrarResultado] = useState(false);
     const [hasClausula79BisValidatorRole, setHasClausula79BisValidatorRole] = useState(() => {
-    const roleIds = getStoredRoleIds();
-        return roleIds.includes(3); // ID 3 = clausula79bis
+        const roleIds = getStoredRoleIds();
+        return roleIds.includes(3);
     });
-
 
     // ===== EFECTOS =====
     useEffect(() => {
@@ -68,7 +81,35 @@ const Dashboard = () => {
                     
                     setHasAutoValidatorRole(roleIds.includes(1));
                     setHasNewsValidatorRole(roleIds.includes(2));
-                    setHasClausula79BisValidatorRole(roleIds.includes(3)); // ← AGREGAR
+                    setHasClausula79BisValidatorRole(roleIds.includes(3));
+                    
+                    // ✅ GUARDAR LA SECCIÓN EN localStorage CON TODOS LOS CAMPOS
+                    if (data.usuario.idSeccion) {
+                        // Recuperar la sección guardada para conservar logo y banner
+                        let seccionGuardada = null;
+                        try {
+                            seccionGuardada = JSON.parse(localStorage.getItem('seccionUsuario'));
+                        } catch {
+                            seccionGuardada = null;
+                        }
+                        
+                        const assets = getSectionAssets(data.usuario.idSeccion);
+                        const seccionData = {
+                            id: data.usuario.idSeccion,
+                            romano: data.usuario.seccion_romano || seccionGuardada?.romano || 'N/A',
+                            nombre: data.usuario.seccion_nombre || seccionGuardada?.nombre || 'Sin sección',
+                            slogan: data.usuario.seccion_slogan || seccionGuardada?.slogan || null,  // ✅ AGREGADO
+                            direccion: data.usuario.seccion_direccion || seccionGuardada?.direccion || null,  // ✅ AGREGADO
+                            color: data.usuario.seccion_color || seccionGuardada?.color || '#3EAEF4',
+                            logo: data.usuario.seccion_logo || assets.logo,
+                            banner: data.usuario.seccion_banner || assets.banner,
+                            // No borrar las redes recibidas en Login al refrescar
+                            // el perfil; obtener_perfil.php también las devuelve.
+                            redes: data.usuario.redes_sociales ?? seccionGuardada?.redes ?? seccionGuardada?.redes_sociales ?? {}
+                        };
+                        localStorage.setItem('seccionUsuario', JSON.stringify(seccionData));
+                        setSeccionUsuario(seccionData);
+                    }
                 }
             } catch (error) {
                 console.error('Error cargando roles del perfil:', error);
@@ -146,7 +187,6 @@ const Dashboard = () => {
             case 'aguinaldo': return <Aguinaldo />;
             case 'clausula97': return <Clausula97 />;
             case 'horas-extras': return <HorasExtras />;
-            //case 'vacaciones': return <Vacaciones />;
             default: return null;
         }
     };
@@ -175,7 +215,6 @@ const Dashboard = () => {
         { id: 'aguinaldo', icon: <FaGift />, titulo: 'Aguinaldo', descripcion: 'Calcula el monto de tu aguinaldo', color: '#E74C3C', bg: 'linear-gradient(135deg, #E74C3C 0%, #F39C12 100%)' },
         { id: 'clausula97', icon: <FaFileContract />, titulo: 'Cláusula 97 CCT', descripcion: 'Préstamo de hasta 4 meses de sueldo', color: '#8E44AD', bg: 'linear-gradient(135deg, #8E44AD 0%, #9B59B6 100%)' },
         { id: 'horas-extras', icon: <FaClock />, titulo: 'Horas Extras', descripcion: 'Calcula el pago de horas extras', color: '#E67E22', bg: 'linear-gradient(135deg, #E67E22 0%, #F39C12 100%)' },
-        //{ id: 'vacaciones', icon: <FaUmbrellaBeach />, titulo: 'Pago de Vacaciones', descripcion: 'Calcula el pago de tus vacaciones', color: '#1ABC9C', bg: 'linear-gradient(135deg, #1ABC9C 0%, #16A085 100%)' },
     ];
 
     // ===== RECURSOS =====
@@ -220,14 +259,6 @@ const Dashboard = () => {
             link: '/conceptos',
             externo: false
         },
-        // { 
-        //     id: 'calendario', 
-        //     icon: <FaCalendarAlt />, 
-        //     titulo: 'Calendario de Pagos', 
-        //     descripcion: 'Fechas de pago quincenal', 
-        //     link: '/calendario',
-        //     externo: false
-        // },
     ];
 
     // ===== RENDER DE PESTAÑAS =====
@@ -536,8 +567,6 @@ const Dashboard = () => {
     </div>
 );
 
-    
-
     // ===== ESTILOS =====
     const styles = {
         container: {
@@ -636,6 +665,22 @@ const Dashboard = () => {
             '@media (max-width: 480px)': {
                 fontSize: '0.7rem',
             },
+        },
+        heroSeccion: {
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+            marginTop: '0.6rem',
+            padding: '0.4rem 1rem',
+            borderRadius: '8px',
+            transition: 'all 0.3s ease',
+        },
+        heroSeccionIcon: {
+            fontSize: '1rem',
+        },
+        heroSeccionText: {
+            fontSize: '0.85rem',
+            fontWeight: '600',
         },
         heroRoles: {
             display: 'flex',
@@ -747,7 +792,6 @@ const Dashboard = () => {
             gap: '1.5rem',
             marginBottom: '3rem',
         },
-        // ===== CARD PARA CALCULADORAS =====
         card: {
             backgroundColor: 'rgba(255,255,255,0.9)',
             backdropFilter: 'blur(10px)',
@@ -878,7 +922,6 @@ const Dashboard = () => {
             margin: 0,
             lineHeight: 1.5,
         },
-        // ===== GRID RESPONSIVE CON FLEXBOX =====
         grid2cols: {
             display: 'flex',
             flexWrap: 'wrap',
@@ -905,7 +948,6 @@ const Dashboard = () => {
                 order: 2,
             },
         },
-        // ===== CARD PARA NOTICIAS =====
         cardNoticias: {
             backgroundColor: 'rgba(255,255,255,0.9)',
             backdropFilter: 'blur(10px)',
@@ -1077,6 +1119,40 @@ const Dashboard = () => {
         },
     };
 
+    // ✅ Determinar la URL del banner según la sesión
+    const getBannerUrl = () => {
+        // Si hay sección y tiene banner
+        if (seccionUsuario?.banner) {
+            console.log('📸 Banner de sección:', seccionUsuario.banner);
+            return seccionUsuario.banner;
+        }
+        // Si no, usar el banner por defecto
+        console.log('📸 Banner por defecto');
+        return '/images/seccionesBanner/bannerD.jpg';
+    };
+
+
+    // ✅ Determinar el título del banner
+    const getBannerTitle = () => {
+        if (seccionUsuario?.romano) {
+            return `SNTSS Sección ${seccionUsuario.romano}`;
+        }
+        return 'SNTSS - CEN';
+    };
+
+    // ✅ Determinar el subtítulo del banner
+    const getBannerSubtitle = () => {
+        if (seccionUsuario?.nombre) {
+            return `"${seccionUsuario.nombre}"`;
+        }
+        return '"Todos Juntos, Todos Fuertes"';
+    };
+
+    // ✅ Determinar el color del banner
+    const getBannerColor = () => {
+        return seccionUsuario?.color || '#3EAEF4';
+    };
+
     return (
         <div style={styles.container}>
             {/* ===== HERO SECTION ===== */}
@@ -1085,11 +1161,36 @@ const Dashboard = () => {
                 <div style={styles.heroContent}>
                     <div style={styles.heroLeft}>
                         <h1 style={styles.heroTitle}>
-                            {isLoggedIn ? `¡Bienvenido, ${userName}!` : 'SNTSS Sección XXXIII'}
+                            {isLoggedIn ? `¡Bienvenido, ${userName}!` : 'SNTSS - CEN'}
                         </h1>
                         <p style={styles.heroSubtitle}>
                             Comité Ejecutivo Seccional al Servicio de los trabajadores
                         </p>
+                        
+                        {/* ✅ MOSTRAR LA SECCIÓN DEL USUARIO DEBAJO DEL NOMBRE (solo si está logueado) */}
+                        {isLoggedIn && seccionUsuario && (
+                            <div style={{
+                                ...styles.heroSeccion,
+                                backgroundColor: `${seccionUsuario.color || '#3EAEF4'}15`,
+                                borderLeft: `4px solid ${seccionUsuario.color || '#3EAEF4'}`
+                            }}>
+                                <FaBuilding style={{ 
+                                    ...styles.heroSeccionIcon,
+                                    color: seccionUsuario.color || '#3EAEF4'
+                                }} />
+                                <span style={{
+                                    ...styles.heroSeccionText,
+                                    color: seccionUsuario.color || '#3EAEF4'
+                                }}>
+                                    Sección {seccionUsuario.romano} - {seccionUsuario.nombre}
+                                </span>
+                                <FaCheckCircle style={{ 
+                                    color: seccionUsuario.color || '#3EAEF4',
+                                    fontSize: '0.8rem',
+                                    opacity: 0.7
+                                }} />
+                            </div>
+                        )}
                     </div>
                     
                     <div style={styles.heroRight}>
@@ -1120,10 +1221,10 @@ const Dashboard = () => {
             </div>
 
             {/* ===== BANNER CON IMAGEN ===== */}
-            <div style={styles.bannerImage}>
+             <div style={styles.bannerImage}>
                 <img 
-                    src="/recursos/banner-sntss.jpg" 
-                    alt="SNTSS Sección XXXIII"
+                    src={getBannerUrl()}
+                    alt={getBannerTitle()}
                     style={styles.bannerImageContent}
                     onError={(e) => {
                         e.target.style.display = 'none';
@@ -1136,14 +1237,16 @@ const Dashboard = () => {
                                 align-items: center;
                                 justify-content: center;
                                 flex-direction: column;
-                                border-bottom: 4px solid #3EAEF4;
+                                border-bottom: 4px solid ${getBannerColor()};
                                 padding: 1rem;
                                 text-align: center;
                             ">
                                 <div style="font-size: 3.5rem;">🏛️</div>
-                                <h2 style="color: white; margin: 0.3rem 0 0 0; font-size: 1.3rem;">SNTSS Sección XXXIII</h2>
-                                <p style="color: #3EAEF4; margin: 0.2rem 0 0 0; font-size: 0.9rem; font-style: italic;">
-                                    "Unidad y Fortaleza Sindical"
+                                <h2 style="color: white; margin: 0.3rem 0 0 0; font-size: 1.3rem;">
+                                    ${getBannerTitle()}
+                                </h2>
+                                <p style="color: ${getBannerColor()}; margin: 0.2rem 0 0 0; font-size: 0.9rem; font-style: italic;">
+                                    ${getBannerSubtitle()}
                                 </p>
                             </div>
                         `;

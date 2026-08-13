@@ -11,9 +11,10 @@ import {
     FaTwitter,
     FaInstagram,
     FaYoutube,
-    FaTiktok
+    FaTiktok,
+    FaWhatsapp
 } from 'react-icons/fa';
-import logo from "../assets/logo.jpeg";
+import { getSeccionUsuario, getRedesSociales } from '../utils/sectionHelpers';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -22,6 +23,11 @@ const Navbar = () => {
     const [userName, setUserName] = useState('');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    
+    // ✅ NUEVO: Estado para la sección y el logo
+    const [seccionUsuario, setSeccionUsuario] = useState(null);
+    const [logo, setLogo] = useState('/images/seccionesLogo/logoD.png');
+    const [redesSociales, setRedesSociales] = useState({});
 
     useEffect(() => {
         const matricula = localStorage.getItem('matricula');
@@ -36,19 +42,40 @@ const Navbar = () => {
         }
     }, [location]);
 
+    // ✅ NUEVO: useEffect para cargar la sección, el logo y las redes
     useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+            const seccion = getSeccionUsuario();
+            console.log('📌 Navbar - Sección obtenida:', seccion);  // DEBUG
+            console.log('📌 Navbar - Redes:', seccion?.redes);      // DEBUG
+            
+            if (seccion) {
+                setSeccionUsuario(seccion);
+                setLogo(seccion.logo || '/images/seccionesLogo/logoD.png');
+                setRedesSociales(getRedesSociales());
+            } else {
+                setSeccionUsuario(null);
+                setLogo('/images/seccionesLogo/logoD.png');
+                setRedesSociales({});
+            }
+        }, [location]);
+
+        useEffect(() => {
+            const handleScroll = () => {
+                setScrolled(window.scrollY > 50);
+            };
+            window.addEventListener('scroll', handleScroll);
+            return () => window.removeEventListener('scroll', handleScroll);
+        }, []);
 
     const handleLogout = () => {
         localStorage.removeItem('matricula');
         localStorage.removeItem('nombre');
         localStorage.removeItem('correo');
+        localStorage.removeItem('seccionUsuario');
         setIsLoggedIn(false);
+        setSeccionUsuario(null);
+        setLogo('/images/seccionesLogo/logoD.png');
+        setRedesSociales({});
         navigate('/login');
     };
 
@@ -58,6 +85,28 @@ const Navbar = () => {
 
     const closeMobileMenu = () => {
         setMobileMenuOpen(false);
+    };
+
+    // ✅ MAPEO DE ICONOS POR RED SOCIAL
+    const iconosRedes = {
+        facebook: <FaFacebook size={20} />,
+        x: <FaTwitter size={20} />,
+        twitter: <FaTwitter size={20} />,
+        instagram: <FaInstagram size={20} />,
+        youtube: <FaYoutube size={20} />,
+        tiktok: <FaTiktok size={20} />,
+        whatsapp: <FaWhatsapp size={20} />
+    };
+
+    // ✅ CLASES CSS PARA CADA RED SOCIAL
+    const clasesRedes = {
+        facebook: 'social-fb',
+        x: 'social-tw',
+        twitter: 'social-tw',
+        instagram: 'social-ig',
+        youtube: 'social-yt',
+        tiktok: 'social-tt',
+        whatsapp: 'social-wa'
     };
 
     // Estilos iguales a los del footer
@@ -86,6 +135,11 @@ const Navbar = () => {
             color: #00f2ea !important;
             transform: translateY(-3px) scale(1.1);
             background-color: rgba(0,242,234,0.2) !important;
+        }
+        .social-wa:hover {
+            color: #25d366 !important;
+            transform: translateY(-3px) scale(1.1);
+            background-color: rgba(37,211,102,0.2) !important;
         }
         .nav-link:hover {
             color: #3EAEF4 !important;
@@ -174,12 +228,12 @@ const Navbar = () => {
             fontWeight: '500',
             marginTop: '2px',
         },
-        // Sección de redes sociales (igual que el footer)
         socials: {
             display: 'flex',
             justifyContent: 'center',
             gap: '0.8rem',
             alignItems: 'center',
+            flexWrap: 'wrap',
         },
         socialLink: {
             color: 'white',
@@ -256,37 +310,87 @@ const Navbar = () => {
         },
     };
 
+    // ✅ Determinar el título y badge según la sesión
+    const getTitulo = () => {
+        if (!isLoggedIn) {
+            return 'SNTSS-CEN';
+        }
+        return `SNTSS Sección ${seccionUsuario?.romano || 'XXXIII'}`;
+    };
+
+    const getBadge = () => {
+        if (!isLoggedIn) {
+            return '"Comite Ejecutivo Nacional"';
+        }
+        return seccionUsuario?.nombre || 'Comite Ejecutivo Nacional';
+    };
+
+    // ✅ REDES SOCIALES DEL NAVBAR (dinámicas o fallback)
+    const redes = isLoggedIn ? redesSociales : {};
+    const tieneRedes = Object.keys(redes).length > 0;
+
     return (
         <>
             <style>{socialStyles}</style>
             <nav style={styles.navbar}>
                 <div style={styles.container} className="navbar-container">
-                    {/* Logo y título */}
+                    {/* ✅ LOGO DINÁMICO SEGÚN SECCIÓN */}
                     <div style={styles.logoContainer} onClick={() => navigate('/')}>
-                        <img src={logo} alt="Logo SNTSS" style={styles.logo} className="navbar-logo" />
+                        <img 
+                            src={logo} 
+                            alt={getTitulo()}
+                            style={styles.logo} 
+                            className="navbar-logo" 
+                            onError={(e) => {
+                                e.target.src = '/images/seccionesLogo/logoD.png';
+                            }}
+                        />
                         <div style={styles.titleContainer}>
-                            <span style={styles.title} className="navbar-title">SNTSS Sección XXXIII</span>
-                            <span style={styles.badge} className="navbar-badge">✨ "Unidad y Fortaleza Sindical"</span>
+                            <span style={styles.title} className="navbar-title">
+                                {getTitulo()}
+                            </span>
+                            <span style={styles.badge} className="navbar-badge">
+                                ✨ {getBadge()}
+                            </span>
                         </div>
                     </div>
 
-                    {/* Social Links - Desktop (igual que el footer) */}
+                    {/* ✅ REDES SOCIALES DINÁMICAS EN EL NAVBAR */}
                     <div style={styles.socials} className="navbar-socials">
-                        <a href="https://www.facebook.com/search/top?q=secci%C3%B3n%2033%20sntss&locale=es_LA" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
-                            <FaFacebook size={20} />
-                        </a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tw">
-                            <FaTwitter size={20} />
-                        </a>
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-ig">
-                            <FaInstagram size={20} />
-                        </a>
-                        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-yt">
-                            <FaYoutube size={20} />
-                        </a>
-                        <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tt">
-                            <FaTiktok size={20} />
-                        </a>
+                        {tieneRedes ? (
+                            Object.entries(redes).map(([red, url]) => (
+                                <a 
+                                    key={red} 
+                                    href={url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    style={styles.socialLink} 
+                                    className={clasesRedes[red] || 'social-fb'}
+                                    aria-label={red}
+                                >
+                                    {iconosRedes[red] || <FaFacebook size={20} />}
+                                </a>
+                            ))
+                        ) : (
+                            // ✅ FALLBACK: Redes del CEN (sección 39)
+                            <>
+                                <a href="https://www.facebook.com/search/top?q=secci%C3%B3n%2033%20sntss&locale=es_LA" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
+                                    <FaFacebook size={20} />
+                                </a>
+                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tw">
+                                    <FaTwitter size={20} />
+                                </a>
+                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-ig">
+                                    <FaInstagram size={20} />
+                                </a>
+                                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-yt">
+                                    <FaYoutube size={20} />
+                                </a>
+                                <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tt">
+                                    <FaTiktok size={20} />
+                                </a>
+                            </>
+                        )}
                     </div>
 
                     {/* Desktop Links */}

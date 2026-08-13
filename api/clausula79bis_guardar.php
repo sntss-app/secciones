@@ -1,7 +1,7 @@
 <?php
 /*
   Guardar registro de trabajador para la Cláusula 79Bis
-  También actualiza teléfono y correo en la tabla usuarios
+  También actualiza teléfono y correo en la tabla registros
 */
 require_once 'config.php';
 
@@ -21,7 +21,7 @@ if (empty($matricula)) {
 }
 
 try {
-    // Verificar si ya tiene registro
+    // Verificar si ya tiene registro en clausula79bis
     $check = $pdo->prepare("SELECT id, estatus FROM clausula79bis WHERE matricula = :matricula");
     $check->execute([':matricula' => $matricula]);
     $existing = $check->fetch();
@@ -35,7 +35,7 @@ try {
         exit;
     }
 
-    // Obtener datos del usuario
+    // Obtener datos del usuario (desde usuarios)
     $user = $pdo->prepare("SELECT nombre, adscripcion, categoria FROM usuarios WHERE matricula = :matricula");
     $user->execute([':matricula' => $matricula]);
     $usuario = $user->fetch();
@@ -46,20 +46,51 @@ try {
         exit;
     }
 
-    // 🔥 ACTUALIZAR TELÉFONO Y CORREO EN LA TABLA USUARIOS
-    $updateUsuario = $pdo->prepare("
-        UPDATE usuarios 
-        SET telefono = :telefono, 
-            correo = :correo 
-        WHERE matricula = :matricula
-    ");
-    $updateUsuario->execute([
-        ':telefono' => $telefono,
-        ':correo' => $correo,
-        ':matricula' => $matricula
-    ]);
+    // Iniciar transacción
+    $pdo->beginTransaction();
 
-    // 🔥 Insertar registro con estatus 2 (Aprobado) en lugar de 1
+    // ✅ 1. ACTUALIZAR TELÉFONO Y CORREO EN LA TABLA registros
+    // Verificar si existe registro en registros
+    $checkRegistro = $pdo->prepare("SELECT id FROM registros WHERE matricula = :matricula");
+    $checkRegistro->execute([':matricula' => $matricula]);
+    $existeRegistro = $checkRegistro->fetch();
+
+    if ($existeRegistro) {
+        // Actualizar registros existentes
+        $updateRegistro = $pdo->prepare("
+            UPDATE registros 
+            SET telefono = :telefono, 
+                correo = :correo 
+            WHERE matricula = :matricula
+        ");
+        $updateRegistro->execute([
+            ':telefono' => $telefono,
+            ':correo' => $correo,
+            ':matricula' => $matricula
+        ]);
+    } else {
+        // Insertar en registros si no existe
+        $insertRegistro = $pdo->prepare("
+            INSERT INTO registros (
+                matricula, 
+                telefono, 
+                correo,
+                status
+            ) VALUES (
+                :matricula,
+                :telefono,
+                :correo,
+                2
+            )
+        ");
+        $insertRegistro->execute([
+            ':matricula' => $matricula,
+            ':telefono' => $telefono,
+            ':correo' => $correo
+        ]);
+    }
+
+    // ✅ 2. Insertar registro en clausula79bis con estatus 2 (Aprobado)
     $stmt = $pdo->prepare("
         INSERT INTO clausula79bis (
             matricula, nombre, adscripcion, categoria, telefono, correo,
@@ -81,12 +112,16 @@ try {
         ':nombre_acompanante' => $nombre_acompanante
     ]);
 
+    // Confirmar transacción
+    $pdo->commit();
+
     echo json_encode([
         'success' => true, 
         'message' => '¡Registro aprobado! Tu solicitud ha sido aceptada.'
     ]);
 
 } catch (PDOException $e) {
+    $pdo->rollBack();
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Error en BD: ' . $e->getMessage()]);
 }

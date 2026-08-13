@@ -3,6 +3,8 @@
  * @param {Storage} storage - localStorage o sessionStorage
  * @param {Object} usuario - Datos del usuario desde la API
  */
+import { getSectionAssets } from './sectionAssets';
+
 export const storeUserSession = (storage, usuario) => {
     storage.setItem('matricula', usuario.matricula || '');
     storage.setItem('nombre', usuario.nombre || '');
@@ -12,6 +14,23 @@ export const storeUserSession = (storage, usuario) => {
     
     if (usuario.foto_path) {
         storage.setItem('foto', usuario.foto_path);
+    }
+
+    // La sección forma parte de la sesión persistente. El login puede incluir
+    // estos campos directamente desde mail-login.php.
+    if (usuario.idSeccion) {
+        const assets = getSectionAssets(usuario.idSeccion);
+        storage.setItem('seccionUsuario', JSON.stringify({
+            id: usuario.idSeccion,
+            romano: usuario.seccion_romano || 'N/A',
+            nombre: usuario.seccion_nombre || 'Sin sección',
+            slogan: usuario.seccion_slogan || null,
+            direccion: usuario.seccion_direccion || null,
+            color: usuario.seccion_color || '#3EAEF4',
+            logo: usuario.seccion_logo || assets.logo,
+            banner: usuario.seccion_banner || assets.banner,
+            redes: usuario.redes_sociales || usuario.redes || {}
+        }));
     }
 };
 
@@ -84,6 +103,7 @@ export const clearUserSession = () => {
     localStorage.removeItem('roleIds');
     localStorage.removeItem('roleNames');
     localStorage.removeItem('foto');
+    localStorage.removeItem('seccionUsuario');
     sessionStorage.clear();
 };
 /**
