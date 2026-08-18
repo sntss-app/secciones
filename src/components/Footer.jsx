@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import AvisoPrivacidad from './AvisoPrivacidad';
-import { FaFacebook, FaTwitter, FaInstagram, FaYoutube, FaTiktok, FaWhatsapp, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaFacebook, FaTwitter, FaInstagram, FaYoutube, FaTiktok, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 
 const Footer = () => {
-    const currentYear = new Date().getFullYear();
     const [showAvisoPrivacidad, setShowAvisoPrivacidad] = useState(false);
 
     // ✅ FUNCIÓN PARA OBTENER LA SECCIÓN DIRECTAMENTE DE localStorage
@@ -20,46 +19,9 @@ const Footer = () => {
         }
     };
 
-    // ✅ FUNCIÓN PARA OBTENER REDES SOCIALES
-    const getRedesSociales = () => {
-        const seccion = getSeccionUsuario();
-        return seccion?.redes || {};
-    };
-
-    // ✅ MAPEO DE ICONOS POR RED SOCIAL
-    const iconosRedes = {
-        facebook: <FaFacebook size={18} />,
-        x: <FaTwitter size={18} />,
-        twitter: <FaTwitter size={18} />,
-        instagram: <FaInstagram size={18} />,
-        youtube: <FaYoutube size={18} />,
-        tiktok: <FaTiktok size={18} />,
-        whatsapp: <FaWhatsapp size={18} />
-    };
-
-    // ✅ CLASES CSS PARA CADA RED SOCIAL
-    const clasesRedes = {
-        facebook: 'social-fb',
-        x: 'social-tw',
-        twitter: 'social-tw',
-        instagram: 'social-ig',
-        youtube: 'social-yt',
-        tiktok: 'social-tt',
-        whatsapp: 'social-wa'
-    };
-
     // ✅ FUNCIONES QUE LEE DIRECTAMENTE DE localStorage
     const getTitulo = () => {
-        const isLoggedIn = Boolean(localStorage.getItem('matricula'));
-        if (!isLoggedIn) {
-            return 'SNTSS';
-        }
-        
-        const seccion = getSeccionUsuario();
-        if (!seccion?.romano) {
-            return 'SNTSS';
-        }
-        return `SNTSS Sección ${seccion.romano}`;
+        return 'SNTSS';
     };
 
     const getSlogan = () => {
@@ -79,17 +41,7 @@ const Footer = () => {
     };
 
     const getCopyright = () => {
-        const isLoggedIn = Boolean(localStorage.getItem('matricula'));
-        let seccionTexto = 'SNTSS';
-        
-        if (isLoggedIn) {
-            const seccion = getSeccionUsuario();
-            if (seccion?.romano) {
-                seccionTexto = `Sección ${seccion.romano}`;
-            }
-        }
-        
-        return `© ${currentYear} SNTSS ${seccionTexto} /`;
+        return '© 2026 SNTSS SNTSS / ';
     };
 
     const getDireccion = () => {
@@ -214,6 +166,12 @@ const Footer = () => {
             color: '#2563EB',
             marginLeft: '5px',
         },
+        didactic: {
+            fontSize: '0.7rem',
+            color: 'var(--sn-text-light)',
+            marginTop: '0.75rem',
+            fontStyle: 'italic',
+        },
     };
 
     const socialStyles = `
@@ -242,19 +200,33 @@ const Footer = () => {
             background-color: #000000 !important;
             transform: translateY(-5px) scale(1.1);
         }
-        .social-wa:hover {
-            color: #fff !important;
-            background-color: #25d366 !important;
-            transform: translateY(-5px) scale(1.1);
-        }
         .footer-link:hover {
             color: #2563EB !important;
         }
     `;
 
-    // ✅ OBTENER REDES SOCIALES (SOLO UNA VEZ)
-    const redes = getRedesSociales();
-    const tieneRedes = Object.keys(redes).length > 0;
+    // ✅ REDES SOCIALES FIJAS (estilo mockup)
+    const redes = [
+        { red: 'facebook', url: '#' },
+        { red: 'twitter', url: '#' },
+        { red: 'instagram', url: '#' },
+        { red: 'youtube', url: '#' },
+        { red: 'tiktok', url: '#' }
+    ];
+    const iconosRedes = {
+        facebook: <FaFacebook size={18} />,
+        twitter: <FaTwitter size={18} />,
+        instagram: <FaInstagram size={18} />,
+        youtube: <FaYoutube size={18} />,
+        tiktok: <FaTiktok size={18} />
+    };
+    const clasesRedes = {
+        facebook: 'social-fb',
+        twitter: 'social-tw',
+        instagram: 'social-ig',
+        youtube: 'social-yt',
+        tiktok: 'social-tt'
+    };
 
     return (
         <>
@@ -277,42 +249,19 @@ const Footer = () => {
                         </div>
                     </div>
                     
-                    {/* ✅ REDES SOCIALES DINÁMICAS */}
+                    {/* ✅ REDES SOCIALES FIJAS (estilo mockup) */}
                     <div style={styles.socials}>
-                        {tieneRedes ? (
-                            Object.entries(redes).map(([red, url]) => (
-                                <a 
-                                    key={red} 
-                                    href={url} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    style={styles.socialLink} 
-                                    className={clasesRedes[red] || 'social-fb'}
-                                    aria-label={red}
-                                >
-                                    {iconosRedes[red] || <FaFacebook size={18} />}
-                                </a>
-                            ))
-                        ) : (
-                            // ✅ FALLBACK: Redes sociales por defecto (CEN)
-                            <>
-                                <a href="https://www.facebook.com/SNTSSOFICIAL" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
-                                    <FaFacebook size={18} />
-                                </a>
-                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tw">
-                                    <FaTwitter size={18} />
-                                </a>
-                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-ig">
-                                    <FaInstagram size={18} />
-                                </a>
-                                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-yt">
-                                    <FaYoutube size={18} />
-                                </a>
-                                <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tt">
-                                    <FaTiktok size={18} />
-                                </a>
-                            </>
-                        )}
+                        {redes.map(({ red, url }) => (
+                            <a 
+                                key={red} 
+                                href={url} 
+                                style={styles.socialLink} 
+                                className={clasesRedes[red] || 'social-fb'}
+                                aria-label={red}
+                            >
+                                {iconosRedes[red] || <FaFacebook size={18} />}
+                            </a>
+                        ))}
                     </div>
                     
                     <div style={styles.linksRow}>
@@ -328,6 +277,9 @@ const Footer = () => {
                     <p style={styles.copy}>
                         {getCopyright()} 
                         <strong style={styles.legend}> espigar.dev</strong>
+                    </p>
+                    <p style={styles.didactic}>
+                        Este sitio es un proyecto didáctico desarrollado con fines exclusivamente académicos y escolares.
                     </p>
                     <AvisoPrivacidad show={showAvisoPrivacidad} onHide={() => setShowAvisoPrivacidad(false)} />
                 </div>

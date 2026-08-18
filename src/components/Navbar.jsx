@@ -7,14 +7,9 @@ import {
     FaSignOutAlt, 
     FaSignInAlt, 
     FaUserPlus,
-    FaFacebook,
-    FaTwitter,
-    FaInstagram,
-    FaYoutube,
-    FaTiktok,
-    FaWhatsapp
+    FaHome
 } from 'react-icons/fa';
-import { getSeccionUsuario, getRedesSociales } from '../utils/sectionHelpers';
+import { getSeccionUsuario } from '../utils/sectionHelpers';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -27,7 +22,6 @@ const Navbar = () => {
     // ✅ NUEVO: Estado para la sección y el logo
     const [seccionUsuario, setSeccionUsuario] = useState(null);
     const [logo, setLogo] = useState('/images/seccionesLogo/logoD.png');
-    const [redesSociales, setRedesSociales] = useState({});
 
     useEffect(() => {
         const matricula = localStorage.getItem('matricula');
@@ -42,20 +36,16 @@ const Navbar = () => {
         }
     }, [location]);
 
-    // ✅ NUEVO: useEffect para cargar la sección, el logo y las redes
+    // ✅ NUEVO: useEffect para cargar la sección y el logo
     useEffect(() => {
             const seccion = getSeccionUsuario();
-            console.log('📌 Navbar - Sección obtenida:', seccion);  // DEBUG
-            console.log('📌 Navbar - Redes:', seccion?.redes);      // DEBUG
             
             if (seccion) {
                 setSeccionUsuario(seccion);
                 setLogo(seccion.logo || '/images/seccionesLogo/logoD.png');
-                setRedesSociales(getRedesSociales());
             } else {
                 setSeccionUsuario(null);
                 setLogo('/images/seccionesLogo/logoD.png');
-                setRedesSociales({});
             }
         }, [location]);
 
@@ -75,7 +65,6 @@ const Navbar = () => {
         setIsLoggedIn(false);
         setSeccionUsuario(null);
         setLogo('/images/seccionesLogo/logoD.png');
-        setRedesSociales({});
         navigate('/login');
     };
 
@@ -87,60 +76,8 @@ const Navbar = () => {
         setMobileMenuOpen(false);
     };
 
-    // ✅ MAPEO DE ICONOS POR RED SOCIAL
-    const iconosRedes = {
-        facebook: <FaFacebook size={18} />,
-        x: <FaTwitter size={18} />,
-        twitter: <FaTwitter size={18} />,
-        instagram: <FaInstagram size={18} />,
-        youtube: <FaYoutube size={18} />,
-        tiktok: <FaTiktok size={18} />,
-        whatsapp: <FaWhatsapp size={18} />
-    };
-
-    // ✅ CLASES CSS PARA CADA RED SOCIAL
-    const clasesRedes = {
-        facebook: 'social-fb',
-        x: 'social-tw',
-        twitter: 'social-tw',
-        instagram: 'social-ig',
-        youtube: 'social-yt',
-        tiktok: 'social-tt',
-        whatsapp: 'social-wa'
-    };
-
-    // Estilos de redes sociales y enlaces (iguales al footer)
+    // Estilos de enlaces y responsive (iguales al footer)
     const socialStyles = `
-        .social-fb:hover {
-            color: #fff !important;
-            background-color: #1877f2 !important;
-            transform: translateY(-3px) scale(1.1);
-        }
-        .social-tw:hover {
-            color: #fff !important;
-            background-color: #1da1f2 !important;
-            transform: translateY(-3px) scale(1.1);
-        }
-        .social-ig:hover {
-            color: #fff !important;
-            background-color: #e4405f !important;
-            transform: translateY(-3px) scale(1.1);
-        }
-        .social-yt:hover {
-            color: #fff !important;
-            background-color: #ff0000 !important;
-            transform: translateY(-3px) scale(1.1);
-        }
-        .social-tt:hover {
-            color: #fff !important;
-            background-color: #000000 !important;
-            transform: translateY(-3px) scale(1.1);
-        }
-        .social-wa:hover {
-            color: #fff !important;
-            background-color: #25d366 !important;
-            transform: translateY(-3px) scale(1.1);
-        }
         .nav-link:hover {
             color: #2563EB !important;
         }
@@ -163,9 +100,6 @@ const Navbar = () => {
             .navbar-logo {
                 height: 42px !important;
                 width: 42px !important;
-            }
-            .navbar-socials {
-                display: none !important;
             }
         }
         @media (max-width: 480px) {
@@ -239,29 +173,6 @@ const Navbar = () => {
             fontWeight: 500,
             marginTop: '2px',
         },
-        socials: {
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '0.55rem',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-        },
-        socialLink: {
-            color: '#475569',
-            transition: 'all 0.3s ease',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '8px',
-            borderRadius: '50%',
-            backgroundColor: 'rgba(255,255,255,0.9)',
-            border: '1px solid rgba(255,255,255,0.95)',
-            boxShadow: '0 4px 10px -2px rgba(15,23,42,0.1)',
-            textDecoration: 'none',
-            cursor: 'pointer',
-            width: '34px',
-            height: '34px',
-        },
         desktopLinks: {
             display: 'flex',
             gap: '0.75rem',
@@ -303,6 +214,22 @@ const Navbar = () => {
             gap: '0.5rem',
             border: '1px solid transparent',
         },
+        linkActive: {
+            color: '#2563EB',
+            textDecoration: 'none',
+            fontSize: '0.95rem',
+            fontWeight: 600,
+            padding: '0.5rem 1.1rem',
+            borderRadius: '999px',
+            transition: 'all 0.3s ease',
+            backgroundColor: 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            border: '1px solid transparent',
+            borderBottom: '2px solid #2563EB',
+            paddingBottom: 'calc(0.5rem - 2px)',
+        },
         logoutButton: {
             backgroundColor: '#DC2626',
             color: 'white',
@@ -331,22 +258,15 @@ const Navbar = () => {
 
     // ✅ Determinar el título y badge según la sesión
     const getTitulo = () => {
-        if (!isLoggedIn) {
-            return 'SNTSS';
-        }
-        return `SNTSS Sección ${seccionUsuario?.romano || 'XXXIII'}`;
+        return 'SNTSS';
     };
 
     const getBadge = () => {
-        if (!isLoggedIn) {
-            return '"Sindicato Nacional de Trabajadores del Seguro Social"';
+        if (isLoggedIn && seccionUsuario?.nombre) {
+            return seccionUsuario.nombre;
         }
-        return seccionUsuario?.nombre || 'Sindicato Nacional de Trabajadores del Seguro Social';
+        return '"Sindicato Nacional de Trabajadores del Seguro Social"';
     };
-
-    // ✅ REDES SOCIALES DEL NAVBAR (dinámicas o fallback)
-    const redes = isLoggedIn ? redesSociales : {};
-    const tieneRedes = Object.keys(redes).length > 0;
 
     return (
         <>
@@ -374,46 +294,11 @@ const Navbar = () => {
                         </div>
                     </div>
 
-                    {/* ✅ REDES SOCIALES DINÁMICAS EN EL NAVBAR */}
-                    <div style={styles.socials} className="navbar-socials">
-                        {tieneRedes ? (
-                            Object.entries(redes).map(([red, url]) => (
-                                <a 
-                                    key={red} 
-                                    href={url} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    style={styles.socialLink} 
-                                    className={clasesRedes[red] || 'social-fb'}
-                                    aria-label={red}
-                                >
-                                    {iconosRedes[red] || <FaFacebook size={18} />}
-                                </a>
-                            ))
-                        ) : (
-                            // ✅ FALLBACK: Redes del CEN (sección 39)
-                            <>
-                                <a href="https://www.facebook.com/SNTSSOFICIAL" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
-                                    <FaFacebook size={18} />
-                                </a>
-                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tw">
-                                    <FaTwitter size={18} />
-                                </a>
-                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-ig">
-                                    <FaInstagram size={18} />
-                                </a>
-                                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-yt">
-                                    <FaYoutube size={18} />
-                                </a>
-                                <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tt">
-                                    <FaTiktok size={18} />
-                                </a>
-                            </>
-                        )}
-                    </div>
-
                     {/* Desktop Links */}
                     <div style={styles.desktopLinks} className="desktop-links">
+                        <Link to="/" style={location.pathname === '/' ? styles.linkActive : styles.link} className="nav-link">
+                            <FaHome /> Inicio
+                        </Link>
                         {!isLoggedIn ? (
                             <>
                                 <Link to="/login" style={styles.link} className="nav-link">
@@ -442,6 +327,9 @@ const Navbar = () => {
 
                     {/* Mobile Menu */}
                     <div style={{ ...styles.mobileMenu, ...(mobileMenuOpen ? styles.mobileMenuOpen : {}) }} className="mobile-menu">
+                        <Link to="/" style={location.pathname === '/' ? styles.linkActive : styles.link} onClick={closeMobileMenu} className="nav-link">
+                            <FaHome /> Inicio
+                        </Link>
                         {!isLoggedIn ? (
                             <>
                                 <Link to="/login" style={styles.link} onClick={closeMobileMenu} className="nav-link">
