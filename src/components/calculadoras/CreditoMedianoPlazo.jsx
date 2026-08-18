@@ -53,7 +53,7 @@ const CreditoMedianoPlazo = () => {
         headerTitle: {
             fontSize: '1.5rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, var(--sn-text), #5B86E5)',
+            background: 'linear-gradient(135deg, #0A0F1E, #5B86E5)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -89,7 +89,7 @@ const CreditoMedianoPlazo = () => {
             display: 'block',
             fontWeight: '600',
             fontSize: '0.85rem',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
             marginBottom: '0.3rem',
         },
         labelIcon: {
@@ -104,7 +104,7 @@ const CreditoMedianoPlazo = () => {
             borderRadius: '10px',
             outline: 'none',
             transition: 'all 0.3s ease',
-            backgroundColor: 'var(--sn-surface)',
+            backgroundColor: 'white',
         },
         button: {
             backgroundColor: '#5B86E5',
@@ -134,7 +134,7 @@ const CreditoMedianoPlazo = () => {
             fontWeight: 'bold',
             textAlign: 'center',
             marginBottom: '1rem',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
             fontSize: '1rem',
         },
         resultadoItem: {

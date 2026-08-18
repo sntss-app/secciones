@@ -62,7 +62,7 @@ const Clausula97 = () => {
         headerTitle: {
             fontSize: '1.5rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, var(--sn-text), #8E44AD)',
+            background: 'linear-gradient(135deg, #0A0F1E, #8E44AD)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -98,7 +98,7 @@ const Clausula97 = () => {
             display: 'block',
             fontWeight: '600',
             fontSize: '0.85rem',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
             marginBottom: '0.3rem',
         },
         labelIcon: {
@@ -113,8 +113,8 @@ const Clausula97 = () => {
             borderRadius: '10px',
             outline: 'none',
             transition: 'all 0.3s ease',
-            backgroundColor: 'var(--sn-surface)',
-            color: 'var(--sn-text)',
+            backgroundColor: 'white',
+            color: '#0A0F1E',
         },
         button: {
             backgroundColor: '#8E44AD',
@@ -144,7 +144,7 @@ const Clausula97 = () => {
             fontWeight: 'bold',
             textAlign: 'center',
             marginBottom: '1rem',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
             fontSize: '1rem',
         },
         resultadoGrid: {
@@ -157,7 +157,7 @@ const Clausula97 = () => {
             borderRadius: '8px',
             textAlign: 'center',
             border: '1px solid #e9ecef',
-            backgroundColor: 'var(--sn-surface)',
+            backgroundColor: 'white',
         },
         resultadoItemTitle: {
             fontSize: '0.8rem',

@@ -6,7 +6,7 @@ import {
     FaThumbtack, FaEye, FaCalendarAlt, FaTools, FaStar, FaRocket,
     FaBuilding, FaHouseUser, FaPiggyBank, FaFileContract, FaClock,
     FaUmbrellaBeach, FaClipboardList, FaFilePdf, FaExternalLinkAlt, FaFileAlt,
-    FaQrcode, FaChartPie, FaArrowRight
+    FaQrcode, FaChartPie
 } from 'react-icons/fa';
 import { apiUrl } from '../config';
 import { Modal } from 'react-bootstrap';
@@ -55,6 +55,10 @@ const Dashboard = () => {
     
     const [showModal, setShowModal] = useState(false);
     const [calculadoraActiva, setCalculadoraActiva] = useState(null);
+    const [c02, setC02] = useState('');
+    const [c11, setC11] = useState('');
+    const [montoAuto, setMontoAuto] = useState(null);
+    const [mostrarResultado, setMostrarResultado] = useState(false);
     const [hasClausula79BisValidatorRole, setHasClausula79BisValidatorRole] = useState(() => {
         const roleIds = getStoredRoleIds();
         return roleIds.includes(3);
@@ -96,7 +100,7 @@ const Dashboard = () => {
                             nombre: data.usuario.seccion_nombre || seccionGuardada?.nombre || 'Sin sección',
                             slogan: data.usuario.seccion_slogan || seccionGuardada?.slogan || null,  // ✅ AGREGADO
                             direccion: data.usuario.seccion_direccion || seccionGuardada?.direccion || null,  // ✅ AGREGADO
-                            color: data.usuario.seccion_color || seccionGuardada?.color || '#2563EB',
+                            color: data.usuario.seccion_color || seccionGuardada?.color || '#3EAEF4',
                             logo: data.usuario.seccion_logo || assets.logo,
                             banner: data.usuario.seccion_banner || assets.banner,
                             // No borrar las redes recibidas en Login al refrescar
@@ -138,6 +142,31 @@ const Dashboard = () => {
         currency: 'MXN',
         minimumFractionDigits: 2
     });
+
+    const calcularAuto = () => {
+        const c02Num = parseFloat(c02);
+        const c11Num = parseFloat(c11);
+        
+        if (isNaN(c02Num) || isNaN(c11Num)) {
+            alert('Por favor ingresa ambos conceptos (002 y 011).');
+            return;
+        }
+        
+        const sumaQuincenal = c02Num + c11Num;
+        const mensualBase = sumaQuincenal * 2;
+        const mensualIntegrado = mensualBase * 1.20;
+        const monto = mensualIntegrado * 24;
+        setMontoAuto(monto);
+        setMostrarResultado(true);
+    };
+
+    const abrirModal = () => {
+        setC02('');
+        setC11('');
+        setMostrarResultado(false);
+        setMontoAuto(null);
+        setShowModal(true);
+    };
 
     const abrirCalculadora = (tipo) => {
         setCalculadoraActiva(tipo);
@@ -188,13 +217,6 @@ const Dashboard = () => {
         { id: 'horas-extras', icon: <FaClock />, titulo: 'Horas Extras', descripcion: 'Calcula el pago de horas extras', color: '#E67E22', bg: 'linear-gradient(135deg, #E67E22 0%, #F39C12 100%)' },
     ];
 
-    // ✅ Degradados y sombras alternados (como el mockup: azul / esmeralda / naranja)
-    const iconVariants = [
-        { bg: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)', shadow: '0 10px 22px -3px rgba(37, 99, 235, 0.38)', arrow: '#2563EB', arrowHover: '#1D4ED8' },
-        { bg: 'linear-gradient(135deg, #34D399 0%, #059669 100%)', shadow: '0 10px 22px -3px rgba(16, 185, 129, 0.38)', arrow: '#059669', arrowHover: '#047857' },
-        { bg: 'linear-gradient(135deg, #FB923C 0%, #EA580C 100%)', shadow: '0 10px 22px -3px rgba(249, 115, 22, 0.38)', arrow: '#EA580C', arrowHover: '#C2410C' },
-    ];
-
     // ===== RECURSOS =====
     const recursos = [
         { 
@@ -242,100 +264,74 @@ const Dashboard = () => {
     // ===== RENDER DE PESTAÑAS =====
     const renderTabCalculadoras = () => (
         <div>
-            {/* ===== TÍTULO DE SECCIÓN (como el mockup) ===== */}
             <div style={styles.sectionTitle}>
-                <div style={styles.sectionIconBox}>
-                    <FaCalculator />
-                </div>
-                <h2 style={styles.sectionTitleText}>Calculadoras Financieras</h2>
-                <div style={styles.sectionTitleLine} />
+                <FaCalculator style={{ color: '#3EAEF4' }} /> Calculadoras
+                <span style={styles.sectionTitleLine} />
             </div>
-
-            {/* ===== GRID DE CALCULADORAS (tarjetas glass del mockup) ===== */}
             <div style={styles.grid}>
-                {calculadoras.map((calc, idx) => {
-                    const variant = iconVariants[idx % 3];
-                    return (
-                        <div 
-                            key={calc.id}
-                            style={styles.card}
-                            onClick={() => abrirCalculadora(calc.id)}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.transform = 'translateY(-6px)';
-                                e.currentTarget.style.boxShadow = '0 20px 40px -8px rgba(30,41,59,0.15)';
-                                const glow = e.currentTarget.querySelector('.card-glow');
-                                if (glow) glow.style.opacity = '1';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.boxShadow = '0 8px 25px -5px rgba(30,41,59,0.06)';
-                                const glow = e.currentTarget.querySelector('.card-glow');
-                                if (glow) glow.style.opacity = '0';
-                            }}
-                        >
-                            <div className="card-glow" style={styles.cardGlow} />
-                            <div style={styles.cardDots} className="dot-pattern" />
-                            <div style={{ ...styles.cardIconWrapper, background: variant.bg, boxShadow: variant.shadow }}>
-                                {calc.icon}
-                            </div>
-                            <h3 style={styles.cardTitle}>{calc.titulo}</h3>
-                            <p style={styles.cardDescription}>{calc.descripcion}</p>
-                            <div 
-                                style={styles.cardArrow}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = variant.arrowHover;
-                                    e.currentTarget.style.color = '#fff';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'rgba(37,99,235,0.06)';
-                                    e.currentTarget.style.color = variant.arrow;
-                                }}
-                            >
-                                <FaArrowRight size={13} />
-                            </div>
+                {calculadoras.map((calc) => (
+                    <div 
+                        key={calc.id}
+                        style={styles.card}
+                        onClick={() => abrirCalculadora(calc.id)}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
+                            e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,0,0,0.12)';
+                            e.currentTarget.style.borderColor = '#3EAEF4';
+                            const glow = e.currentTarget.querySelector('.card-glow');
+                            if (glow) glow.style.opacity = '1';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                            e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.06)';
+                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)';
+                            const glow = e.currentTarget.querySelector('.card-glow');
+                            if (glow) glow.style.opacity = '0';
+                        }}
+                    >
+                        <div className="card-glow" style={styles.cardGlow} />
+                        <div style={{ ...styles.cardIconWrapper, background: calc.bg }}>
+                            {calc.icon}
                         </div>
-                    );
-                })}
+                        <h3 style={styles.cardTitle}>{calc.titulo}</h3>
+                        <p style={styles.cardDescription}>{calc.descripcion}</p>
+                    </div>
+                ))}
             </div>
 
-            {/* ===== TÍTULO DE SECCIÓN RECURSOS ===== */}
-            <div style={{ ...styles.sectionTitle, marginTop: '2.5rem' }}>
-                <div style={styles.sectionIconBox}>
-                    <FaFilePdf />
-                </div>
-                <h2 style={styles.sectionTitleText}>Recursos y Documentos</h2>
-                <div style={styles.sectionTitleLine} />
+            <div style={{ ...styles.sectionTitle}}>
+                <FaFilePdf style={{ color: '#E74C3C' }} /> Recursos y Documentos
+                <span style={styles.sectionTitleLine} />
             </div>
             <div style={styles.grid}>
-                {recursos.map((recurso, idx) => {
-                    const variant = iconVariants[(idx + 1) % 3];
-                    return (
-                        <a
-                            key={recurso.id}
-                            href={recurso.link}
-                            target={recurso.externo ? '_blank' : '_self'}
-                            rel={recurso.externo ? 'noopener noreferrer' : ''}
-                            style={styles.linkCard}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.transform = 'translateY(-6px)';
-                                e.currentTarget.style.boxShadow = '0 20px 40px -8px rgba(30,41,59,0.15)';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.boxShadow = '0 8px 25px -5px rgba(30,41,59,0.06)';
-                            }}
-                        >
-                            <div style={{ ...styles.linkIcon, color: variant.arrow }}>{recurso.icon}</div>
-                            <h3 style={styles.linkTitle}>{recurso.titulo}</h3>
-                            <p style={styles.linkDescription}>{recurso.descripcion}</p>
-                            {recurso.externo && (
-                                <span style={styles.linkExternal}>
-                                    <FaExternalLinkAlt /> Abrir en nueva ventana
-                                </span>
-                            )}
-                        </a>
-                    );
-                })}
+                {recursos.map((recurso) => (
+                    <a
+                        key={recurso.id}
+                        href={recurso.link}
+                        target={recurso.externo ? '_blank' : '_self'}
+                        rel={recurso.externo ? 'noopener noreferrer' : ''}
+                        style={styles.linkCard}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-6px)';
+                            e.currentTarget.style.boxShadow = '0 12px 36px rgba(0,0,0,0.1)';
+                            e.currentTarget.style.borderColor = '#3EAEF4';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.06)';
+                            e.currentTarget.style.borderColor = '#e9ecef';
+                        }}
+                    >
+                        <span style={styles.linkIcon}>{recurso.icon}</span>
+                        <h3 style={styles.linkTitle}>{recurso.titulo}</h3>
+                        <p style={styles.linkDescription}>{recurso.descripcion}</p>
+                        {recurso.externo && (
+                            <span style={styles.linkExternal}>
+                                <FaExternalLinkAlt /> Abrir en nueva ventana
+                            </span>
+                        )}
+                    </a>
+                ))}
             </div>
         </div>
     );
@@ -348,7 +344,7 @@ const Dashboard = () => {
             <div style={styles.colNoticias}>
                 <div style={styles.cardNoticias}>
                     <div style={styles.cardTitleNoticias}>
-                        <FaNewspaper style={{ color: 'var(--sn-primary)' }} /> Noticias y Avisos
+                        <FaNewspaper style={{ color: '#3EAEF4' }} /> Noticias y Avisos
                     </div>
                     <div style={styles.cardBody}>
                         {loadingNoticias ? (
@@ -360,14 +356,13 @@ const Dashboard = () => {
                                         <img 
                                             src={getImageUrl(noticia.imagen)} 
                                             alt={noticia.titulo} 
-                                            loading="lazy"
                                             style={{
                                                 width: '100%',
                                                 height: '140px',
                                                 objectFit: 'cover',
-                                                borderRadius: '12px',
+                                                borderRadius: '8px',
                                                 marginBottom: '0.5rem',
-                                                backgroundColor: 'var(--sn-surface-soft)',
+                                                backgroundColor: '#e9ecef',
                                             }}
                                             onError={(e) => { 
                                                 e.target.style.display = 'none'; 
@@ -389,13 +384,13 @@ const Dashboard = () => {
                             <p className="text-muted">No hay noticias disponibles.</p>
                         )}
                         {!isLoggedIn && noticias.length > 0 && (
-                            <div style={{ marginTop: '0.5rem', color: 'var(--sn-primary)', fontSize: '0.85rem' }}>
+                            <div style={{ marginTop: '0.5rem', color: '#3EAEF4', fontSize: '0.85rem' }}>
                                 🔒 Inicia sesión para ver todas las noticias
                             </div>
                         )}
                     </div>
                     <div style={styles.cardTitleNoticias}>
-                        <FaNewspaper style={{ color: 'var(--sn-primary)' }} /> Las puedes visualizar en la sección de noticias y avisos
+                        <FaNewspaper style={{ color: '#3EAEF4' }} /> Las puedes visualizar en la sección de noticias y avisos
                     </div>
                 </div>
             </div>
@@ -408,7 +403,7 @@ const Dashboard = () => {
                     </div>
                     <p style={{ 
                         fontSize: '0.85rem', 
-                        color: 'var(--sn-text-muted)', 
+                        color: '#6c757d', 
                         marginBottom: '1rem',
                         lineHeight: '1.5'
                     }}>
@@ -422,29 +417,27 @@ const Dashboard = () => {
                             { titulo: 'Registro para RIFA DE PROPUESTAS 2026', descripcion: 'Próximamente • Fecha por definir' },
                         ].map((item, index) => (
                             <div key={index} style={{
-                                backgroundColor: 'var(--sn-glass-card-bg)',
-                                backdropFilter: 'blur(10px)',
-                                WebkitBackdropFilter: 'blur(10px)',
+                                backgroundColor: 'rgba(255,255,255,0.8)',
                                 borderRadius: '12px',
                                 padding: '0.7rem 1rem',
-                                border: '1px solid var(--sn-glass-card-border)',
+                                border: '1px solid #e9ecef',
                                 transition: 'all 0.3s ease',
-                                opacity: 0.8,
+                                opacity: 0.7,
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
                             }}>
                                 <div>
-                                    <div style={{ fontWeight: '600', fontSize: '0.85rem', color: 'var(--sn-text)' }}>
+                                    <div style={{ fontWeight: '600', fontSize: '0.85rem', color: '#0A0F1E' }}>
                                         {item.titulo}
                                     </div>
-                                    <div style={{ fontSize: '0.7rem', color: 'var(--sn-text-muted)' }}>
+                                    <div style={{ fontSize: '0.7rem', color: '#6c757d' }}>
                                         {item.descripcion}
                                     </div>
                                 </div>
                                 <span style={{
-                                    backgroundColor: '#F59E0B',
-                                    color: '#fff',
+                                    backgroundColor: '#ffc107',
+                                    color: '#0A0F1E',
                                     padding: '0.15rem 0.6rem',
                                     borderRadius: '12px',
                                     fontSize: '0.55rem',
@@ -461,35 +454,35 @@ const Dashboard = () => {
                     <div style={{
                         marginTop: '0.8rem',
                         padding: '0.5rem 1rem',
-                        backgroundColor: 'rgba(37,99,235,0.06)',
+                        backgroundColor: 'rgba(62,174,244,0.05)',
                         borderRadius: '12px',
-                        border: '1px dashed var(--sn-primary)',
+                        border: '1px dashed #3EAEF4',
                         textAlign: 'center',
                     }}>
-                        <span style={{ fontSize: '0.7rem', color: 'var(--sn-text-muted)' }}>
-                            🔔 <Link to="/contacto" style={{ color: 'var(--sn-primary)', fontWeight: '600', textDecoration: 'none' }}>Contáctanos</Link> para más información
+                        <span style={{ fontSize: '0.7rem', color: '#6c757d' }}>
+                            🔔 <Link to="/contacto" style={{ color: '#3EAEF4', fontWeight: '600', textDecoration: 'none' }}>Contáctanos</Link> para más información
                         </span>
                     </div>
 
-                    <div style={{ ...styles.sidebarTitle, marginTop: '1.5rem' }}>
+                    <div style={styles.sidebarTitle, { marginTop: '1.5rem' }}>
                         <FaInfoCircle /> ¿Cómo participar?
                     </div>
                     <ul style={styles.listaReglas}>
                         <li style={styles.listaReglasItem}>
-                            <FaShieldAlt style={{ color: 'var(--sn-primary)' }} /> Ser agremiado de base.
+                            <FaShieldAlt style={{ color: '#3EAEF4' }} /> Ser agremiado de base.
                         </li>
                         <li style={styles.listaReglasItem}>
-                            <FaChartLine style={{ color: 'var(--sn-primary)' }} /> Se evalua la antiguedad segun el proceso.
+                            <FaChartLine style={{ color: '#3EAEF4' }} /> Se evalua la antiguedad segun el proceso.
                         </li>
                         <li style={styles.listaReglasItem}>
-                            <FaGift style={{ color: 'var(--sn-primary)' }} /> Inscribirse en las rifas.
+                            <FaGift style={{ color: '#3EAEF4' }} /> Inscribirse en las rifas.
                         </li>
                     </ul>
                     
                     {!isLoggedIn ? (
-                        <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(37,99,235,0.1)', borderRadius: '12px', textAlign: 'center' }}>
-                            <p style={{ fontWeight: 'bold', marginBottom: '0.3rem', color: 'var(--sn-text)' }}>✨ Beneficios exclusivos ✨</p>
-                            <p style={{ fontSize: '0.85rem', color: 'var(--sn-text-muted)' }}>Préstamos, rifas, sorteos y más</p>
+                        <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(62,174,244,0.12)', borderRadius: '12px', textAlign: 'center' }}>
+                            <p style={{ fontWeight: 'bold', marginBottom: '0.3rem', color: '#0A0F1E' }}>✨ Beneficios exclusivos ✨</p>
+                            <p style={{ fontSize: '0.85rem', color: '#6c757d' }}>Préstamos, rifas, sorteos y más</p>
                             <Link to="/registro" style={{ ...styles.heroBtn, marginTop: '0.5rem', fontSize: '0.85rem', padding: '0.5rem 1.5rem' }}>
                                 Regístrate aquí
                             </Link>
@@ -509,29 +502,29 @@ const Dashboard = () => {
         <div style={{ ...styles.actionGrid, marginTop: '2rem' }}>
             {/* ===== CRÉDITO AUTO ===== */}
             <Link to="/registro-auto" style={styles.actionCard}>
-                <div style={{ ...styles.actionCardIcon, color: '#2563EB' }}><FaCar /></div>
+                <div style={{ ...styles.actionCardIcon, color: '#4A90D9' }}><FaCar /></div>
                 <h3 style={styles.actionCardTitle}>🚗 Preregistro a la rifa de auto</h3>
                 <p style={styles.actionCardDescription}>Participa en la rifa para obtener un crédito automotriz.</p>
             </Link>
 
             {/* ===== NOTICIAS ===== */}
             <Link to="/noticias" style={styles.actionCard}>
-                <div style={{ ...styles.actionCardIcon, color: '#3B82F6' }}><FaNewspaper /></div>
+                <div style={{ ...styles.actionCardIcon, color: '#5B86E5' }}><FaNewspaper /></div>
                 <h3 style={styles.actionCardTitle}>📰 Noticias y avisos</h3>
                 <p style={styles.actionCardDescription}>Mantente informado con las últimas noticias.</p>
             </Link>
 
             {/* ===== CLÁUSULA 79BIS - Registro (Siempre visible) ===== */}
             <Link to="/clausula79bis" style={styles.actionCard}>
-                <div style={{ ...styles.actionCardIcon, color: '#7C3AED' }}><FaGift /></div>
+                <div style={{ ...styles.actionCardIcon, color: '#8E44AD' }}><FaGift /></div>
                 <h3 style={styles.actionCardTitle}>🎉 Cláusula 79Bis</h3>
                 <p style={styles.actionCardDescription}>Registro para el festejo de Intendencia y Limpieza.</p>
             </Link>
 
             {/* ===== VALIDADOR AUTO (solo rol auto) ===== */}
             {hasAutoValidatorRole && (
-                <Link to="/validador-auto" style={{ ...styles.actionCard, borderColor: '#F59E0B' }}>
-                    <div style={{ ...styles.actionCardIcon, color: '#F59E0B' }}><FaCheckCircle /></div>
+                <Link to="/validador-auto" style={{ ...styles.actionCard, borderColor: '#FFC107' }}>
+                    <div style={{ ...styles.actionCardIcon, color: '#FFC107' }}><FaCheckCircle /></div>
                     <h3 style={styles.actionCardTitle}>🔍 Validador Auto</h3>
                     <p style={styles.actionCardDescription}>Gestiona solicitudes de crédito.</p>
                 </Link>
@@ -539,8 +532,8 @@ const Dashboard = () => {
 
             {/* ===== CREAR NOTICIA (solo rol noticias) ===== */}
             {hasNewsValidatorRole && (
-                <Link to="/noticias/crear" style={{ ...styles.actionCard, borderColor: '#10B981' }}>
-                    <div style={{ ...styles.actionCardIcon, color: '#10B981' }}><FaNewspaper /></div>
+                <Link to="/noticias/crear" style={{ ...styles.actionCard, borderColor: '#28a745' }}>
+                    <div style={{ ...styles.actionCardIcon, color: '#28a745' }}><FaNewspaper /></div>
                     <h3 style={styles.actionCardTitle}>✍️ Crear Noticia</h3>
                     <p style={styles.actionCardDescription}>Publica nuevas noticias.</p>
                 </Link>
@@ -549,22 +542,22 @@ const Dashboard = () => {
             {/* ===== VALIDADOR 79BIS (solo rol clausula79bis) ===== */}
             {hasClausula79BisValidatorRole && (
                 <>
-                    <Link to="/clausula79bis/validador" style={{ ...styles.actionCard, borderColor: '#7C3AED' }}>
-                        <div style={{ ...styles.actionCardIcon, color: '#7C3AED' }}><FaShieldAlt /></div>
+                    <Link to="/clausula79bis/validador" style={{ ...styles.actionCard, borderColor: '#8E44AD' }}>
+                        <div style={{ ...styles.actionCardIcon, color: '#8E44AD' }}><FaShieldAlt /></div>
                         <h3 style={styles.actionCardTitle}>🔍 Validador 79Bis</h3>
                         <p style={styles.actionCardDescription}>Gestiona los registros del festejo.</p>
                     </Link>
 
                     {/* ===== ENTRADA 79BIS (solo rol clausula79bis) ===== */}
-                    <Link to="/clausula79bis/entrada" style={{ ...styles.actionCard, borderColor: '#2563EB' }}>
-                        <div style={{ ...styles.actionCardIcon, color: '#2563EB' }}><FaQrcode /></div>
+                    <Link to="/clausula79bis/entrada" style={{ ...styles.actionCard, borderColor: '#3EAEF4' }}>
+                        <div style={{ ...styles.actionCardIcon, color: '#3EAEF4' }}><FaQrcode /></div>
                         <h3 style={styles.actionCardTitle}>🎟️ Entrada 79Bis</h3>
                         <p style={styles.actionCardDescription}>Control de asistencia del evento.</p>
                     </Link>
 
                     {/* ===== ESTADÍSTICAS 79BIS (solo rol clausula79bis) ===== */}
-                    <Link to="/clausula79bis/estadisticas" style={{ ...styles.actionCard, borderColor: '#10B981' }}>
-                        <div style={{ ...styles.actionCardIcon, color: '#10B981' }}><FaChartPie /></div>
+                    <Link to="/clausula79bis/estadisticas" style={{ ...styles.actionCard, borderColor: '#28a745' }}>
+                        <div style={{ ...styles.actionCardIcon, color: '#28a745' }}><FaChartPie /></div>
                         <h3 style={styles.actionCardTitle}>📊 Estadísticas 79Bis</h3>
                         <p style={styles.actionCardDescription}>Dashboard del evento con gráficas.</p>
                     </Link>
@@ -577,103 +570,122 @@ const Dashboard = () => {
     // ===== ESTILOS =====
     const styles = {
         container: {
-            maxWidth: '1280px',
+            maxWidth: '1400px',
             margin: '0 auto',
-            padding: '1.5rem 1.5rem 2rem 1.5rem',
+            padding: '2rem 1.5rem',
             minHeight: 'calc(100vh - 200px)',
-            position: 'relative',
-            zIndex: 1,
+            background: '#f0f4f8',
             '@media (max-width: 768px)': {
                 padding: '1rem 0.8rem',
             },
         },
-
-        // ===== HERO (2 tarjetas como el mockup) =====
-        heroGrid: {
-            display: 'grid',
-            gridTemplateColumns: '5fr 7fr',
-            gap: '1.5rem',
-            marginBottom: '2.5rem',
-            '@media (max-width: 992px)': {
-                gridTemplateColumns: '1fr',
-            },
-        },
-        heroCard: {
-            background: 'var(--sn-glass-bg)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid var(--sn-glass-border)',
-            borderRadius: '24px',
-            padding: '2rem',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
+        heroSection: {
+            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
+            borderRadius: '16px',
+            padding: '1.2rem 1.5rem',
+            marginBottom: '1.5rem',
+            borderBottom: '3px solid #3EAEF4',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
             position: 'relative',
             overflow: 'hidden',
-            minHeight: '240px',
-            boxShadow: '0 12px 35px -8px rgba(15,23,42,0.08), inset 0 1px 2px rgba(255,255,255,0.95)',
+            '@media (max-width: 768px)': {
+                padding: '1rem',
+                borderRadius: '12px',
+            },
             '@media (max-width: 480px)': {
-                padding: '1.5rem',
-                minHeight: 'auto',
+                padding: '0.8rem',
+                marginBottom: '1rem',
             },
         },
-        heroCardDots: {
+        heroGlow: {
             position: 'absolute',
-            top: '1rem',
-            right: '1rem',
-            width: '6rem',
-            height: '6rem',
-            opacity: 0.3,
+            top: '-30%',
+            right: '-10%',
+            width: '200px',
+            height: '200px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(62,174,244,0.08) 0%, transparent 70%)',
             pointerEvents: 'none',
         },
-        heroBadge: {
-            display: 'inline-block',
-            backgroundColor: 'rgba(37,99,235,0.1)',
-            color: '#1D4ED8',
-            fontSize: '0.65rem',
-            fontWeight: 700,
-            padding: '0.3rem 0.75rem',
-            borderRadius: '999px',
-            marginBottom: '0.75rem',
-            border: '1px solid rgba(37,99,235,0.25)',
-            alignSelf: 'flex-start',
+        heroContent: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '0.8rem',
+            position: 'relative',
+            zIndex: 2,
+            '@media (max-width: 768px)': {
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                gap: '0.5rem',
+            },
+            '@media (max-width: 480px)': {
+                gap: '0.3rem',
+            },
+        },
+        heroLeft: {
+            flex: 1,
+            minWidth: '150px',
+        },
+        heroRight: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-end',
+            gap: '0.3rem',
+            '@media (max-width: 768px)': {
+                alignItems: 'flex-start',
+                width: '100%',
+            },
         },
         heroTitle: {
-            fontSize: '2rem',
-            fontWeight: 700,
-            color: 'var(--sn-text)',
+            fontSize: '1.8rem',
+            fontWeight: 'bold',
+            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
             margin: 0,
             letterSpacing: '-0.5px',
+            lineHeight: 1.2,
+            '@media (max-width: 768px)': {
+                fontSize: '1.4rem',
+            },
             '@media (max-width: 480px)': {
-                fontSize: '1.6rem',
+                fontSize: '1.1rem',
             },
         },
         heroSubtitle: {
-            fontSize: '0.9rem',
-            color: 'var(--sn-text-muted)',
-            margin: '0.5rem 0 0 0',
-            lineHeight: 1.6,
-            fontWeight: 500,
+            fontSize: '0.85rem',
+            color: '#aab',
+            margin: '0.1rem 0 0 0',
+            '@media (max-width: 768px)': {
+                fontSize: '0.75rem',
+            },
+            '@media (max-width: 480px)': {
+                fontSize: '0.7rem',
+            },
         },
         heroSeccion: {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.6rem',
-            marginTop: '0.75rem',
+            marginTop: '0.6rem',
             padding: '0.4rem 1rem',
-            borderRadius: '10px',
+            borderRadius: '8px',
             transition: 'all 0.3s ease',
-            fontSize: '0.8rem',
-            fontWeight: 600,
-            '@media (max-width: 480px)': {
-                fontSize: '0.75rem',
-            },
+        },
+        heroSeccionIcon: {
+            fontSize: '1rem',
+        },
+        heroSeccionText: {
+            fontSize: '0.85rem',
+            fontWeight: '600',
         },
         heroRoles: {
             display: 'flex',
             gap: '0.3rem',
             flexWrap: 'wrap',
-            marginTop: '0.75rem',
         },
         badgeRol: {
             display: 'inline-block',
@@ -681,182 +693,114 @@ const Dashboard = () => {
             borderRadius: '12px',
             fontSize: '0.6rem',
             fontWeight: 'bold',
-            backgroundColor: 'rgba(37,99,235,0.12)',
-            color: '#1D4ED8',
-            border: '1px solid rgba(37,99,235,0.2)',
+            backgroundColor: 'rgba(62,174,244,0.15)',
+            color: '#3EAEF4',
+            border: '1px solid rgba(62,174,244,0.2)',
+            '@media (max-width: 480px)': {
+                fontSize: '0.55rem',
+                padding: '0.05rem 0.4rem',
+            },
         },
         heroBtnContainer: {
             display: 'flex',
             gap: '0.4rem',
             flexWrap: 'wrap',
-            marginTop: '1.5rem',
+            '@media (max-width: 480px)': {
+                width: '100%',
+                gap: '0.3rem',
+            },
         },
         heroBtn: {
-            backgroundColor: 'var(--sn-primary)',
-            color: '#fff',
-            padding: '0.55rem 1.25rem',
-            borderRadius: '999px',
+            backgroundColor: '#3EAEF4',
+            color: '#0A0F1E',
+            padding: '0.3rem 0.9rem',
+            borderRadius: '20px',
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.5rem',
+            gap: '0.3rem',
             textDecoration: 'none',
-            fontWeight: 600,
-            fontSize: '0.85rem',
+            fontWeight: '600',
+            fontSize: '0.75rem',
             transition: 'all 0.3s ease',
             border: 'none',
             cursor: 'pointer',
             whiteSpace: 'nowrap',
-            boxShadow: '0 10px 22px -3px rgba(37,99,235,0.38)',
-        },
-        heroDotsGrid: {
-            position: 'absolute',
-            bottom: '1rem',
-            right: '1.25rem',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '0.4rem',
-            opacity: 0.4,
-            pointerEvents: 'none',
-        },
-        heroDotsDot: {
-            width: '6px',
-            height: '6px',
-            borderRadius: '50%',
-            backgroundColor: '#2563EB',
-        },
-        heroBannerCard: {
-            background: 'var(--sn-glass-bg)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid var(--sn-glass-border)',
-            borderRadius: '24px',
-            overflow: 'hidden',
-            position: 'relative',
-            minHeight: '240px',
-            boxShadow: '0 12px 35px -8px rgba(15,23,42,0.08)',
             '@media (max-width: 480px)': {
-                minHeight: '180px',
+                fontSize: '0.7rem',
+                padding: '0.25rem 0.7rem',
+                flex: 1,
+                justifyContent: 'center',
             },
         },
-        heroBannerImg: {
-            width: '100%',
-            height: '100%',
-            minHeight: '240px',
-            objectFit: 'cover',
-            display: 'block',
-            transition: 'transform 0.5s ease',
-            '@media (max-width: 480px)': {
-                minHeight: '180px',
-            },
-        },
-        heroBannerOverlay: {
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(to top, rgba(15,23,42,0.35), transparent)',
-            pointerEvents: 'none',
-        },
-
-        // ===== TABS (pastilla glass) =====
         tabsContainer: {
             display: 'flex',
-            justifyContent: 'center',
-            marginBottom: '2.5rem',
-        },
-        tabsPill: {
-            display: 'flex',
-            gap: '0.4rem',
-            padding: '0.4rem',
-            background: 'var(--sn-glass-bg)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid var(--sn-glass-border)',
-            borderRadius: '999px',
-            boxShadow: '0 8px 25px -5px rgba(30,41,59,0.08)',
+            gap: '0.5rem',
+            marginBottom: '2rem',
+            background: 'rgba(255,255,255,0.9)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '0.5rem',
+            border: '1px solid rgba(255,255,255,0.5)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+            overflow: 'hidden',
             '@media (max-width: 480px)': {
-                width: '100%',
-                borderRadius: '20px',
+                flexDirection: 'column',
+                gap: '0.3rem',
             },
         },
         tab: (activa) => ({
             flex: 1,
-            padding: '0.65rem 1.75rem',
-            borderRadius: '999px',
+            padding: '0.8rem 1.5rem',
+            borderRadius: '12px',
             border: 'none',
-            fontSize: '0.9rem',
-            fontWeight: 600,
+            fontSize: '0.95rem',
+            fontWeight: 'bold',
             cursor: 'pointer',
             transition: 'all 0.3s ease',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: '0.5rem',
-            background: activa ? 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)' : 'transparent',
-            color: activa ? '#fff' : 'var(--sn-text-muted)',
-            boxShadow: activa ? '0 8px 20px -4px rgba(37,99,235,0.45)' : 'none',
-            whiteSpace: 'nowrap',
+            background: activa ? 'linear-gradient(135deg, #3EAEF4, #2d8fd4)' : 'transparent',
+            color: activa ? '#0A0F1E' : '#6c757d',
+            boxShadow: activa ? '0 4px 16px rgba(62,174,244,0.3)' : 'none',
             '@media (max-width: 480px)': {
-                padding: '0.6rem 0.5rem',
-                fontSize: '0.8rem',
+                width: '100%',
+                padding: '0.6rem 1rem',
+                fontSize: '0.85rem',
             },
         }),
-
-        // ===== TÍTULOS DE SECCIÓN =====
         sectionTitle: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            color: '#0A0F1E',
             marginBottom: '1.5rem',
-        },
-        sectionIconBox: {
-            width: '36px',
-            height: '36px',
-            borderRadius: '12px',
-            backgroundColor: '#2563EB',
-            color: '#fff',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1rem',
-            boxShadow: '0 8px 22px -3px rgba(37,99,235,0.35)',
-            flexShrink: 0,
-        },
-        sectionTitleText: {
-            fontSize: '1.35rem',
-            fontWeight: 700,
-            color: 'var(--sn-text)',
-            margin: 0,
-            '@media (max-width: 480px)': {
-                fontSize: '1.1rem',
-            },
+            gap: '0.8rem',
+            position: 'relative',
         },
         sectionTitleLine: {
             flex: 1,
             height: '2px',
-            borderRadius: '2px',
-            background: 'linear-gradient(90deg, rgba(37,99,235,0.4), transparent)',
-            marginLeft: '0.5rem',
+            background: 'linear-gradient(90deg, #3EAEF4, transparent)',
+            marginLeft: '1rem',
         },
-
-        // ===== GRID Y TARJETAS =====
         grid: {
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
             gap: '1.5rem',
-            marginBottom: '1rem',
-            '@media (max-width: 480px)': {
-                gridTemplateColumns: '1fr',
-            },
+            marginBottom: '3rem',
         },
         card: {
-            background: 'var(--sn-glass-card-bg)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid var(--sn-glass-card-border)',
-            borderRadius: '24px',
-            padding: '1.75rem 1.5rem',
-            boxShadow: '0 8px 25px -5px rgba(30,41,59,0.06)',
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '1.8rem 1.5rem',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
             cursor: 'pointer',
-            transition: 'all 0.3s ease',
+            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            border: '1px solid rgba(255,255,255,0.5)',
             textAlign: 'center',
             position: 'relative',
             overflow: 'hidden',
@@ -867,68 +811,42 @@ const Dashboard = () => {
             left: '-50%',
             width: '200%',
             height: '200%',
-            background: 'radial-gradient(circle, rgba(37,99,235,0.06) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(62,174,244,0.05) 0%, transparent 70%)',
             opacity: 0,
             transition: 'opacity 0.4s ease',
             pointerEvents: 'none',
         },
-        cardDots: {
-            position: 'absolute',
-            top: '0.75rem',
-            right: '0.75rem',
-            width: '3rem',
-            height: '3rem',
-            opacity: 0.2,
-            pointerEvents: 'none',
-        },
         cardIconWrapper: {
-            width: '64px',
-            height: '64px',
+            width: '70px',
+            height: '70px',
             margin: '0 auto 1rem',
             borderRadius: '16px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '1.6rem',
-            color: '#fff',
+            fontSize: '2rem',
+            color: 'white',
             transition: 'all 0.3s ease',
         },
         cardTitle: {
-            fontSize: '1rem',
-            fontWeight: 700,
+            fontSize: '1.05rem',
+            fontWeight: 'bold',
             marginBottom: '0.3rem',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
         },
         cardDescription: {
-            fontSize: '0.8rem',
-            color: 'var(--sn-text-muted)',
-            lineHeight: 1.6,
+            fontSize: '0.85rem',
+            color: '#6c757d',
+            lineHeight: 1.5,
             margin: 0,
         },
-        cardArrow: {
-            position: 'absolute',
-            bottom: '1rem',
-            right: '1rem',
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            border: '1px solid rgba(37,99,235,0.35)',
-            backgroundColor: 'rgba(37,99,235,0.06)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.3s ease',
-            cursor: 'pointer',
-        },
         linkCard: {
-            background: 'var(--sn-glass-card-bg)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid var(--sn-glass-card-border)',
-            borderRadius: '24px',
-            padding: '1.75rem 1.5rem',
-            boxShadow: '0 8px 25px -5px rgba(30,41,59,0.06)',
-            transition: 'all 0.3s ease',
+            backgroundColor: 'white',
+            borderRadius: '16px',
+            padding: '1.8rem 1.5rem',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            border: '1px solid #e9ecef',
             textAlign: 'center',
             textDecoration: 'none',
             color: 'inherit',
@@ -938,28 +856,27 @@ const Dashboard = () => {
         },
         linkIcon: {
             fontSize: '2.5rem',
+            color: '#3EAEF4',
             marginBottom: '0.8rem',
             display: 'block',
         },
         linkTitle: {
             fontSize: '1rem',
-            fontWeight: 700,
+            fontWeight: 'bold',
             marginBottom: '0.3rem',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
         },
         linkDescription: {
             fontSize: '0.85rem',
-            color: 'var(--sn-text-muted)',
+            color: '#6c757d',
             margin: 0,
         },
         linkExternal: {
-            color: 'var(--sn-primary)',
+            color: '#3EAEF4',
             fontSize: '0.7rem',
             marginTop: '0.5rem',
             display: 'inline-block',
         },
-
-        // ===== ACCIONES =====
         actionGrid: {
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
@@ -971,17 +888,16 @@ const Dashboard = () => {
             },
         },
         actionCard: {
-            background: 'var(--sn-glass-card-bg)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid var(--sn-glass-card-border)',
-            borderRadius: '24px',
-            padding: '1.75rem 1.5rem',
-            boxShadow: '0 8px 25px -5px rgba(30,41,59,0.06)',
-            transition: 'all 0.3s ease',
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '1.8rem 1.5rem',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
             textDecoration: 'none',
             color: 'inherit',
             display: 'block',
+            border: '1px solid rgba(255,255,255,0.5)',
             position: 'relative',
             overflow: 'hidden',
             textAlign: 'center',
@@ -990,24 +906,22 @@ const Dashboard = () => {
             },
         },
         actionCardIcon: {
-            fontSize: '2.2rem',
+            fontSize: '2.5rem',
             marginBottom: '0.8rem',
             display: 'block',
         },
         actionCardTitle: {
             fontSize: '1rem',
-            fontWeight: 700,
+            fontWeight: 'bold',
             marginBottom: '0.3rem',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
         },
         actionCardDescription: {
             fontSize: '0.85rem',
-            color: 'var(--sn-text-muted)',
+            color: '#6c757d',
             margin: 0,
             lineHeight: 1.5,
         },
-
-        // ===== NOTICIAS / SIDEBAR =====
         grid2cols: {
             display: 'flex',
             flexWrap: 'wrap',
@@ -1035,13 +949,12 @@ const Dashboard = () => {
             },
         },
         cardNoticias: {
-            background: 'var(--sn-glass-card-bg)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid var(--sn-glass-card-border)',
-            borderRadius: '24px',
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
             padding: '1.5rem',
-            boxShadow: '0 8px 25px -5px rgba(30,41,59,0.06)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+            border: '1px solid rgba(255,255,255,0.5)',
             transition: 'all 0.3s ease',
             height: '100%',
             '@media (max-width: 480px)': {
@@ -1050,71 +963,70 @@ const Dashboard = () => {
         },
         cardTitleNoticias: {
             fontSize: '1.1rem',
-            fontWeight: 700,
+            fontWeight: 'bold',
             marginBottom: '1rem',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            color: 'var(--sn-text)',
-            borderBottom: '2px solid var(--sn-primary)',
+            color: '#0A0F1E',
+            borderBottom: '2px solid #3EAEF4',
             paddingBottom: '0.5rem',
             '@media (max-width: 480px)': {
                 fontSize: '1rem',
             },
         },
         cardBody: {
-            color: 'var(--sn-text-muted)',
+            color: '#495057',
             lineHeight: '1.6',
         },
         noticiaCard: {
-            backgroundColor: 'var(--sn-surface)',
-            borderRadius: '16px',
+            backgroundColor: '#f8f9fa',
+            borderRadius: '12px',
             padding: '1rem',
             marginBottom: '1rem',
             transition: 'all 0.3s ease',
-            border: '1px solid var(--sn-glass-border)',
+            border: '1px solid #e9ecef',
             '@media (max-width: 480px)': {
                 padding: '0.8rem',
             },
         },
         noticiaTitulo: {
             fontSize: '0.95rem',
-            fontWeight: 700,
+            fontWeight: 'bold',
             marginBottom: '0.3rem',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
             '@media (max-width: 480px)': {
                 fontSize: '0.85rem',
             },
         },
         noticiaResumen: {
-            color: 'var(--sn-text-muted)',
+            color: '#6c757d',
             fontSize: '0.8rem',
             marginBottom: '0.3rem',
         },
         noticiaMeta: {
             fontSize: '0.7rem',
-            color: 'var(--sn-text-light)',
+            color: '#adb5bd',
             display: 'flex',
             flexWrap: 'wrap',
             gap: '0.5rem 1rem',
             alignItems: 'center',
         },
         noticiaBadge: {
-            backgroundColor: 'var(--sn-primary)',
-            color: '#fff',
+            backgroundColor: '#3EAEF4',
+            color: '#0A0F1E',
             fontSize: '0.6rem',
             fontWeight: 'bold',
             padding: '0.1rem 0.5rem',
             borderRadius: '10px',
         },
         sidebar: {
-            background: 'var(--sn-glass-card-bg)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid var(--sn-glass-card-border)',
-            borderRadius: '24px',
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
             padding: '1.5rem',
-            boxShadow: '0 8px 25px -5px rgba(30,41,59,0.06)',
+            border: '1px solid rgba(255,255,255,0.5)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
             height: '100%',
             '@media (max-width: 480px)': {
                 padding: '1rem',
@@ -1122,11 +1034,11 @@ const Dashboard = () => {
         },
         sidebarTitle: {
             fontSize: '1rem',
-            fontWeight: 700,
+            fontWeight: 'bold',
             marginBottom: '1rem',
-            borderBottom: '2px solid var(--sn-primary)',
+            borderBottom: '2px solid #3EAEF4',
             paddingBottom: '0.5rem',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
@@ -1138,24 +1050,72 @@ const Dashboard = () => {
         },
         listaReglasItem: {
             padding: '0.5rem 0',
-            borderBottom: '1px solid var(--sn-glass-border)',
+            borderBottom: '1px solid #e9ecef',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
             fontSize: '0.85rem',
-            color: 'var(--sn-text-muted)',
             '@media (max-width: 480px)': {
                 fontSize: '0.8rem',
             },
         },
-
-        // ===== MODAL =====
         modalHeader: {
-            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+            background: 'linear-gradient(135deg, #282b34, #37383d)',
             color: 'white',
-            borderBottom: '3px solid #3B82F6',
+            borderBottom: '3px solid #3EAEF4',
             borderRadius: '16px 16px 0 0',
             padding: '1.5rem 2rem',
+        },
+        btnCalcular: {
+            backgroundColor: '#3EAEF4',
+            color: '#0A0F1E',
+            border: 'none',
+            padding: '0.6rem 1.2rem',
+            borderRadius: '10px',
+            fontWeight: 'bold',
+            width: '100%',
+            transition: 'all 0.3s ease',
+            cursor: 'pointer',
+            fontSize: '0.95rem',
+        },
+        resultadoContainer: {
+            backgroundColor: '#e9ecef',
+            borderRadius: '12px',
+            padding: '1.25rem',
+            textAlign: 'center',
+            marginTop: '1rem',
+            border: '1px solid #dee2e6',
+        },
+        resultadoMonto: {
+            fontSize: '2rem',
+            fontWeight: 'bold',
+            color: '#003c82',
+            '@media (max-width: 480px)': {
+                fontSize: '1.5rem',
+            },
+        },
+        bannerImage: {
+            width: '100%',
+            borderRadius: '16px',
+            overflow: 'hidden',
+            marginBottom: '1.5rem',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            transition: 'all 0.3s ease',
+        },
+        bannerImageContent: {
+            width: '100%',
+            height: 'auto',
+            display: 'block',
+            objectFit: 'cover',
+            maxHeight: '220px',
+            backgroundColor: '#0A0F1E',
+            '@media (max-width: 768px)': {
+                maxHeight: '130px',
+            },
+            '@media (max-width: 480px)': {
+                maxHeight: '90px',
+            },
         },
     };
 
@@ -1170,6 +1130,7 @@ const Dashboard = () => {
         console.log('📸 Banner por defecto');
         return '/images/seccionesBanner/bannerD.jpg';
     };
+
 
     // ✅ Determinar el título del banner
     const getBannerTitle = () => {
@@ -1189,344 +1150,142 @@ const Dashboard = () => {
 
     // ✅ Determinar el color del banner
     const getBannerColor = () => {
-        return seccionUsuario?.color || '#2563EB';
+        return seccionUsuario?.color || '#3EAEF4';
     };
 
-    // ✅ Color de la sección (fallback azul del nuevo diseño)
-    const colorSeccion = seccionUsuario?.color || '#2563EB';
-
     return (
-        <>
-            {/* ================= CAPAS DE FONDO DECORATIVAS (como el mockup) ================= */}
-            <div className="sn-decor" aria-hidden="true">
-                {/* Resplandores ambientales (radial-gradients, sin filtros pesados) */}
-                <div style={{
-                    position: 'absolute',
-                    top: '-80px',
-                    left: '25%',
-                    width: '600px',
-                    height: '600px',
-                    background: 'radial-gradient(circle, rgba(147,197,253,0.4) 0%, transparent 70%)',
-                }} />
-                <div style={{
-                    position: 'absolute',
-                    bottom: '40px',
-                    right: '-80px',
-                    width: '500px',
-                    height: '500px',
-                    background: 'radial-gradient(circle, rgba(110,231,183,0.35) 0%, transparent 70%)',
-                }} />
-
-                {/* Onda azul curva (izquierda central) */}
-                <svg style={{
-                    position: 'absolute',
-                    top: '28%',
-                    left: '-48px',
-                    width: '380px',
-                    height: '380px',
-                    opacity: 0.8,
-                }} viewBox="0 0 200 200" fill="none">
-                    <path d="M -50 100 C 20 180, 120 40, 200 120 C 220 140, 240 180, 250 200 L -50 200 Z" fill="rgba(147,197,253,0.5)"/>
-                </svg>
-
-                {/* Círculos flotantes (izquierda) */}
-                <div style={{
-                    position: 'absolute',
-                    top: '32%',
-                    left: '6%',
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    backgroundColor: 'rgba(96,165,250,0.3)',
-                }} />
-                <div style={{
-                    position: 'absolute',
-                    top: '36%',
-                    left: '4%',
-                    width: '16px',
-                    height: '16px',
-                    borderRadius: '50%',
-                    backgroundColor: 'rgba(125,211,252,0.5)',
-                }} />
-
-                {/* Composición geométrica verde (derecha central) */}
-                <div style={{
-                    position: 'absolute',
-                    top: '25%',
-                    right: '-4%',
-                    width: '384px',
-                    height: '384px',
-                    opacity: 0.6,
-                }}>
-                    <div style={{
-                        position: 'absolute',
-                        top: 0,
-                        right: '40px',
-                        width: '288px',
-                        height: '288px',
-                        border: '28px solid rgba(110,231,183,0.4)',
-                        borderRadius: '50%',
-                    }} />
-                    <div style={{
-                        position: 'absolute',
-                        top: '48px',
-                        right: '80px',
-                        width: '192px',
-                        height: '192px',
-                        backgroundColor: 'rgba(110,231,183,0.4)',
-                        borderTopLeftRadius: '999px',
-                        borderTopRightRadius: '999px',
-                        transform: 'rotate(-45deg)',
-                    }} />
-                    <div style={{
-                        position: 'absolute',
-                        top: '144px',
-                        right: '32px',
-                        width: '24px',
-                        height: '24px',
-                        borderRadius: '50%',
-                        backgroundColor: 'rgba(52,211,153,0.4)',
-                    }} />
-                    <div style={{
-                        position: 'absolute',
-                        top: '176px',
-                        right: '80px',
-                        width: '12px',
-                        height: '12px',
-                        borderRadius: '50%',
-                        backgroundColor: 'rgba(16,185,129,0.3)',
-                    }} />
-                </div>
-
-                {/* Figuras naranjas y cápsula (inferior derecha) */}
-                <div style={{
-                    position: 'absolute',
-                    bottom: '18%',
-                    right: '2%',
-                    width: '256px',
-                    height: '256px',
-                    opacity: 0.75,
-                }}>
-                    <div style={{
-                        position: 'absolute',
-                        bottom: '32px',
-                        right: '48px',
-                        width: '32px',
-                        height: '112px',
-                        background: 'linear-gradient(to top, rgba(251,146,60,0.8), rgba(252,211,77,0.8))',
-                        borderRadius: '999px',
-                        transform: 'rotate(35deg)',
-                    }} />
-                    <div style={{
-                        position: 'absolute',
-                        bottom: '8px',
-                        right: '16px',
-                        width: '96px',
-                        height: '96px',
-                        border: '6px solid rgba(251,146,60,0.5)',
-                        borderRadius: '50%',
-                    }} />
-                    <div style={{
-                        position: 'absolute',
-                        bottom: '64px',
-                        right: '128px',
-                        width: '20px',
-                        height: '20px',
-                        borderRadius: '50%',
-                        backgroundColor: 'rgba(251,146,60,0.7)',
-                    }} />
-                </div>
-
-                {/* Círculo azul traslúcido (inferior izquierda) */}
-                <div style={{
-                    position: 'absolute',
-                    bottom: '-50px',
-                    left: '-30px',
-                    width: '320px',
-                    height: '320px',
-                    borderRadius: '50%',
-                    backgroundColor: 'rgba(147,197,253,0.4)',
-                }} />
-
-                {/* Matrices de puntos */}
-                <div style={{
-                    position: 'absolute',
-                    top: '48px',
-                    left: '32px',
-                    width: '192px',
-                    height: '192px',
-                    opacity: 0.6,
-                }} className="dot-pattern" />
-                <div style={{
-                    position: 'absolute',
-                    top: '40%',
-                    left: '2%',
-                    width: '160px',
-                    height: '208px',
-                    opacity: 0.35,
-                }} className="dot-pattern" />
-                <div style={{
-                    position: 'absolute',
-                    top: '48%',
-                    right: '3%',
-                    width: '96px',
-                    height: '192px',
-                    opacity: 0.3,
-                }} className="dot-pattern" />
-                <div style={{
-                    position: 'absolute',
-                    bottom: '96px',
-                    left: '48px',
-                    width: '224px',
-                    height: '224px',
-                    opacity: 0.4,
-                }} className="dot-pattern" />
-            </div>
-
-            <div style={styles.container}>
-                {/* ===== HERO: 2 TARJETAS (como el mockup) ===== */}
-                <section style={styles.heroGrid}>
-                    {/* Card izquierda: Sección Sindical / Ingresar */}
-                    <div style={styles.heroCard} className="group">
-                        <div style={styles.heroCardDots} className="dot-pattern" />
-                        <div>
-                            <span style={{
-                                ...styles.heroBadge,
-                                backgroundColor: `${colorSeccion}15`,
-                                color: colorSeccion,
-                                border: `1px solid ${colorSeccion}40`,
+        <div style={styles.container}>
+            {/* ===== HERO SECTION ===== */}
+            <div style={styles.heroSection}>
+                <div style={styles.heroGlow} />
+                <div style={styles.heroContent}>
+                    <div style={styles.heroLeft}>
+                        <h1 style={styles.heroTitle}>
+                            {isLoggedIn ? `¡Bienvenido, ${userName}!` : 'SNTSS'}
+                        </h1>
+                        <p style={styles.heroSubtitle}>
+                            Comité Ejecutivo Seccional al Servicio de los trabajadores
+                        </p>
+                        
+                        {/* ✅ MOSTRAR LA SECCIÓN DEL USUARIO DEBAJO DEL NOMBRE (solo si está logueado) */}
+                        {isLoggedIn && seccionUsuario && (
+                            <div style={{
+                                ...styles.heroSeccion,
+                                backgroundColor: `${seccionUsuario.color || '#3EAEF4'}15`,
+                                borderLeft: `4px solid ${seccionUsuario.color || '#3EAEF4'}`
                             }}>
-                                {isLoggedIn ? `Sección ${seccionUsuario?.romano || ''} Sindical` : 'Sección Sindical'}
-                            </span>
-                            <h2 style={styles.heroTitle}>
-                                {isLoggedIn ? `¡Bienvenido, ${userName}!` : 'SNTSS'}
-                            </h2>
-                            <p style={styles.heroSubtitle}>
-                                Comité Ejecutivo Seccional al Servicio de los trabajadores
-                            </p>
-
-                            {/* ✅ MOSTRAR LA SECCIÓN DEL USUARIO DEBAJO DEL NOMBRE (solo si está logueado) */}
-                            {isLoggedIn && seccionUsuario && (
-                                <div style={{
-                                    ...styles.heroSeccion,
-                                    backgroundColor: `${colorSeccion}15`,
-                                    borderLeft: `4px solid ${colorSeccion}`,
-                                    color: colorSeccion,
+                                <FaBuilding style={{ 
+                                    ...styles.heroSeccionIcon,
+                                    color: seccionUsuario.color || '#3EAEF4'
+                                }} />
+                                <span style={{
+                                    ...styles.heroSeccionText,
+                                    color: seccionUsuario.color || '#3EAEF4'
                                 }}>
-                                    <FaBuilding size={14} />
-                                    <span>
-                                        Sección {seccionUsuario.romano} - {seccionUsuario.nombre}
+                                    Sección {seccionUsuario.romano} - {seccionUsuario.nombre}
+                                </span>
+                                <FaCheckCircle style={{ 
+                                    color: seccionUsuario.color || '#3EAEF4',
+                                    fontSize: '0.8rem',
+                                    opacity: 0.7
+                                }} />
+                            </div>
+                        )}
+                    </div>
+                    
+                    <div style={styles.heroRight}>
+                        {isLoggedIn && rolesDisponibles.length > 0 && (
+                            <div style={styles.heroRoles}>
+                                {rolesDisponibles.map((rol, idx) => (
+                                    <span key={idx} style={styles.badgeRol}>
+                                        🛡️ {rol}
                                     </span>
-                                    <FaCheckCircle size={12} style={{ opacity: 0.7 }} />
-                                </div>
-                            )}
-
-                            {isLoggedIn && rolesDisponibles.length > 0 && (
-                                <div style={styles.heroRoles}>
-                                    {rolesDisponibles.map((rol, idx) => (
-                                        <span key={idx} style={styles.badgeRol}>
-                                            🛡️ {rol}
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
+                                ))}
+                            </div>
+                        )}
+                        
                         <div style={styles.heroBtnContainer}>
-                            {isLoggedIn ? (
+                            {isLoggedIn && (
                                 <Link to="/perfil" style={styles.heroBtn}>
-                                    <FaUser size={14} /> Mi Perfil
+                                    <FaUser size={14} /> Perfil
                                 </Link>
-                            ) : (
+                            )}
+                            {!isLoggedIn && (
                                 <Link to="/login" style={styles.heroBtn}>
-                                    <FaSignInAlt size={14} /> Ingresar al Portal
+                                    <FaSignInAlt size={14} /> Ingresar
                                 </Link>
                             )}
                         </div>
-
-                        {/* Matriz de puntitos esquina inferior */}
-                        <div style={styles.heroDotsGrid}>
-                            {Array.from({ length: 8 }).map((_, i) => (
-                                <span key={i} style={styles.heroDotsDot} />
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Card derecha: Banner */}
-                    <div style={styles.heroBannerCard} className="group">
-                        <img 
-                            src={getBannerUrl()}
-                            alt={getBannerTitle()}
-                            loading="lazy"
-                            style={styles.heroBannerImg}
-                            onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.05)'; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
-                            onError={(e) => {
-                                e.target.style.display = 'none';
-                                e.target.parentElement.innerHTML = `
-                                    <div style="
-                                        width: 100%;
-                                        height: 100%;
-                                        min-height: 240px;
-                                        background: linear-gradient(135deg, #172554 0%, #1E3A8A 50%, #172554 100%);
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: center;
-                                        flex-direction: column;
-                                        border-bottom: 4px solid ${getBannerColor()};
-                                        padding: 1rem;
-                                        text-align: center;
-                                    ">
-                                        <div style="font-size: 3.5rem;">🏛️</div>
-                                        <h2 style="color: white; margin: 0.3rem 0 0 0; font-size: 1.3rem;">
-                                            ${getBannerTitle()}
-                                        </h2>
-                                        <p style="color: ${getBannerColor()}; margin: 0.2rem 0 0 0; font-size: 0.9rem; font-style: italic;">
-                                            ${getBannerSubtitle()}
-                                        </p>
-                                    </div>
-                                `;
-                            }}
-                        />
-                        <div style={styles.heroBannerOverlay} />
-                    </div>
-                </section>
-
-                {/* ===== PASTILLA DE TABS (como el mockup) ===== */}
-                <div style={styles.tabsContainer}>
-                    <div style={styles.tabsPill}>
-                        <button 
-                            style={styles.tab(tabActiva === 'calculadoras')}
-                            onClick={() => setTabActiva('calculadoras')}
-                        >
-                            <FaCalculator /> Calculadoras
-                        </button>
-                        <button 
-                            style={styles.tab(tabActiva === 'proceso')}
-                            onClick={() => setTabActiva('proceso')}
-                        >
-                            <FaNewspaper /> Proceso y Noticias
-                        </button>
                     </div>
                 </div>
-
-                {/* ===== CONTENIDO DE LAS TABS ===== */}
-                {tabActiva === 'calculadoras' ? renderTabCalculadoras() : renderTabProceso()}
-
-                {/* ===== MODAL DE CALCULADORA ===== */}
-                <Modal show={showModal} onHide={cerrarCalculadora} centered size="lg">
-                    <Modal.Header closeButton style={styles.modalHeader}>
-                        <Modal.Title>
-                            <FaCalculator style={{ marginRight: '10px', color: '#93C5FD' }} /> 
-                            {calculadoraActiva && calculadoras.find(c => c.id === calculadoraActiva)?.titulo || 'Calculadora'}
-                        </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body style={{ padding: '2rem', background: 'var(--sn-surface-soft)' }}>
-                        {renderCalculadora()}
-                    </Modal.Body>
-                </Modal>
             </div>
-        </>
+
+            {/* ===== BANNER CON IMAGEN ===== */}
+             <div style={styles.bannerImage}>
+                <img 
+                    src={getBannerUrl()}
+                    alt={getBannerTitle()}
+                    style={styles.bannerImageContent}
+                    onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = `
+                            <div style="
+                                width: 100%;
+                                height: 240px;
+                                background: linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                flex-direction: column;
+                                border-bottom: 4px solid ${getBannerColor()};
+                                padding: 1rem;
+                                text-align: center;
+                            ">
+                                <div style="font-size: 3.5rem;">🏛️</div>
+                                <h2 style="color: white; margin: 0.3rem 0 0 0; font-size: 1.3rem;">
+                                    ${getBannerTitle()}
+                                </h2>
+                                <p style="color: ${getBannerColor()}; margin: 0.2rem 0 0 0; font-size: 0.9rem; font-style: italic;">
+                                    ${getBannerSubtitle()}
+                                </p>
+                            </div>
+                        `;
+                    }}
+                />
+            </div>
+
+            {/* ===== TABS ===== */}
+            <div style={styles.tabsContainer}>
+                <button 
+                    style={styles.tab(tabActiva === 'calculadoras')}
+                    onClick={() => setTabActiva('calculadoras')}
+                >
+                    <FaCalculator /> Calculadoras y Herramientas
+                </button>
+                <button 
+                    style={styles.tab(tabActiva === 'proceso')}
+                    onClick={() => setTabActiva('proceso')}
+                >
+                    <FaClipboardList /> Proceso y Noticias
+                </button>
+            </div>
+
+            {/* ===== CONTENIDO DE LAS TABS ===== */}
+            {tabActiva === 'calculadoras' ? renderTabCalculadoras() : renderTabProceso()}
+
+            {/* ===== MODAL DE CALCULADORA ===== */}
+            <Modal show={showModal} onHide={cerrarCalculadora} centered size="lg">
+                <Modal.Header closeButton style={styles.modalHeader}>
+                    <Modal.Title>
+                        <FaCalculator style={{ marginRight: '10px', color: '#3EAEF4' }} /> 
+                        {calculadoraActiva && calculadoras.find(c => c.id === calculadoraActiva)?.titulo || 'Calculadora'}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body style={{ padding: '2rem', background: '#f8fafc' }}>
+                    {renderCalculadora()}
+                </Modal.Body>
+            </Modal>
+        </div>
     );
 };
 

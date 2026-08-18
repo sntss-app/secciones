@@ -73,7 +73,7 @@ const Vacaciones = () => {
         headerTitle: {
             fontSize: '1.5rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, var(--sn-text), #1ABC9C)',
+            background: 'linear-gradient(135deg, #0A0F1E, #1ABC9C)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -109,7 +109,7 @@ const Vacaciones = () => {
             display: 'block',
             fontWeight: '600',
             fontSize: '0.85rem',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
             marginBottom: '0.3rem',
         },
         labelIcon: {
@@ -124,8 +124,8 @@ const Vacaciones = () => {
             borderRadius: '10px',
             outline: 'none',
             transition: 'all 0.3s ease',
-            backgroundColor: 'var(--sn-surface)',
-            color: 'var(--sn-text)',
+            backgroundColor: 'white',
+            color: '#0A0F1E',
         },
         select: {
             width: '100%',
@@ -135,7 +135,7 @@ const Vacaciones = () => {
             borderRadius: '10px',
             outline: 'none',
             transition: 'all 0.3s ease',
-            backgroundColor: 'var(--sn-surface)',
+            backgroundColor: 'white',
             cursor: 'pointer',
         },
         inputFull: {
@@ -169,7 +169,7 @@ const Vacaciones = () => {
             fontWeight: 'bold',
             textAlign: 'center',
             marginBottom: '1rem',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
             fontSize: '1rem',
         },
         resultadoItem: {

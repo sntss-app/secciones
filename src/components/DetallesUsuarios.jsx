@@ -108,8 +108,8 @@ const DetallesUsuarios = ({
                     top: `${tooltipPosition.top - 200}px`,
                     left: `${tooltipPosition.left}px`,
                     transform: 'translateX(-50%)',
-                    backgroundColor: 'var(--sn-surface)',
-                    border: '1px solid var(--sn-glass-border)',
+                    backgroundColor: '#fff',
+                    border: '1px solid #e0e0e0',
                     borderRadius: '12px',
                     padding: '8px 0',
                     minWidth: '220px',
@@ -131,15 +131,15 @@ const DetallesUsuarios = ({
                         height: '0',
                         borderLeft: '8px solid transparent',
                         borderRight: '8px solid transparent',
-                        borderTop: '8px solid var(--sn-surface)',
+                        borderTop: '8px solid #fff',
                         filter: 'drop-shadow(0 2px 2px rgba(0,0,0,0.1))',
                     }} />
                     
                     <div style={{
                         padding: '0 14px 8px 14px',
-                        borderBottom: '1px solid var(--sn-glass-border)',
+                        borderBottom: '1px solid #f0f0f0',
                         fontWeight: 'bold',
-                        color: 'var(--sn-text)',
+                        color: '#333',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '8px',
@@ -147,11 +147,11 @@ const DetallesUsuarios = ({
                         {icono}
                         {titulo}
                         <span style={{ 
-                            backgroundColor: 'rgba(37,99,235,0.1)', 
+                            backgroundColor: '#f0f0f0', 
                             padding: '0 8px', 
                             borderRadius: '12px',
                             fontSize: '0.7rem',
-                            color: 'var(--sn-primary)',
+                            color: '#666',
                             marginLeft: 'auto'
                         }}>
                             {total}
@@ -176,19 +176,18 @@ const DetallesUsuarios = ({
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '10px',
-                                    borderBottom: idx < usuarios.length - 1 ? '1px solid var(--sn-glass-border)' : 'none',
+                                    borderBottom: idx < usuarios.length - 1 ? '1px solid #f5f5f5' : 'none',
                                     transition: 'background 0.2s ease',
                                 }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(37,99,235,0.06)'}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'
-                                }
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                 >
                                     <span style={{
                                         display: 'inline-block',
                                         width: '32px',
                                         height: '32px',
                                         borderRadius: '50%',
-                                        backgroundColor: '#2563EB',
+                                        backgroundColor: '#1877f2',
                                         color: 'white',
                                         textAlign: 'center',
                                         lineHeight: '32px',
@@ -198,7 +197,7 @@ const DetallesUsuarios = ({
                                     }}>
                                         {usuario.nombre?.charAt(0).toUpperCase() || 'U'}
                                     </span>
-                                    <span style={{ flex: 1, color: 'var(--sn-text)', fontWeight: '500' }}>
+                                    <span style={{ flex: 1, color: '#333', fontWeight: '500' }}>
                                         {usuario.nombre?.replace(/\//g, ' ') || usuario.matricula}
                                     </span>
                                 </div>

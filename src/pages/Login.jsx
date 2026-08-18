@@ -172,7 +172,7 @@ const Login = () => {
                     nombre: usuario.seccion_nombre || 'Sin sección',
                     slogan: usuario.seccion_slogan || null,
                     direccion: usuario.seccion_direccion || null,
-                    color: usuario.seccion_color || '#2563EB',
+                    color: usuario.seccion_color || '#3EAEF4',
                     logo: usuario.seccion_logo || assets.logo,
                     banner: usuario.seccion_banner || assets.banner,
                     redes: usuario.redes_sociales || {}
@@ -241,24 +241,23 @@ const Login = () => {
             alignItems: 'center',
             justifyContent: 'center',
             padding: '2rem',
-            background: 'transparent',
+            background: '#f0f4f8',
         },
         card: {
             maxWidth: '450px',
             width: '100%',
-            backgroundColor: 'var(--sn-glass-bg)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderRadius: '24px',
-            boxShadow: '0 12px 35px -8px rgba(15,23,42,0.12), inset 0 1px 2px rgba(255,255,255,0.95)',
+            backgroundColor: 'rgba(255,255,255,0.95)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '20px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
             overflow: 'hidden',
-            border: '1px solid var(--sn-glass-border)',
+            border: '1px solid rgba(255,255,255,0.5)',
         },
         header: {
-            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
             padding: '2.5rem 2rem',
             textAlign: 'center',
-            borderBottom: '4px solid #3B82F6',
+            borderBottom: '4px solid #3EAEF4',
             position: 'relative',
             overflow: 'hidden',
         },
@@ -269,13 +268,13 @@ const Login = () => {
             width: '300px',
             height: '300px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(147,197,253,0.2) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(62,174,244,0.08) 0%, transparent 70%)',
             pointerEvents: 'none',
         },
         title: {
             fontSize: '2rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #93C5FD 100%)',
+            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -284,15 +283,15 @@ const Login = () => {
             zIndex: 2,
         },
         subtitle: {
-            color: '#E0E7FF',
+            color: '#aab',
             fontSize: '0.9rem',
             position: 'relative',
             zIndex: 2,
         },
         badge: {
             display: 'inline-block',
-            backgroundColor: 'rgba(255,255,255,0.2)',
-            color: '#fff',
+            backgroundColor: '#3EAEF4',
+            color: '#0A0F1E',
             padding: '0.2rem 0.8rem',
             borderRadius: '12px',
             fontSize: '0.65rem',
@@ -311,7 +310,7 @@ const Login = () => {
             display: 'block',
             marginBottom: '0.4rem',
             fontWeight: '600',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
             fontSize: '0.85rem',
         },
         inputWrapper: {
@@ -333,9 +332,9 @@ const Login = () => {
             borderRadius: '12px',
             transition: 'all 0.3s ease',
             outline: 'none',
-            backgroundColor: 'var(--sn-surface)',
+            backgroundColor: 'white',
             boxSizing: 'border-box',
-            color: 'var(--sn-text)',
+            color: '#000',
         },
         passwordToggle: {
             position: 'absolute',
@@ -360,8 +359,8 @@ const Login = () => {
             padding: '0.75rem',
             fontSize: '1rem',
             fontWeight: '600',
-            color: '#fff',
-            backgroundColor: 'var(--sn-primary)',
+            color: '#0A0F1E',
+            backgroundColor: '#3EAEF4',
             border: 'none',
             borderRadius: '12px',
             cursor: 'pointer',
@@ -390,10 +389,10 @@ const Login = () => {
             textAlign: 'center',
             marginTop: '1.5rem',
             paddingTop: '1rem',
-            borderTop: '1px solid var(--sn-glass-border)',
+            borderTop: '1px solid #e9ecef',
         },
         footerLink: {
-            color: 'var(--sn-primary)',
+            color: '#3EAEF4',
             textDecoration: 'none',
             fontWeight: '500',
             display: 'inline-flex',
@@ -414,7 +413,7 @@ const Login = () => {
                 <div style={styles.header}>
                     <div style={styles.headerGlow} />
                     <h2 style={styles.title}>
-                        <FaRocket style={{ color: '#93C5FD', marginRight: '8px' }} /> Bienvenido
+                        <FaRocket style={{ color: '#3EAEF4', marginRight: '8px' }} /> Bienvenido
                     </h2>
                     <p style={styles.subtitle}>SNTSS Sección XXXIII</p>
                     <span style={styles.badge}>
@@ -433,7 +432,7 @@ const Login = () => {
                     <form onSubmit={handleSubmit}>
                         <div style={styles.inputGroup}>
                             <label style={styles.label}>
-                                <FaUserAlt style={{ marginRight: '8px', color: '#2563EB' }} /> Matrícula
+                                <FaUserAlt style={{ marginRight: '8px', color: '#3EAEF4' }} /> Matrícula
                             </label>
                             <div style={styles.inputWrapper}>
                                 <FaUserAlt style={styles.inputIcon} />
@@ -444,8 +443,8 @@ const Login = () => {
                                     value={formData.matricula}
                                     onChange={handleMatriculaChange}
                                     onFocus={(e) => {
-                                        e.target.style.borderColor = '#2563EB';
-                                        e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.15)';
+                                        e.target.style.borderColor = '#3EAEF4';
+                                        e.target.style.boxShadow = '0 0 0 3px rgba(62,174,244,0.15)';
                                     }}
                                     onBlur={(e) => {
                                         e.target.style.borderColor = '#ddd';
@@ -463,7 +462,7 @@ const Login = () => {
                         
                         <div style={styles.inputGroup}>
                             <label style={styles.label}>
-                                <FaLock style={{ marginRight: '8px', color: '#2563EB' }} /> Contraseña
+                                <FaLock style={{ marginRight: '8px', color: '#3EAEF4' }} /> Contraseña
                             </label>
                             <div style={styles.inputWrapper}>
                                 <FaLock style={styles.inputIcon} />
@@ -474,8 +473,8 @@ const Login = () => {
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     onFocus={(e) => {
-                                        e.target.style.borderColor = '#2563EB';
-                                        e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.15)';
+                                        e.target.style.borderColor = '#3EAEF4';
+                                        e.target.style.boxShadow = '0 0 0 3px rgba(62,174,244,0.15)';
                                     }}
                                     onBlur={(e) => {
                                         e.target.style.borderColor = '#ddd';
@@ -504,7 +503,7 @@ const Login = () => {
                             onMouseEnter={(e) => {
                                 if (!loading && !bloqueado) {
                                     e.currentTarget.style.transform = 'translateY(-2px)';
-                                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(37,99,235,0.3)';
+                                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(62,174,244,0.3)';
                                 }
                             }}
                             onMouseLeave={(e) => {
@@ -531,8 +530,8 @@ const Login = () => {
                         <Link 
                             to="/registro" 
                             style={styles.footerLink}
-                            onMouseEnter={(e) => e.currentTarget.style.color = '#1D4ED8'}
-                            onMouseLeave={(e) => e.currentTarget.style.color = '#2563EB'}
+                            onMouseEnter={(e) => e.currentTarget.style.color = '#2d8fd4'}
+                            onMouseLeave={(e) => e.currentTarget.style.color = '#3EAEF4'}
                         >
                             <FaUserPlus /> ¿No tienes cuenta? Regístrate aquí
                         </Link>
@@ -540,8 +539,8 @@ const Login = () => {
                         <Link 
                             to="/RecuperarContraseña" 
                             style={styles.footerLink}
-                            onMouseEnter={(e) => e.currentTarget.style.color = '#1D4ED8'}
-                            onMouseLeave={(e) => e.currentTarget.style.color = '#2563EB'}
+                            onMouseEnter={(e) => e.currentTarget.style.color = '#2d8fd4'}
+                            onMouseLeave={(e) => e.currentTarget.style.color = '#3EAEF4'}
                         >
                             <FaEnvelope /> ¿Olvidaste tu contraseña?
                         </Link>

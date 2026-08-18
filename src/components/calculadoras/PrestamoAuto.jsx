@@ -51,7 +51,7 @@ const PrestamoAuto = () => {
         headerTitle: {
             fontSize: '1.5rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, var(--sn-text), #F2994A)',
+            background: 'linear-gradient(135deg, #0A0F1E, #F2994A)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -87,7 +87,7 @@ const PrestamoAuto = () => {
             display: 'block',
             fontWeight: '600',
             fontSize: '0.85rem',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
             marginBottom: '0.3rem',
         },
         labelIcon: {
@@ -102,8 +102,8 @@ const PrestamoAuto = () => {
             borderRadius: '10px',
             outline: 'none',
             transition: 'all 0.3s ease',
-            backgroundColor: 'var(--sn-surface)',
-            color: 'var(--sn-text)',
+            backgroundColor: 'white',
+            color: '#0A0F1E',
         },
         button: {
             backgroundColor: '#F2994A',
@@ -133,7 +133,7 @@ const PrestamoAuto = () => {
             fontWeight: 'bold',
             textAlign: 'center',
             marginBottom: '1rem',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
             fontSize: '1rem',
         },
         resultadoItem: {

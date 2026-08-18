@@ -7,9 +7,14 @@ import {
     FaSignOutAlt, 
     FaSignInAlt, 
     FaUserPlus,
-    FaHome
+    FaFacebook,
+    FaTwitter,
+    FaInstagram,
+    FaYoutube,
+    FaTiktok,
+    FaWhatsapp
 } from 'react-icons/fa';
-import { getSeccionUsuario } from '../utils/sectionHelpers';
+import { getSeccionUsuario, getRedesSociales } from '../utils/sectionHelpers';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -22,6 +27,7 @@ const Navbar = () => {
     // ✅ NUEVO: Estado para la sección y el logo
     const [seccionUsuario, setSeccionUsuario] = useState(null);
     const [logo, setLogo] = useState('/images/seccionesLogo/logoD.png');
+    const [redesSociales, setRedesSociales] = useState({});
 
     useEffect(() => {
         const matricula = localStorage.getItem('matricula');
@@ -36,16 +42,20 @@ const Navbar = () => {
         }
     }, [location]);
 
-    // ✅ NUEVO: useEffect para cargar la sección y el logo
+    // ✅ NUEVO: useEffect para cargar la sección, el logo y las redes
     useEffect(() => {
             const seccion = getSeccionUsuario();
+            console.log('📌 Navbar - Sección obtenida:', seccion);  // DEBUG
+            console.log('📌 Navbar - Redes:', seccion?.redes);      // DEBUG
             
             if (seccion) {
                 setSeccionUsuario(seccion);
                 setLogo(seccion.logo || '/images/seccionesLogo/logoD.png');
+                setRedesSociales(getRedesSociales());
             } else {
                 setSeccionUsuario(null);
                 setLogo('/images/seccionesLogo/logoD.png');
+                setRedesSociales({});
             }
         }, [location]);
 
@@ -65,6 +75,7 @@ const Navbar = () => {
         setIsLoggedIn(false);
         setSeccionUsuario(null);
         setLogo('/images/seccionesLogo/logoD.png');
+        setRedesSociales({});
         navigate('/login');
     };
 
@@ -76,13 +87,62 @@ const Navbar = () => {
         setMobileMenuOpen(false);
     };
 
-    // Estilos de enlaces y responsive (iguales al footer)
+    // ✅ MAPEO DE ICONOS POR RED SOCIAL
+    const iconosRedes = {
+        facebook: <FaFacebook size={20} />,
+        x: <FaTwitter size={20} />,
+        twitter: <FaTwitter size={20} />,
+        instagram: <FaInstagram size={20} />,
+        youtube: <FaYoutube size={20} />,
+        tiktok: <FaTiktok size={20} />,
+        whatsapp: <FaWhatsapp size={20} />
+    };
+
+    // ✅ CLASES CSS PARA CADA RED SOCIAL
+    const clasesRedes = {
+        facebook: 'social-fb',
+        x: 'social-tw',
+        twitter: 'social-tw',
+        instagram: 'social-ig',
+        youtube: 'social-yt',
+        tiktok: 'social-tt',
+        whatsapp: 'social-wa'
+    };
+
+    // Estilos iguales a los del footer
     const socialStyles = `
-        .nav-link:hover {
-            color: #2563EB !important;
+        .social-fb:hover {
+            color: #1877f2 !important;
+            transform: translateY(-3px) scale(1.1);
+            background-color: rgba(24,119,242,0.2) !important;
         }
-        .nav-link:hover i, .nav-link:hover svg {
-            color: #2563EB !important;
+        .social-tw:hover {
+            color: #1da1f2 !important;
+            transform: translateY(-3px) scale(1.1);
+            background-color: rgba(29,161,242,0.2) !important;
+        }
+        .social-ig:hover {
+            color: #e4405f !important;
+            transform: translateY(-3px) scale(1.1);
+            background-color: rgba(228,64,95,0.2) !important;
+        }
+        .social-yt:hover {
+            color: #ff0000 !important;
+            transform: translateY(-3px) scale(1.1);
+            background-color: rgba(255,0,0,0.2) !important;
+        }
+        .social-tt:hover {
+            color: #00f2ea !important;
+            transform: translateY(-3px) scale(1.1);
+            background-color: rgba(0,242,234,0.2) !important;
+        }
+        .social-wa:hover {
+            color: #25d366 !important;
+            transform: translateY(-3px) scale(1.1);
+            background-color: rgba(37,211,102,0.2) !important;
+        }
+        .nav-link:hover {
+            color: #3EAEF4 !important;
         }
         @media (max-width: 768px) {
             .desktop-links {
@@ -95,11 +155,14 @@ const Navbar = () => {
                 padding: 0.8rem 1rem !important;
             }
             .navbar-title {
-                font-size: 1.05rem !important;
+                font-size: 1.1rem !important;
             }
             .navbar-logo {
-                height: 42px !important;
-                width: 42px !important;
+                height: 45px !important;
+                width: 45px !important;
+            }
+            .navbar-socials {
+                display: none !important;
             }
         }
         @media (max-width: 480px) {
@@ -114,159 +177,157 @@ const Navbar = () => {
 
     const styles = {
         navbar: {
+            backgroundColor: scrolled ? '#0A0F1E' : '#0A0F1E',
+            borderBottom: '3px solid #3EAEF4',
+            boxShadow: scrolled ? '0 4px 12px rgba(0,0,0,0.3)' : 'none',
+            transition: 'all 0.3s ease',
             position: 'sticky',
             top: 0,
             zIndex: 1000,
-            padding: '0.8rem 1.5rem',
-            background: 'transparent',
-            transition: 'all 0.3s ease',
+            padding: '0.8rem 2rem',
         },
         container: {
             width: '100%',
-            maxWidth: '1280px',
             margin: '0 auto',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             flexWrap: 'wrap',
-            background: 'var(--sn-glass-bg)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid var(--sn-glass-border)',
-            borderRadius: '1.25rem',
-            boxShadow: scrolled
-                ? '0 12px 35px -8px rgba(15, 23, 42, 0.15), inset 0 1px 2px rgba(255,255,255,0.95)'
-                : '0 8px 25px -5px rgba(30, 41, 59, 0.08), inset 0 1px 2px rgba(255,255,255,0.95)',
-            padding: '0.8rem 1.25rem',
-            transition: 'all 0.3s ease',
         },
         logoContainer: {
             display: 'flex',
             alignItems: 'center',
-            gap: '0.85rem',
+            gap: '1rem',
             cursor: 'pointer',
         },
         logo: {
-            height: '48px',
-            width: '48px',
+            height: '55px',
+            width: '55px',
             borderRadius: '50%',
             objectFit: 'cover',
-            border: '2px solid #fff',
-            boxShadow: '0 0 0 2px #2563EB, 0 6px 14px -4px rgba(37,99,235,0.45)',
-            background: 'linear-gradient(135deg, #1D4ED8, #0EA5E9)',
+            border: '2px solid #3EAEF4',
+            boxShadow: '0 0 0 2px #0A0F1E, 0 0 0 4px #3EAEF4',
         },
         titleContainer: {
             display: 'flex',
             flexDirection: 'column',
         },
         title: {
-            fontSize: '1.3rem',
-            fontWeight: 700,
-            color: 'var(--sn-text)',
-            letterSpacing: '0.5px',
+            fontSize: '1.4rem',
+            fontWeight: 'bold',
+            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            letterSpacing: '1px',
             margin: 0,
-            lineHeight: 1.1,
         },
         badge: {
-            fontSize: '0.65rem',
-            color: 'var(--sn-text-muted)',
-            fontWeight: 500,
+            fontSize: '0.7rem',
+            color: '#3EAEF4',
+            fontWeight: '500',
             marginTop: '2px',
+        },
+        socials: {
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '0.8rem',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+        },
+        socialLink: {
+            color: 'white',
+            transition: 'all 0.3s ease',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '8px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255,255,255,0.05)',
+            textDecoration: 'none',
+            cursor: 'pointer',
+            width: '36px',
+            height: '36px',
         },
         desktopLinks: {
             display: 'flex',
-            gap: '0.75rem',
+            gap: '1.5rem',
             alignItems: 'center',
         },
         mobileMenuIcon: {
             display: 'none',
-            fontSize: '1.6rem',
+            fontSize: '1.8rem',
             cursor: 'pointer',
-            color: '#2563EB',
+            color: '#3EAEF4',
         },
         mobileMenu: {
             display: 'none',
             flexDirection: 'column',
             width: '100%',
-            background: 'var(--sn-glass-bg)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid var(--sn-glass-border)',
-            borderRadius: '1rem',
+            backgroundColor: '#0A0F1E',
             padding: '1rem',
-            marginTop: '0.75rem',
-            gap: '0.5rem',
+            marginTop: '1rem',
+            borderTop: '1px solid rgba(255,215,0,0.2)',
         },
         mobileMenuOpen: {
             display: 'flex',
         },
         link: {
-            color: 'var(--sn-text-muted)',
+            color: 'white',
             textDecoration: 'none',
-            fontSize: '0.95rem',
-            fontWeight: 500,
-            padding: '0.5rem 1.1rem',
-            borderRadius: '999px',
+            fontSize: '1rem',
+            fontWeight: '500',
+            padding: '0.5rem 1rem',
+            borderRadius: '25px',
             transition: 'all 0.3s ease',
-            backgroundColor: 'transparent',
+            backgroundColor: 'rgba(255,215,0,0.1)',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            border: '1px solid transparent',
-        },
-        linkActive: {
-            color: '#2563EB',
-            textDecoration: 'none',
-            fontSize: '0.95rem',
-            fontWeight: 600,
-            padding: '0.5rem 1.1rem',
-            borderRadius: '999px',
-            transition: 'all 0.3s ease',
-            backgroundColor: 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            border: '1px solid transparent',
-            borderBottom: '2px solid #2563EB',
-            paddingBottom: 'calc(0.5rem - 2px)',
         },
         logoutButton: {
             backgroundColor: '#DC2626',
             color: 'white',
             border: 'none',
             padding: '0.5rem 1.2rem',
-            borderRadius: '999px',
+            borderRadius: '25px',
             cursor: 'pointer',
-            fontWeight: 600,
-            fontSize: '0.9rem',
+            fontWeight: 'bold',
+            fontSize: '0.95rem',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
             transition: 'all 0.3s ease',
-            boxShadow: '0 8px 18px -4px rgba(220,38,38,0.4)',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
         },
         userName: {
-            color: '#2563EB',
-            fontWeight: 600,
-            marginRight: '0.25rem',
+            color: '#3EAEF4',
+            fontWeight: 'bold',
+            marginRight: '0.5rem',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            fontSize: '0.95rem',
         },
     };
 
     // ✅ Determinar el título y badge según la sesión
     const getTitulo = () => {
-        return 'SNTSS';
+        if (!isLoggedIn) {
+            return 'SNTSS';
+        }
+        return `SNTSS Sección ${seccionUsuario?.romano || 'XXXIII'}`;
     };
 
     const getBadge = () => {
-        if (isLoggedIn && seccionUsuario?.nombre) {
-            return seccionUsuario.nombre;
+        if (!isLoggedIn) {
+            return '"Sindicato Nacional de Trabajadores del Seguro Social"';
         }
-        return '"Sindicato Nacional de Trabajadores del Seguro Social"';
+        return seccionUsuario?.nombre || 'Sindicato Nacional de Trabajadores del Seguro Social';
     };
+
+    // ✅ REDES SOCIALES DEL NAVBAR (dinámicas o fallback)
+    const redes = isLoggedIn ? redesSociales : {};
+    const tieneRedes = Object.keys(redes).length > 0;
 
     return (
         <>
@@ -294,11 +355,46 @@ const Navbar = () => {
                         </div>
                     </div>
 
+                    {/* ✅ REDES SOCIALES DINÁMICAS EN EL NAVBAR */}
+                    <div style={styles.socials} className="navbar-socials">
+                        {tieneRedes ? (
+                            Object.entries(redes).map(([red, url]) => (
+                                <a 
+                                    key={red} 
+                                    href={url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    style={styles.socialLink} 
+                                    className={clasesRedes[red] || 'social-fb'}
+                                    aria-label={red}
+                                >
+                                    {iconosRedes[red] || <FaFacebook size={20} />}
+                                </a>
+                            ))
+                        ) : (
+                            // ✅ FALLBACK: Redes del CEN (sección 39)
+                            <>
+                                <a href="https://www.facebook.com/SNTSSOFICIAL" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
+                                    <FaFacebook size={20} />
+                                </a>
+                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tw">
+                                    <FaTwitter size={20} />
+                                </a>
+                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-ig">
+                                    <FaInstagram size={20} />
+                                </a>
+                                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-yt">
+                                    <FaYoutube size={20} />
+                                </a>
+                                <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tt">
+                                    <FaTiktok size={20} />
+                                </a>
+                            </>
+                        )}
+                    </div>
+
                     {/* Desktop Links */}
                     <div style={styles.desktopLinks} className="desktop-links">
-                        <Link to="/" style={location.pathname === '/' ? styles.linkActive : styles.link} className="nav-link">
-                            <FaHome /> Inicio
-                        </Link>
                         {!isLoggedIn ? (
                             <>
                                 <Link to="/login" style={styles.link} className="nav-link">
@@ -327,9 +423,6 @@ const Navbar = () => {
 
                     {/* Mobile Menu */}
                     <div style={{ ...styles.mobileMenu, ...(mobileMenuOpen ? styles.mobileMenuOpen : {}) }} className="mobile-menu">
-                        <Link to="/" style={location.pathname === '/' ? styles.linkActive : styles.link} onClick={closeMobileMenu} className="nav-link">
-                            <FaHome /> Inicio
-                        </Link>
                         {!isLoggedIn ? (
                             <>
                                 <Link to="/login" style={styles.link} onClick={closeMobileMenu} className="nav-link">

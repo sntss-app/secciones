@@ -72,18 +72,18 @@ const Conceptos = () => {
             margin: '0 auto',
             padding: '2rem 1.5rem',
             minHeight: 'calc(100vh - 200px)',
-            background: 'transparent',
+            background: '#f0f4f8',
             '@media (max-width: 768px)': {
                 padding: '1rem 0.8rem',
             },
         },
         // Header con glow
         header: {
-            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
             borderRadius: '20px',
             padding: '2.5rem 2rem',
             marginBottom: '2rem',
-            borderBottom: '4px solid #3B82F6',
+            borderBottom: '4px solid #3EAEF4',
             boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
             position: 'relative',
             overflow: 'hidden',
@@ -101,7 +101,7 @@ const Conceptos = () => {
             width: '400px',
             height: '400px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(147,197,253,0.2) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(62,174,244,0.1) 0%, transparent 70%)',
             pointerEvents: 'none',
         },
         headerContent: {
@@ -146,7 +146,7 @@ const Conceptos = () => {
         title: {
             fontSize: '2rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #93C5FD 100%)',
+            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -163,7 +163,7 @@ const Conceptos = () => {
             },
         },
         subtitle: {
-            color: '#E0E7FF',
+            color: '#aab',
             fontSize: '0.95rem',
             margin: 0,
             '@media (max-width: 768px)': {
@@ -172,8 +172,8 @@ const Conceptos = () => {
         },
         headerBadge: {
             display: 'inline-block',
-            backgroundColor: 'var(--sn-primary)',
-            color: '#fff',
+            backgroundColor: '#3EAEF4',
+            color: '#0A0F1E',
             padding: '0.3rem 1rem',
             borderRadius: '20px',
             fontSize: '0.75rem',
@@ -221,7 +221,7 @@ const Conceptos = () => {
             borderRadius: '25px',
             outline: 'none',
             transition: 'all 0.3s ease',
-            backgroundColor: 'var(--sn-surface-soft)',
+            backgroundColor: '#f0f2f5',
             height: '46px',
         },
         resultsBadge: {
@@ -230,7 +230,7 @@ const Conceptos = () => {
             gap: '0.5rem',
             padding: '0.4rem 1.2rem',
             borderRadius: '20px',
-            background: 'transparent',
+            background: '#f0f2f5',
             color: '#6c757d',
             fontSize: '0.9rem',
             fontWeight: '500',
@@ -289,8 +289,8 @@ const Conceptos = () => {
             fontWeight: 'bold',
             marginBottom: '1rem',
             paddingBottom: '0.5rem',
-            borderBottom: '3px solid #2563EB',
-            color: 'var(--sn-text)',
+            borderBottom: '3px solid #3EAEF4',
+            color: '#0A0F1E',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
@@ -304,7 +304,7 @@ const Conceptos = () => {
             alignItems: 'center',
             gap: '0.75rem',
             padding: '0.8rem 1rem',
-            backgroundColor: 'var(--sn-glass-card-bg)',
+            backgroundColor: 'rgba(255,255,255,0.9)',
             backdropFilter: 'blur(10px)',
             borderRadius: '12px',
             border: '1px solid rgba(255,255,255,0.5)',
@@ -340,7 +340,7 @@ const Conceptos = () => {
         conceptTitulo: {
             fontSize: '0.9rem',
             fontWeight: '500',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
             '@media (max-width: 480px)': {
                 fontSize: '0.8rem',
             },
@@ -367,9 +367,9 @@ const Conceptos = () => {
         },
         // ===== MODAL MODERNO =====
         modalHeader: {
-            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+            background: 'linear-gradient(135deg, #0A0F1E, #1a1f2e)',
             color: 'white',
-            borderBottom: '3px solid #2563EB',
+            borderBottom: '3px solid #3EAEF4',
             borderRadius: '16px 16px 0 0',
             padding: '1.5rem 2rem',
         },
@@ -388,7 +388,7 @@ const Conceptos = () => {
         modalTitulo: {
             fontSize: '1.8rem',
             fontWeight: 'bold',
-            color: 'var(--sn-text)',
+            color: '#0A0F1E',
             marginBottom: '0.5rem',
             '@media (max-width: 480px)': {
                 fontSize: '1.3rem',
@@ -457,7 +457,7 @@ const Conceptos = () => {
                         </Link>
                         <div>
                             <h1 style={styles.title}>
-                                <FaRocket style={{ color: '#2563EB' }} /> Conceptos del Tarjetón
+                                <FaRocket style={{ color: '#3EAEF4' }} /> Conceptos del Tarjetón
                             </h1>
                             <p style={styles.subtitle}>
                                 Consulta la descripción de cada concepto que aparece en tu tarjetón de pago
@@ -483,8 +483,8 @@ const Conceptos = () => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         onFocus={(e) => {
-                            e.target.style.borderColor = '#2563EB';
-                            e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.15)';
+                            e.target.style.borderColor = '#3EAEF4';
+                            e.target.style.boxShadow = '0 0 0 3px rgba(62,174,244,0.15)';
                             e.target.style.backgroundColor = 'white';
                         }}
                         onBlur={(e) => {
@@ -495,7 +495,7 @@ const Conceptos = () => {
                     />
                 </div>
                 <div style={styles.resultsBadge}>
-                    <FaListAlt style={{ color: '#2563EB' }} /> {conceptosFiltrados.length} conceptos
+                    <FaListAlt style={{ color: '#3EAEF4' }} /> {conceptosFiltrados.length} conceptos
                 </div>
                 {searchTerm && (
                     <button 
@@ -522,8 +522,8 @@ const Conceptos = () => {
                                 onClick={() => abrirDetalle(concepto)}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = 'translateX(4px)';
-                                    e.currentTarget.style.borderColor = '#2563EB';
-                                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(37,99,235,0.15)';
+                                    e.currentTarget.style.borderColor = '#3EAEF4';
+                                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(62,174,244,0.15)';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'translateX(0)';
@@ -541,7 +541,7 @@ const Conceptos = () => {
                                         <div style={styles.conceptDescripcion}>{concepto.descripcion}</div>
                                     )}
                                 </div>
-                                <FaInfoCircle style={{ color: '#2563EB', fontSize: '0.9rem', flexShrink: 0 }} />
+                                <FaInfoCircle style={{ color: '#3EAEF4', fontSize: '0.9rem', flexShrink: 0 }} />
                             </div>
                         ))
                     ) : (
@@ -562,8 +562,8 @@ const Conceptos = () => {
                                 onClick={() => abrirDetalle(concepto)}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = 'translateX(4px)';
-                                    e.currentTarget.style.borderColor = '#2563EB';
-                                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(37,99,235,0.15)';
+                                    e.currentTarget.style.borderColor = '#3EAEF4';
+                                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(62,174,244,0.15)';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'translateX(0)';
@@ -581,7 +581,7 @@ const Conceptos = () => {
                                         <div style={styles.conceptDescripcion}>{concepto.descripcion}</div>
                                     )}
                                 </div>
-                                <FaInfoCircle style={{ color: '#2563EB', fontSize: '0.9rem', flexShrink: 0 }} />
+                                <FaInfoCircle style={{ color: '#3EAEF4', fontSize: '0.9rem', flexShrink: 0 }} />
                             </div>
                         ))
                     ) : (
@@ -593,13 +593,13 @@ const Conceptos = () => {
             {/* Empty State */}
             {conceptosFiltrados.length === 0 && (
                 <div style={styles.emptyState}>
-                    <FaFileAlt style={{ fontSize: '4rem', color: '#2563EB', marginBottom: '1rem', opacity: 0.3 }} />
-                    <h4 style={{ color: 'var(--sn-text)' }}>No se encontraron conceptos</h4>
+                    <FaFileAlt style={{ fontSize: '4rem', color: '#3EAEF4', marginBottom: '1rem', opacity: 0.3 }} />
+                    <h4 style={{ color: '#0A0F1E' }}>No se encontraron conceptos</h4>
                     <p style={{ color: '#6c757d' }}>No hay conceptos que coincidan con tu búsqueda.</p>
                     <button 
                         className="btn btn-link"
                         onClick={() => setSearchTerm('')}
-                        style={{ color: '#2563EB', fontWeight: 'bold', textDecoration: 'none' }}
+                        style={{ color: '#3EAEF4', fontWeight: 'bold', textDecoration: 'none' }}
                     >
                         Ver todos los conceptos
                     </button>
@@ -610,7 +610,7 @@ const Conceptos = () => {
             <Modal show={showModal} onHide={cerrarDetalle} centered size="lg">
                 <Modal.Header closeButton style={styles.modalHeader}>
                     <Modal.Title>
-                        <FaTag style={{ color: '#2563EB', marginRight: '10px' }} /> Detalle del Concepto
+                        <FaTag style={{ color: '#3EAEF4', marginRight: '10px' }} /> Detalle del Concepto
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={styles.modalBody}>

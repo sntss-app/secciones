@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import AvisoPrivacidad from './AvisoPrivacidad';
-import { FaFacebook, FaTwitter, FaInstagram, FaYoutube, FaTiktok, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaFacebook, FaTwitter, FaInstagram, FaYoutube, FaTiktok, FaWhatsapp, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 
 const Footer = () => {
+    const currentYear = new Date().getFullYear();
     const [showAvisoPrivacidad, setShowAvisoPrivacidad] = useState(false);
 
     // ✅ FUNCIÓN PARA OBTENER LA SECCIÓN DIRECTAMENTE DE localStorage
@@ -19,9 +20,46 @@ const Footer = () => {
         }
     };
 
+    // ✅ FUNCIÓN PARA OBTENER REDES SOCIALES
+    const getRedesSociales = () => {
+        const seccion = getSeccionUsuario();
+        return seccion?.redes || {};
+    };
+
+    // ✅ MAPEO DE ICONOS POR RED SOCIAL
+    const iconosRedes = {
+        facebook: <FaFacebook size={24} />,
+        x: <FaTwitter size={24} />,
+        twitter: <FaTwitter size={24} />,
+        instagram: <FaInstagram size={24} />,
+        youtube: <FaYoutube size={24} />,
+        tiktok: <FaTiktok size={24} />,
+        whatsapp: <FaWhatsapp size={24} />
+    };
+
+    // ✅ CLASES CSS PARA CADA RED SOCIAL
+    const clasesRedes = {
+        facebook: 'social-fb',
+        x: 'social-tw',
+        twitter: 'social-tw',
+        instagram: 'social-ig',
+        youtube: 'social-yt',
+        tiktok: 'social-tt',
+        whatsapp: 'social-wa'
+    };
+
     // ✅ FUNCIONES QUE LEE DIRECTAMENTE DE localStorage
     const getTitulo = () => {
-        return 'SNTSS';
+        const isLoggedIn = Boolean(localStorage.getItem('matricula'));
+        if (!isLoggedIn) {
+            return 'SNTSS';
+        }
+        
+        const seccion = getSeccionUsuario();
+        if (!seccion?.romano) {
+            return 'SNTSS';
+        }
+        return `SNTSS Sección ${seccion.romano}`;
     };
 
     const getSlogan = () => {
@@ -41,7 +79,17 @@ const Footer = () => {
     };
 
     const getCopyright = () => {
-        return '© 2026 SNTSS SNTSS / ';
+        const isLoggedIn = Boolean(localStorage.getItem('matricula'));
+        let seccionTexto = 'SNTSS';
+        
+        if (isLoggedIn) {
+            const seccion = getSeccionUsuario();
+            if (seccion?.romano) {
+                seccionTexto = `Sección ${seccion.romano}`;
+            }
+        }
+        
+        return `© ${currentYear} SNTSS ${seccionTexto} /`;
     };
 
     const getDireccion = () => {
@@ -61,19 +109,10 @@ const Footer = () => {
 
     const styles = {
         footer: {
-            background: 'var(--sn-glass-bg)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid var(--sn-glass-border)',
-            borderTopLeftRadius: '2.5rem',
-            borderTopRightRadius: '2.5rem',
-            borderBottom: 'none',
-            color: 'var(--sn-text)',
+            backgroundColor: '#0A0F1E',
+            color: 'white',
             marginTop: 'auto',
             position: 'relative',
-            zIndex: 1,
-            overflow: 'hidden',
-            boxShadow: '0 -12px 35px -8px rgba(15, 23, 42, 0.08)',
         },
         wave: {
             position: 'relative',
@@ -81,24 +120,23 @@ const Footer = () => {
             lineHeight: 0,
         },
         content: {
-            padding: '2rem 1.5rem 2rem 1.5rem',
+            padding: '2rem 1rem 2rem 1rem',
             textAlign: 'center',
-            maxWidth: '1280px',
-            margin: '0 auto',
-            position: 'relative',
-            zIndex: 1,
         },
         mainInfo: {
             marginBottom: '1.5rem',
         },
         title: {
-            fontSize: '1.6rem',
-            fontWeight: 700,
-            color: 'var(--sn-text)',
+            fontSize: '1.8rem',
+            fontWeight: 'bold',
+            background: 'linear-gradient(135deg, #9fd3f4, #1a41cf)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
             marginBottom: '0.5rem',
         },
         slogan: {
-            color: '#2563EB',
+            color: '#3EAEF4',
             fontSize: '0.9rem',
             fontStyle: 'italic',
             marginBottom: '0.5rem',
@@ -110,7 +148,7 @@ const Footer = () => {
             flexWrap: 'wrap',
             marginBottom: '1rem',
             fontSize: '0.85rem',
-            color: 'var(--sn-text-muted)',
+            color: '#aaa',
         },
         contactItem: {
             display: 'flex',
@@ -120,24 +158,22 @@ const Footer = () => {
         socials: {
             display: 'flex',
             justifyContent: 'center',
-            gap: '0.75rem',
+            gap: '1.5rem',
             flexWrap: 'wrap',
             marginBottom: '1.5rem',
         },
         socialLink: {
-            color: '#475569',
+            color: 'white',
             transition: 'all 0.3s ease',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             padding: '10px',
             borderRadius: '50%',
-            backgroundColor: 'rgba(255,255,255,0.9)',
-            border: '1px solid rgba(255,255,255,0.95)',
-            boxShadow: '0 4px 10px -2px rgba(15,23,42,0.1)',
+            backgroundColor: 'rgba(255,255,255,0.05)',
             cursor: 'pointer',
-            width: '38px',
-            height: '38px',
+            width: '44px',
+            height: '44px',
             textDecoration: 'none',
         },
         linksRow: {
@@ -148,90 +184,76 @@ const Footer = () => {
             flexWrap: 'wrap',
         },
         footerLink: {
-            color: 'var(--sn-text-muted)',
+            color: '#ccc',
             textDecoration: 'none',
             fontSize: '0.85rem',
             transition: 'color 0.3s ease',
         },
         separator: {
-            color: '#2563EB',
+            color: '#3EAEF4',
         },
         copy: {
             fontSize: '0.75rem',
-            color: 'var(--sn-text-light)',
-            borderTop: '1px solid var(--sn-glass-border)',
+            color: '#888',
+            borderTop: '1px solid rgba(255,215,0,0.2)',
             paddingTop: '1rem',
         },
         legend: {
-            color: '#2563EB',
+            color: '#3EAEF4',
             marginLeft: '5px',
-        },
-        didactic: {
-            fontSize: '0.7rem',
-            color: 'var(--sn-text-light)',
-            marginTop: '0.75rem',
-            fontStyle: 'italic',
         },
     };
 
     const socialStyles = `
         .social-fb:hover {
-            color: #fff !important;
-            background-color: #1877f2 !important;
+            color: #1877f2 !important;
             transform: translateY(-5px) scale(1.1);
+            background-color: rgba(24,119,242,0.2) !important;
         }
         .social-tw:hover {
-            color: #fff !important;
-            background-color: #1da1f2 !important;
+            color: #1da1f2 !important;
             transform: translateY(-5px) scale(1.1);
+            background-color: rgba(29,161,242,0.2) !important;
         }
         .social-ig:hover {
-            color: #fff !important;
-            background-color: #e4405f !important;
+            color: #e4405f !important;
             transform: translateY(-5px) scale(1.1);
+            background-color: rgba(228,64,95,0.2) !important;
         }
         .social-yt:hover {
-            color: #fff !important;
-            background-color: #ff0000 !important;
+            color: #ff0000 !important;
             transform: translateY(-5px) scale(1.1);
+            background-color: rgba(255,0,0,0.2) !important;
         }
         .social-tt:hover {
-            color: #fff !important;
-            background-color: #000000 !important;
+            color: #00f2ea !important;
             transform: translateY(-5px) scale(1.1);
+            background-color: rgba(0,242,234,0.2) !important;
+        }
+        .social-wa:hover {
+            color: #25d366 !important;
+            transform: translateY(-5px) scale(1.1);
+            background-color: rgba(37,211,102,0.2) !important;
         }
         .footer-link:hover {
-            color: #2563EB !important;
+            color: #3EAEF4 !important;
         }
     `;
 
-    // ✅ REDES SOCIALES FIJAS (estilo mockup)
-    const redes = [
-        { red: 'facebook', url: '#' },
-        { red: 'twitter', url: '#' },
-        { red: 'instagram', url: '#' },
-        { red: 'youtube', url: '#' },
-        { red: 'tiktok', url: '#' }
-    ];
-    const iconosRedes = {
-        facebook: <FaFacebook size={18} />,
-        twitter: <FaTwitter size={18} />,
-        instagram: <FaInstagram size={18} />,
-        youtube: <FaYoutube size={18} />,
-        tiktok: <FaTiktok size={18} />
-    };
-    const clasesRedes = {
-        facebook: 'social-fb',
-        twitter: 'social-tw',
-        instagram: 'social-ig',
-        youtube: 'social-yt',
-        tiktok: 'social-tt'
-    };
+    // ✅ OBTENER REDES SOCIALES (SOLO UNA VEZ)
+    const redes = getRedesSociales();
+    const tieneRedes = Object.keys(redes).length > 0;
 
     return (
         <>
             <style>{socialStyles}</style>
             <footer style={styles.footer}>
+                <div style={styles.wave}>
+                    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                        <path d="M0,64L80,69C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58L1440,64L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z" 
+                              fill="#0A0F1E" fillOpacity="1"></path>
+                    </svg>
+                </div>
                 <div style={styles.content}>
                     <div style={styles.mainInfo}>
                         <h3 style={styles.title}>{getTitulo()}</h3>
@@ -249,19 +271,42 @@ const Footer = () => {
                         </div>
                     </div>
                     
-                    {/* ✅ REDES SOCIALES FIJAS (estilo mockup) */}
+                    {/* ✅ REDES SOCIALES DINÁMICAS */}
                     <div style={styles.socials}>
-                        {redes.map(({ red, url }) => (
-                            <a 
-                                key={red} 
-                                href={url} 
-                                style={styles.socialLink} 
-                                className={clasesRedes[red] || 'social-fb'}
-                                aria-label={red}
-                            >
-                                {iconosRedes[red] || <FaFacebook size={18} />}
-                            </a>
-                        ))}
+                        {tieneRedes ? (
+                            Object.entries(redes).map(([red, url]) => (
+                                <a 
+                                    key={red} 
+                                    href={url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    style={styles.socialLink} 
+                                    className={clasesRedes[red] || 'social-fb'}
+                                    aria-label={red}
+                                >
+                                    {iconosRedes[red] || <FaFacebook size={24} />}
+                                </a>
+                            ))
+                        ) : (
+                            // ✅ FALLBACK: Redes sociales por defecto (CEN)
+                            <>
+                                <a href="https://www.facebook.com/SNTSSOFICIAL" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
+                                    <FaFacebook size={24} />
+                                </a>
+                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tw">
+                                    <FaTwitter size={24} />
+                                </a>
+                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-ig">
+                                    <FaInstagram size={24} />
+                                </a>
+                                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-yt">
+                                    <FaYoutube size={24} />
+                                </a>
+                                <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tt">
+                                    <FaTiktok size={24} />
+                                </a>
+                            </>
+                        )}
                     </div>
                     
                     <div style={styles.linksRow}>
@@ -277,9 +322,6 @@ const Footer = () => {
                     <p style={styles.copy}>
                         {getCopyright()} 
                         <strong style={styles.legend}> espigar.dev</strong>
-                    </p>
-                    <p style={styles.didactic}>
-                        Este sitio es un proyecto didáctico desarrollado con fines exclusivamente académicos y escolares.
                     </p>
                     <AvisoPrivacidad show={showAvisoPrivacidad} onHide={() => setShowAvisoPrivacidad(false)} />
                 </div>
