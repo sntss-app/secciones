@@ -28,13 +28,13 @@ const Footer = () => {
 
     // ✅ MAPEO DE ICONOS POR RED SOCIAL
     const iconosRedes = {
-        facebook: <FaFacebook size={24} />,
-        x: <FaTwitter size={24} />,
-        twitter: <FaTwitter size={24} />,
-        instagram: <FaInstagram size={24} />,
-        youtube: <FaYoutube size={24} />,
-        tiktok: <FaTiktok size={24} />,
-        whatsapp: <FaWhatsapp size={24} />
+        facebook: <FaFacebook size={18} />,
+        x: <FaTwitter size={18} />,
+        twitter: <FaTwitter size={18} />,
+        instagram: <FaInstagram size={18} />,
+        youtube: <FaYoutube size={18} />,
+        tiktok: <FaTiktok size={18} />,
+        whatsapp: <FaWhatsapp size={18} />
     };
 
     // ✅ CLASES CSS PARA CADA RED SOCIAL
@@ -109,10 +109,19 @@ const Footer = () => {
 
     const styles = {
         footer: {
-            backgroundColor: '#0A0F1E',
-            color: 'white',
+            background: 'var(--sn-glass-bg)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid var(--sn-glass-border)',
+            borderTopLeftRadius: '2.5rem',
+            borderTopRightRadius: '2.5rem',
+            borderBottom: 'none',
+            color: 'var(--sn-text)',
             marginTop: 'auto',
             position: 'relative',
+            zIndex: 1,
+            overflow: 'hidden',
+            boxShadow: '0 -12px 35px -8px rgba(15, 23, 42, 0.08)',
         },
         wave: {
             position: 'relative',
@@ -120,23 +129,24 @@ const Footer = () => {
             lineHeight: 0,
         },
         content: {
-            padding: '2rem 1rem 2rem 1rem',
+            padding: '2rem 1.5rem 2rem 1.5rem',
             textAlign: 'center',
+            maxWidth: '1280px',
+            margin: '0 auto',
+            position: 'relative',
+            zIndex: 1,
         },
         mainInfo: {
             marginBottom: '1.5rem',
         },
         title: {
-            fontSize: '1.8rem',
-            fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #9fd3f4, #1a41cf)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
+            fontSize: '1.6rem',
+            fontWeight: 700,
+            color: 'var(--sn-text)',
             marginBottom: '0.5rem',
         },
         slogan: {
-            color: '#3EAEF4',
+            color: '#2563EB',
             fontSize: '0.9rem',
             fontStyle: 'italic',
             marginBottom: '0.5rem',
@@ -148,7 +158,7 @@ const Footer = () => {
             flexWrap: 'wrap',
             marginBottom: '1rem',
             fontSize: '0.85rem',
-            color: '#aaa',
+            color: 'var(--sn-text-muted)',
         },
         contactItem: {
             display: 'flex',
@@ -158,22 +168,24 @@ const Footer = () => {
         socials: {
             display: 'flex',
             justifyContent: 'center',
-            gap: '1.5rem',
+            gap: '0.75rem',
             flexWrap: 'wrap',
             marginBottom: '1.5rem',
         },
         socialLink: {
-            color: 'white',
+            color: '#475569',
             transition: 'all 0.3s ease',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             padding: '10px',
             borderRadius: '50%',
-            backgroundColor: 'rgba(255,255,255,0.05)',
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            border: '1px solid rgba(255,255,255,0.95)',
+            boxShadow: '0 4px 10px -2px rgba(15,23,42,0.1)',
             cursor: 'pointer',
-            width: '44px',
-            height: '44px',
+            width: '38px',
+            height: '38px',
             textDecoration: 'none',
         },
         linksRow: {
@@ -184,59 +196,59 @@ const Footer = () => {
             flexWrap: 'wrap',
         },
         footerLink: {
-            color: '#ccc',
+            color: 'var(--sn-text-muted)',
             textDecoration: 'none',
             fontSize: '0.85rem',
             transition: 'color 0.3s ease',
         },
         separator: {
-            color: '#3EAEF4',
+            color: '#2563EB',
         },
         copy: {
             fontSize: '0.75rem',
-            color: '#888',
-            borderTop: '1px solid rgba(255,215,0,0.2)',
+            color: 'var(--sn-text-light)',
+            borderTop: '1px solid var(--sn-glass-border)',
             paddingTop: '1rem',
         },
         legend: {
-            color: '#3EAEF4',
+            color: '#2563EB',
             marginLeft: '5px',
         },
     };
 
     const socialStyles = `
         .social-fb:hover {
-            color: #1877f2 !important;
+            color: #fff !important;
+            background-color: #1877f2 !important;
             transform: translateY(-5px) scale(1.1);
-            background-color: rgba(24,119,242,0.2) !important;
         }
         .social-tw:hover {
-            color: #1da1f2 !important;
+            color: #fff !important;
+            background-color: #1da1f2 !important;
             transform: translateY(-5px) scale(1.1);
-            background-color: rgba(29,161,242,0.2) !important;
         }
         .social-ig:hover {
-            color: #e4405f !important;
+            color: #fff !important;
+            background-color: #e4405f !important;
             transform: translateY(-5px) scale(1.1);
-            background-color: rgba(228,64,95,0.2) !important;
         }
         .social-yt:hover {
-            color: #ff0000 !important;
+            color: #fff !important;
+            background-color: #ff0000 !important;
             transform: translateY(-5px) scale(1.1);
-            background-color: rgba(255,0,0,0.2) !important;
         }
         .social-tt:hover {
-            color: #00f2ea !important;
+            color: #fff !important;
+            background-color: #000000 !important;
             transform: translateY(-5px) scale(1.1);
-            background-color: rgba(0,242,234,0.2) !important;
         }
         .social-wa:hover {
-            color: #25d366 !important;
+            color: #fff !important;
+            background-color: #25d366 !important;
             transform: translateY(-5px) scale(1.1);
-            background-color: rgba(37,211,102,0.2) !important;
         }
         .footer-link:hover {
-            color: #3EAEF4 !important;
+            color: #2563EB !important;
         }
     `;
 
@@ -248,12 +260,6 @@ const Footer = () => {
         <>
             <style>{socialStyles}</style>
             <footer style={styles.footer}>
-                <div style={styles.wave}>
-                    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-                        <path d="M0,64L80,69C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58L1440,64L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z" 
-                              fill="#0A0F1E" fillOpacity="1"></path>
-                    </svg>
-                </div>
                 <div style={styles.content}>
                     <div style={styles.mainInfo}>
                         <h3 style={styles.title}>{getTitulo()}</h3>
@@ -284,26 +290,26 @@ const Footer = () => {
                                     className={clasesRedes[red] || 'social-fb'}
                                     aria-label={red}
                                 >
-                                    {iconosRedes[red] || <FaFacebook size={24} />}
+                                    {iconosRedes[red] || <FaFacebook size={18} />}
                                 </a>
                             ))
                         ) : (
                             // ✅ FALLBACK: Redes sociales por defecto (CEN)
                             <>
                                 <a href="https://www.facebook.com/SNTSSOFICIAL" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-fb">
-                                    <FaFacebook size={24} />
+                                    <FaFacebook size={18} />
                                 </a>
                                 <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tw">
-                                    <FaTwitter size={24} />
+                                    <FaTwitter size={18} />
                                 </a>
                                 <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-ig">
-                                    <FaInstagram size={24} />
+                                    <FaInstagram size={18} />
                                 </a>
                                 <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-yt">
-                                    <FaYoutube size={24} />
+                                    <FaYoutube size={18} />
                                 </a>
                                 <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} className="social-tt">
-                                    <FaTiktok size={24} />
+                                    <FaTiktok size={18} />
                                 </a>
                             </>
                         )}

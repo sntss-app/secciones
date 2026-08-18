@@ -50,16 +50,16 @@ const Aguinaldo = () => {
             gap: '0.8rem',
             marginBottom: '1.5rem',
             paddingBottom: '0.5rem',
-            borderBottom: '3px solid #3EAEF4',
+            borderBottom: '3px solid #2563EB',
         },
         headerIcon: {
             fontSize: '2rem',
-            color: '#3EAEF4',
+            color: '#2563EB',
         },
         headerTitle: {
             fontSize: '1.5rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #0A0F1E, #3EAEF4)',
+            background: 'linear-gradient(135deg, var(--sn-text), #2563EB)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -74,8 +74,8 @@ const Aguinaldo = () => {
             gap: '0.3rem',
         },
         infoBox: {
-            backgroundColor: 'rgba(62,174,244,0.08)',
-            borderLeft: '4px solid #3EAEF4',
+            backgroundColor: 'rgba(147,197,253,0.15)',
+            borderLeft: '4px solid #2563EB',
             padding: '0.8rem 1rem',
             borderRadius: '8px',
             marginBottom: '1.5rem',
@@ -95,12 +95,12 @@ const Aguinaldo = () => {
             display: 'block',
             fontWeight: '600',
             fontSize: '0.85rem',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             marginBottom: '0.3rem',
         },
         labelIcon: {
             marginRight: '0.3rem',
-            color: '#3EAEF4',
+            color: '#2563EB',
         },
         input: {
             width: '100%',
@@ -110,15 +110,15 @@ const Aguinaldo = () => {
             borderRadius: '10px',
             outline: 'none',
             transition: 'all 0.3s ease',
-            backgroundColor: 'white',
-            color: '#0A0F1E',
+            backgroundColor: 'var(--sn-surface)',
+            color: 'var(--sn-text)',
         },
         inputFull: {
             gridColumn: '1 / -1',
         },
         button: {
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
+            backgroundColor: 'var(--sn-primary)',
+            color: '#fff',
             border: 'none',
             padding: '0.7rem 1.5rem',
             borderRadius: '12px',
@@ -144,7 +144,7 @@ const Aguinaldo = () => {
             fontWeight: 'bold',
             textAlign: 'center',
             marginBottom: '1rem',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             fontSize: '1rem',
         },
         resultadoItem: {
@@ -175,14 +175,14 @@ const Aguinaldo = () => {
             display: 'flex',
             justifyContent: 'space-between',
             padding: '0.8rem 1rem',
-            backgroundColor: 'rgba(62,174,244,0.08)',
+            backgroundColor: 'rgba(147,197,253,0.15)',
             borderRadius: '8px',
             marginTop: '0.5rem',
             alignItems: 'center',
         },
         resultadoTotalLabel: {
             fontWeight: 'bold',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             fontSize: '1rem',
         },
         resultadoTotalMonto: {
@@ -221,7 +221,7 @@ const Aguinaldo = () => {
 
             {/* Info Box */}
             <div style={styles.infoBox}>
-                <FaInfoCircle style={{ color: '#3EAEF4', marginRight: '0.5rem' }} />
+                <FaInfoCircle style={{ color: '#2563EB', marginRight: '0.5rem' }} />
                 El aguinaldo se calcula con base en el sueldo diario integrado. 
                 Incluye concepto 002 + 011 (el 011 se multiplica por 2 por ser bono quincenal).
             </div>
@@ -239,8 +239,8 @@ const Aguinaldo = () => {
                         onChange={(e) => setC02(e.target.value)} 
                         placeholder="Ej: 2437.73"
                         onFocus={(e) => {
-                            e.target.style.borderColor = '#3EAEF4';
-                            e.target.style.boxShadow = '0 0 0 3px rgba(62,174,244,0.15)';
+                            e.target.style.borderColor = '#2563EB';
+                            e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.15)';
                         }}
                         onBlur={(e) => {
                             e.target.style.borderColor = '#ddd';
@@ -259,8 +259,8 @@ const Aguinaldo = () => {
                         onChange={(e) => setC11(e.target.value)} 
                         placeholder="Ej: 2002.60"
                         onFocus={(e) => {
-                            e.target.style.borderColor = '#3EAEF4';
-                            e.target.style.boxShadow = '0 0 0 3px rgba(62,174,244,0.15)';
+                            e.target.style.borderColor = '#2563EB';
+                            e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.15)';
                         }}
                         onBlur={(e) => {
                             e.target.style.borderColor = '#ddd';
@@ -278,8 +278,8 @@ const Aguinaldo = () => {
                         value={dias} 
                         onChange={(e) => setDias(Number(e.target.value))}
                         onFocus={(e) => {
-                            e.target.style.borderColor = '#3EAEF4';
-                            e.target.style.boxShadow = '0 0 0 3px rgba(62,174,244,0.15)';
+                            e.target.style.borderColor = '#2563EB';
+                            e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.15)';
                         }}
                         onBlur={(e) => {
                             e.target.style.borderColor = '#ddd';
@@ -295,7 +295,7 @@ const Aguinaldo = () => {
                 onClick={calcular}
                 onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(62,174,244,0.3)';
+                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(37,99,235,0.3)';
                 }}
                 onMouseLeave={(e) => {
                     e.currentTarget.style.transform = 'translateY(0)';
@@ -309,7 +309,7 @@ const Aguinaldo = () => {
             {resultado && (
                 <div style={styles.resultadoContainer}>
                     <div style={styles.resultadoTitle}>
-                        <FaGift style={{ color: '#3EAEF4', marginRight: '0.5rem' }} />
+                        <FaGift style={{ color: '#2563EB', marginRight: '0.5rem' }} />
                         Montos estimados
                     </div>
 

@@ -15,7 +15,7 @@ const styles = {
         maxWidth: '1400px',
         margin: '0 auto',
         padding: '2rem 1.5rem',
-        background: '#f0f2f5',
+        background: 'transparent',
         minHeight: 'calc(100vh - 200px)',
         '@media (max-width: 768px)': {
             padding: '1rem 0.8rem',
@@ -23,13 +23,13 @@ const styles = {
     },
     // Header con glow
     header: {
-        background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
+        background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
         borderRadius: '20px',
         padding: '2.5rem 2rem',
         marginBottom: '2rem',
         textAlign: 'center',
         color: 'white',
-        borderBottom: '4px solid #3EAEF4',
+        borderBottom: '4px solid #3B82F6',
         boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
         position: 'relative',
         overflow: 'hidden',
@@ -47,13 +47,13 @@ const styles = {
         width: '400px',
         height: '400px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(62,174,244,0.1) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(147,197,253,0.2) 0%, transparent 70%)',
         pointerEvents: 'none',
     },
     headerTitle: {
         fontSize: '2.5rem',
         fontWeight: 'bold',
-        background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+        background: 'linear-gradient(135deg, #fff 30%, #93C5FD 100%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
@@ -68,7 +68,7 @@ const styles = {
         },
     },
     headerSubtitle: {
-        color: '#aab',
+        color: '#E0E7FF',
         fontSize: '1.1rem',
         position: 'relative',
         zIndex: 2,
@@ -81,8 +81,8 @@ const styles = {
     },
     headerBadge: {
         display: 'inline-block',
-        backgroundColor: '#3EAEF4',
-        color: '#0A0F1E',
+        backgroundColor: 'var(--sn-primary)',
+        color: '#fff',
         padding: '0.3rem 1.2rem',
         borderRadius: '20px',
         fontSize: '0.8rem',
@@ -135,14 +135,14 @@ const styles = {
         borderRadius: '25px',
         outline: 'none',
         transition: 'all 0.3s ease',
-        backgroundColor: '#f0f2f5',
-        color: '#0A0F1E',
+        backgroundColor: 'var(--sn-surface-soft)',
+        color: 'var(--sn-text)',
         height: '46px',
     },
     searchInputFocus: {
-        borderColor: '#3EAEF4',
-        boxShadow: '0 0 0 3px rgba(62,174,244,0.15)',
-        backgroundColor: 'white',
+        borderColor: '#2563EB',
+        boxShadow: '0 0 0 3px rgba(37,99,235,0.15)',
+        backgroundColor: 'var(--sn-surface)',
     },
     filterSelect: {
         padding: '0.7rem 1rem',
@@ -150,7 +150,7 @@ const styles = {
         border: '1px solid #ddd',
         borderRadius: '25px',
         outline: 'none',
-        backgroundColor: '#f0f2f5',
+        backgroundColor: 'var(--sn-surface-soft)',
         cursor: 'pointer',
         minWidth: '150px',
         transition: 'all 0.3s ease',
@@ -164,8 +164,8 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         gap: '0.5rem',
-        background: 'linear-gradient(135deg, #3EAEF4, #2d8fd4)',
-        color: '#0A0F1E',
+        background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+        color: 'var(--sn-text)',
         border: 'none',
         padding: '0.7rem 1.5rem',
         borderRadius: '25px',
@@ -175,7 +175,7 @@ const styles = {
         transition: 'all 0.3s ease',
         textDecoration: 'none',
         height: '46px',
-        boxShadow: '0 2px 8px rgba(62,174,244,0.3)',
+        boxShadow: '0 2px 8px rgba(37,99,235,0.3)',
         whiteSpace: 'nowrap',
         '@media (max-width: 768px)': {
             width: '100%',
@@ -204,7 +204,7 @@ const styles = {
     },
     // Card estilo red social premium
     card: {
-        backgroundColor: 'rgba(255,255,255,0.95)',
+        backgroundColor: 'var(--sn-glass-bg)',
         backdropFilter: 'blur(10px)',
         borderRadius: '16px',
         boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
@@ -220,7 +220,7 @@ const styles = {
     cardHover: {
         transform: 'translateY(-6px)',
         boxShadow: '0 16px 40px rgba(0,0,0,0.1)',
-        borderColor: '#3EAEF4',
+        borderColor: '#2563EB',
     },
     cardHeader: {
         display: 'flex',
@@ -232,19 +232,19 @@ const styles = {
         width: '44px',
         height: '44px',
         borderRadius: '50%',
-        background: 'linear-gradient(135deg, #3EAEF4, #2d8fd4)',
+        background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         fontSize: '1.5rem',
         color: 'white',
         flexShrink: 0,
-        boxShadow: '0 2px 8px rgba(62,174,244,0.2)',
+        boxShadow: '0 2px 8px rgba(37,99,235,0.2)',
     },
     autorNombre: {
         fontWeight: 'bold',
         fontSize: '0.95rem',
-        color: '#0A0F1E',
+        color: 'var(--sn-text)',
     },
     autorFecha: {
         fontSize: '0.7rem',
@@ -257,7 +257,7 @@ const styles = {
         fontSize: '1.1rem',
         fontWeight: 'bold',
         marginBottom: '0.3rem',
-        color: '#0A0F1E',
+        color: 'var(--sn-text)',
         display: '-webkit-box',
         WebkitLineClamp: 2,
         WebkitBoxOrient: 'vertical',
@@ -296,7 +296,7 @@ const styles = {
     },
     btnLeerMas: {
         backgroundColor: 'transparent',
-        color: '#3EAEF4',
+        color: '#2563EB',
         border: 'none',
         padding: '0.3rem 0',
         fontWeight: '600',
@@ -350,8 +350,8 @@ const styles = {
         borderRadius: '12px',
         fontSize: '0.65rem',
         fontWeight: 'bold',
-        background: 'linear-gradient(135deg, #3EAEF4, #2d8fd4)',
-        color: '#0A0F1E',
+        background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+        color: 'var(--sn-text)',
     },
     // Modal
     modalOverlay: {
@@ -372,7 +372,7 @@ const styles = {
         },
     },
     modalContent: {
-        backgroundColor: 'white',
+        backgroundColor: 'var(--sn-surface)',
         borderRadius: '20px',
         maxWidth: '900px',
         width: '100%',
@@ -421,7 +421,7 @@ const styles = {
         fontSize: '2rem',
         fontWeight: 'bold',
         marginBottom: '0.5rem',
-        color: '#0A0F1E',
+        color: 'var(--sn-text)',
         '@media (max-width: 768px)': {
             fontSize: '1.5rem',
         },
@@ -478,15 +478,15 @@ const styles = {
     pageBtn: (active) => ({
         padding: '0.5rem 1rem',
         borderRadius: '25px',
-        border: active ? '2px solid #3EAEF4' : '1px solid #ddd',
-        backgroundColor: active ? '#3EAEF4' : 'transparent',
-        color: active ? '#0A0F1E' : '#6c757d',
+        border: active ? '2px solid #2563EB' : '1px solid #ddd',
+        backgroundColor: active ? '#2563EB' : 'transparent',
+        color: active ? '#fff' : 'var(--sn-text-muted)',
         fontWeight: active ? 'bold' : 'normal',
         cursor: 'pointer',
         transition: 'all 0.3s ease',
         minWidth: '40px',
         ...(active && {
-            boxShadow: '0 2px 8px rgba(62,174,244,0.3)',
+            boxShadow: '0 2px 8px rgba(37,99,235,0.3)',
         }),
     }),
 };
@@ -887,7 +887,7 @@ const Noticias = () => {
             <div style={styles.header}>
                 <div style={styles.headerGlow} />
                 <h1 style={styles.headerTitle}>
-                    <FaRocket style={{ color: '#3EAEF4' }} /> Noticias y Avisos
+                    <FaRocket style={{ color: '#2563EB' }} /> Noticias y Avisos
                 </h1>
                 <p style={styles.headerSubtitle}>
                     Mantente informado con las últimas noticias de tu sección sindical
@@ -908,8 +908,8 @@ const Noticias = () => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         onFocus={(e) => {
-                            e.target.style.borderColor = '#3EAEF4';
-                            e.target.style.boxShadow = '0 0 0 3px rgba(62,174,244,0.15)';
+                            e.target.style.borderColor = '#2563EB';
+                            e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.15)';
                             e.target.style.backgroundColor = 'white';
                         }}
                         onBlur={(e) => {
@@ -935,15 +935,15 @@ const Noticias = () => {
                 </select>
                 
                 <span style={styles.noticiasCount}>
-                    <FaEye style={{ marginRight: '5px', color: '#3EAEF4' }} /> {noticiasFiltradas.length} noticias
+                    <FaEye style={{ marginRight: '5px', color: '#2563EB' }} /> {noticiasFiltradas.length} noticias
                 </span>
             </div>
 
             {/* Grid de noticias */}
             {noticiasPagina.length === 0 ? (
                 <div style={styles.emptyState}>
-                    <FaNewspaper style={{ fontSize: '4rem', color: '#3EAEF4', marginBottom: '1rem', opacity: 0.3 }} />
-                    <h3 style={{ color: '#0A0F1E' }}>No hay noticias disponibles</h3>
+                    <FaNewspaper style={{ fontSize: '4rem', color: '#2563EB', marginBottom: '1rem', opacity: 0.3 }} />
+                    <h3 style={{ color: 'var(--sn-text)' }}>No hay noticias disponibles</h3>
                     <p style={{ color: '#6c757d' }}>Pronto publicaremos nuevas noticias para ti.</p>
                 </div>
             ) : (
@@ -955,7 +955,7 @@ const Noticias = () => {
                             onMouseEnter={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-6px)';
                                 e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,0,0,0.1)';
-                                e.currentTarget.style.borderColor = '#3EAEF4';
+                                e.currentTarget.style.borderColor = '#2563EB';
                             }}
                             onMouseLeave={(e) => {
                                 e.currentTarget.style.transform = 'translateY(0)';

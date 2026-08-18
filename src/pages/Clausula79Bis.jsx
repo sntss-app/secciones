@@ -363,15 +363,15 @@ const Clausula79Bis = () => {
             maxWidth: '900px',
             margin: '0 auto',
             padding: '2rem 1.5rem',
-            background: '#f0f4f8',
+            background: 'transparent',
             minHeight: 'calc(100vh - 200px)',
         },
         header: {
-            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
+            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
             borderRadius: '20px',
             padding: '2.5rem 2rem',
             marginBottom: '2rem',
-            borderBottom: '4px solid #3EAEF4',
+            borderBottom: '4px solid #3B82F6',
             boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
             position: 'relative',
             overflow: 'hidden',
@@ -383,7 +383,7 @@ const Clausula79Bis = () => {
             width: '400px',
             height: '400px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(62,174,244,0.1) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(147,197,253,0.2) 0%, transparent 70%)',
             pointerEvents: 'none',
         },
         headerContent: {
@@ -416,14 +416,14 @@ const Clausula79Bis = () => {
         title: {
             fontSize: '2rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+            background: 'linear-gradient(135deg, #fff 30%, #93C5FD 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
             margin: 0,
         },
         subtitle: {
-            color: '#aab',
+            color: '#E0E7FF',
             fontSize: '0.95rem',
             margin: 0,
         },
@@ -431,18 +431,18 @@ const Clausula79Bis = () => {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.5rem',
-            backgroundColor: 'rgba(62,174,244,0.15)',
-            color: '#3EAEF4',
+            backgroundColor: 'rgba(37,99,235,0.15)',
+            color: '#2563EB',
             padding: '0.3rem 1rem',
             borderRadius: '20px',
             fontSize: '0.75rem',
             fontWeight: 'bold',
             marginTop: '0.5rem',
-            border: '1px solid rgba(62,174,244,0.2)',
+            border: '1px solid rgba(37,99,235,0.2)',
             flexWrap: 'wrap',
         },
         card: {
-            backgroundColor: 'rgba(255,255,255,0.95)',
+            backgroundColor: 'var(--sn-glass-bg)',
             backdropFilter: 'blur(10px)',
             borderRadius: '20px',
             boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
@@ -492,7 +492,7 @@ const Clausula79Bis = () => {
             marginBottom: '0.3rem',
         },
         labelIcon: {
-            color: '#3EAEF4',
+            color: '#2563EB',
             marginRight: '0.3rem',
         },
         input: {
@@ -502,8 +502,8 @@ const Clausula79Bis = () => {
             border: '1px solid #ddd',
             borderRadius: '10px',
             outline: 'none',
-            backgroundColor: 'white',
-            color: '#0A0F1E',
+            backgroundColor: 'var(--sn-surface)',
+            color: 'var(--sn-text)',
         },
         inputReadOnly: {
             backgroundColor: '#f8f9fa',
@@ -511,7 +511,7 @@ const Clausula79Bis = () => {
             color: '#495057',
         },
         inputEditable: {
-            borderLeft: '3px solid #3EAEF4',
+            borderLeft: '3px solid #2563EB',
         },
         fileInput: {
             width: '100%',
@@ -519,7 +519,7 @@ const Clausula79Bis = () => {
             fontSize: '0.9rem',
             border: '1px solid #ddd',
             borderRadius: '10px',
-            backgroundColor: 'white',
+            backgroundColor: 'var(--sn-surface)',
             cursor: 'pointer',
         },
         checkboxWrapper: {
@@ -541,19 +541,19 @@ const Clausula79Bis = () => {
             width: '24px',
             height: '24px',
             borderRadius: '6px',
-            backgroundColor: checked ? '#3EAEF4' : 'white',
-            border: checked ? '2px solid #3EAEF4' : '2px solid #ddd',
+            backgroundColor: checked ? '#2563EB' : 'white',
+            border: checked ? '2px solid #2563EB' : '2px solid #ddd',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             transition: 'all 0.3s ease',
             flexShrink: 0,
-            boxShadow: checked ? '0 2px 8px rgba(62,174,244,0.3)' : 'none',
+            boxShadow: checked ? '0 2px 8px rgba(37,99,235,0.3)' : 'none',
         }),
         checkboxLabel: {
             fontSize: '0.95rem',
             fontWeight: '500',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             cursor: 'pointer',
         },
         checkboxSubtext: {
@@ -562,8 +562,8 @@ const Clausula79Bis = () => {
             marginTop: '0.1rem',
         },
         btnPrimary: {
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
+            backgroundColor: 'var(--sn-primary)',
+            color: '#fff',
             border: 'none',
             padding: '0.8rem 1.5rem',
             borderRadius: '12px',
@@ -575,7 +575,7 @@ const Clausula79Bis = () => {
             justifyContent: 'center',
             gap: '0.5rem',
             width: '100%',
-            boxShadow: '0 2px 8px rgba(62,174,244,0.2)',
+            boxShadow: '0 2px 8px rgba(37,99,235,0.2)',
         },
         btnDownload: {
             backgroundColor: '#28a745',
@@ -595,7 +595,7 @@ const Clausula79Bis = () => {
         },
         btnReintentar: {
             backgroundColor: '#ffc107',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             border: 'none',
             padding: '0.8rem 1.5rem',
             borderRadius: '12px',
@@ -779,7 +779,7 @@ const Clausula79Bis = () => {
                                 </div>
                                 <div>
                                     <div style={styles.checkboxLabel}>
-                                        <FaUserPlus style={{ color: '#3EAEF4', marginRight: '0.3rem' }} />
+                                        <FaUserPlus style={{ color: '#2563EB', marginRight: '0.3rem' }} />
                                         ¿Llevarás acompañante?
                                     </div>
                                     <div style={styles.checkboxSubtext}>Si asistes con alguien más, regístralo aquí</div>
@@ -914,7 +914,7 @@ const Clausula79Bis = () => {
                 <div style={styles.card}>
                     <div style={styles.cardBody}>
                         <div style={styles.statusCard}>
-                            <FaCalendarAlt style={{ color: '#3EAEF4' }} />
+                            <FaCalendarAlt style={{ color: '#2563EB' }} />
                             <span style={{ color: '#6c757d', fontSize: '0.9rem' }}>
                                 {registroExistente.fecha_registro && 
                                     `Registrado el ${new Date(registroExistente.fecha_registro).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}`
@@ -1014,7 +1014,7 @@ const Clausula79Bis = () => {
                         </div>
                     </div>
                     <div>
-                        <span style={styles.statusBadge('linear-gradient(135deg, #3EAEF4, #2d8fd4)')}>
+                        <span style={styles.statusBadge('linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)')}>
                             <FaRocket /> Nuevo Registro
                         </span>
                     </div>
@@ -1095,7 +1095,7 @@ const Clausula79Bis = () => {
                             </div>
                             <div>
                                 <div style={styles.checkboxLabel}>
-                                    <FaUserPlus style={{ color: '#3EAEF4', marginRight: '0.3rem' }} />
+                                    <FaUserPlus style={{ color: '#2563EB', marginRight: '0.3rem' }} />
                                     ¿Llevarás acompañante?
                                 </div>
                                 <div style={styles.checkboxSubtext}>Si asistes con alguien más, regístralo aquí</div>

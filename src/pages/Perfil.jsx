@@ -290,7 +290,7 @@ const Perfil = () => {
             maxWidth: '1200px',
             margin: '0 auto',
             padding: '2rem 1.5rem',
-            background: '#f0f4f8',
+            background: 'transparent',
             minHeight: 'calc(100vh - 200px)',
             '@media (max-width: 768px)': {
                 padding: '1rem 0.8rem',
@@ -298,11 +298,11 @@ const Perfil = () => {
         },
         // Header
         header: {
-            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
+            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
             borderRadius: '20px',
             padding: '2.5rem 2rem',
             marginBottom: '2rem',
-            borderBottom: '4px solid #3EAEF4',
+            borderBottom: '4px solid #3B82F6',
             boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
             position: 'relative',
             overflow: 'hidden',
@@ -320,7 +320,7 @@ const Perfil = () => {
             width: '400px',
             height: '400px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(62,174,244,0.1) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(147,197,253,0.2) 0%, transparent 70%)',
             pointerEvents: 'none',
         },
         headerContent: {
@@ -368,7 +368,7 @@ const Perfil = () => {
         title: {
             fontSize: '2rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+            background: 'linear-gradient(135deg, #fff 30%, #93C5FD 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -385,7 +385,7 @@ const Perfil = () => {
             },
         },
         subtitle: {
-            color: '#aab',
+            color: '#E0E7FF',
             fontSize: '0.95rem',
             margin: 0,
             '@media (max-width: 768px)': {
@@ -394,15 +394,15 @@ const Perfil = () => {
         },
         headerBadge: {
             display: 'inline-block',
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
+            backgroundColor: 'var(--sn-primary)',
+            color: '#fff',
             padding: '0.3rem 1rem',
             borderRadius: '20px',
             fontSize: '0.75rem',
             fontWeight: 'bold',
         },
         card: {
-            backgroundColor: 'rgba(255,255,255,0.95)',
+            backgroundColor: 'var(--sn-glass-bg)',
             backdropFilter: 'blur(10px)',
             borderRadius: '20px',
             boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
@@ -429,8 +429,8 @@ const Perfil = () => {
             height: '160px',
             borderRadius: '50%',
             objectFit: 'cover',
-            border: '4px solid #3EAEF4',
-            boxShadow: '0 4px 20px rgba(62,174,244,0.3)',
+            border: '4px solid #2563EB',
+            boxShadow: '0 4px 20px rgba(37,99,235,0.3)',
             transition: 'all 0.3s ease',
             '@media (max-width: 480px)': {
                 width: '120px',
@@ -445,8 +445,8 @@ const Perfil = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            border: '4px solid #3EAEF4',
-            boxShadow: '0 4px 20px rgba(62,174,244,0.3)',
+            border: '4px solid #2563EB',
+            boxShadow: '0 4px 20px rgba(37,99,235,0.3)',
             '@media (max-width: 480px)': {
                 width: '120px',
                 height: '120px',
@@ -456,7 +456,7 @@ const Perfil = () => {
             position: 'absolute',
             bottom: '5px',
             right: '5px',
-            backgroundColor: '#3EAEF4',
+            backgroundColor: '#2563EB',
             borderRadius: '50%',
             padding: '10px',
             cursor: 'pointer',
@@ -502,7 +502,7 @@ const Perfil = () => {
             display: 'block',
             fontSize: '1rem',
             fontWeight: '500',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             padding: '0.5rem 0.75rem',
             backgroundColor: '#f8f9fa',
             borderRadius: '8px',
@@ -512,22 +512,22 @@ const Perfil = () => {
             width: '100%',
             padding: '0.6rem 1rem',
             fontSize: '0.95rem',
-            color: '#0A0F1E', // ← Color de texto visible
+            color: 'var(--sn-text)', // ← Color de texto visible
             border: '1px solid #ddd',
             borderRadius: '10px',
             outline: 'none',
             transition: 'all 0.3s ease',
-            backgroundColor: 'white',
+            backgroundColor: 'var(--sn-surface)',
             '&::placeholder': {
                 color: '#adb5bd',
             },
         },
         inputEditable: {
-            borderLeft: '3px solid #3EAEF4',
+            borderLeft: '3px solid #2563EB',
         },
         btnPrimary: {
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
+            backgroundColor: 'var(--sn-primary)',
+            color: '#fff',
             border: 'none',
             padding: '0.7rem 1.5rem',
             borderRadius: '12px',
@@ -607,7 +607,7 @@ const Perfil = () => {
             },
         },
         modalContent: {
-            backgroundColor: 'white',
+            backgroundColor: 'var(--sn-surface)',
             borderRadius: '20px',
             maxWidth: '500px',
             width: '100%',
@@ -618,13 +618,13 @@ const Perfil = () => {
             },
         },
         modalHeader: {
-            background: 'linear-gradient(135deg, #0A0F1E, #1a1f2e)',
+            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
             color: 'white',
             padding: '1.5rem 2rem',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            borderBottom: '3px solid #3EAEF4',
+            borderBottom: '3px solid #2563EB',
         },
         modalBody: {
             padding: '2rem',
@@ -700,7 +700,7 @@ const Perfil = () => {
                         </button>
                         <div>
                             <h1 style={styles.title}>
-                                <FaRocket style={{ color: '#3EAEF4' }} /> Mi Perfil
+                                <FaRocket style={{ color: '#2563EB' }} /> Mi Perfil
                             </h1>
                             <p style={styles.subtitle}>
                                 Gestiona tu información personal
@@ -795,8 +795,8 @@ const Perfil = () => {
                             {/* Datos editables */}
                             <div style={styles.colFull}>
                                 <div style={{ marginTop: '0.5rem' }}>
-                                    <p style={{ fontSize: '0.8rem', color: '#6c757d', borderBottom: '2px dashed #3EAEF4', paddingBottom: '0.5rem' }}>
-                                        <FaEdit style={{ color: '#3EAEF4' }} /> Campos editables
+                                    <p style={{ fontSize: '0.8rem', color: '#6c757d', borderBottom: '2px dashed #2563EB', paddingBottom: '0.5rem' }}>
+                                        <FaEdit style={{ color: '#2563EB' }} /> Campos editables
                                     </p>
                                 </div>
                             </div>
@@ -838,7 +838,7 @@ const Perfil = () => {
                                 onClick={handleSubmit}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = 'translateY(-2px)';
-                                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(62,174,244,0.3)';
+                                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(37,99,235,0.3)';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'translateY(0)';

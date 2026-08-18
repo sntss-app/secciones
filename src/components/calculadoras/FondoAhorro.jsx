@@ -48,7 +48,7 @@ const FondoAhorro = () => {
         headerTitle: {
             fontSize: '1.5rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #0A0F1E, #27AE60)',
+            background: 'linear-gradient(135deg, var(--sn-text), #27AE60)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -84,7 +84,7 @@ const FondoAhorro = () => {
             display: 'block',
             fontWeight: '600',
             fontSize: '0.85rem',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             marginBottom: '0.3rem',
         },
         labelIcon: {
@@ -99,8 +99,8 @@ const FondoAhorro = () => {
             borderRadius: '10px',
             outline: 'none',
             transition: 'all 0.3s ease',
-            backgroundColor: 'white',
-            color: '#0A0F1E',
+            backgroundColor: 'var(--sn-surface)',
+            color: 'var(--sn-text)',
         },
         button: {
             backgroundColor: '#27AE60',
@@ -130,7 +130,7 @@ const FondoAhorro = () => {
             fontWeight: 'bold',
             textAlign: 'center',
             marginBottom: '1rem',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             fontSize: '1rem',
         },
         resultadoItem: {

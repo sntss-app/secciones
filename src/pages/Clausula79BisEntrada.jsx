@@ -71,7 +71,7 @@ const Clausula79BisEntrada = () => {
                         title: 'ℹ️ Ya registrado',
                         text: 'Este trabajador ya registró su entrada.',
                         icon: 'info',
-                        confirmButtonColor: '#3EAEF4',
+                        confirmButtonColor: '#2563EB',
                         timer: 2000,
                     });
                 }
@@ -199,7 +199,7 @@ const Clausula79BisEntrada = () => {
                 title: 'ℹ️ Sin acompañante',
                 text: 'Este trabajador no registró acompañante.',
                 icon: 'info',
-                confirmButtonColor: '#3EAEF4',
+                confirmButtonColor: '#2563EB',
             });
             return;
         }
@@ -209,7 +209,7 @@ const Clausula79BisEntrada = () => {
                 title: 'ℹ️ Ya registrado',
                 text: 'El acompañante ya registró su entrada.',
                 icon: 'info',
-                confirmButtonColor: '#3EAEF4',
+                confirmButtonColor: '#2563EB',
             });
             return;
         }
@@ -281,15 +281,15 @@ const Clausula79BisEntrada = () => {
             maxWidth: '1200px',
             margin: '0 auto',
             padding: '2rem 1.5rem',
-            background: '#f0f4f8',
+            background: 'transparent',
             minHeight: 'calc(100vh - 200px)',
         },
         header: {
-            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
+            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
             borderRadius: '20px',
             padding: '2.5rem 2rem',
             marginBottom: '2rem',
-            borderBottom: '4px solid #3EAEF4',
+            borderBottom: '4px solid #3B82F6',
             boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
             position: 'relative',
             overflow: 'hidden',
@@ -301,7 +301,7 @@ const Clausula79BisEntrada = () => {
             width: '400px',
             height: '400px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(62,174,244,0.1) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(147,197,253,0.2) 0%, transparent 70%)',
             pointerEvents: 'none',
         },
         headerContent: {
@@ -334,21 +334,21 @@ const Clausula79BisEntrada = () => {
         title: {
             fontSize: '2rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+            background: 'linear-gradient(135deg, #fff 30%, #93C5FD 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
             margin: 0,
         },
         subtitle: {
-            color: '#aab',
+            color: '#E0E7FF',
             fontSize: '0.95rem',
             margin: 0,
         },
         headerBadge: {
             display: 'inline-block',
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
+            backgroundColor: 'var(--sn-primary)',
+            color: '#fff',
             padding: '0.3rem 1rem',
             borderRadius: '20px',
             fontSize: '0.75rem',
@@ -362,7 +362,7 @@ const Clausula79BisEntrada = () => {
             marginBottom: '2rem',
         },
         statCard: {
-            backgroundColor: 'rgba(255,255,255,0.9)',
+            backgroundColor: 'var(--sn-glass-card-bg)',
             backdropFilter: 'blur(10px)',
             borderRadius: '16px',
             padding: '1rem 1.2rem',
@@ -374,7 +374,7 @@ const Clausula79BisEntrada = () => {
         statNumber: {
             fontSize: '2rem',
             fontWeight: 'bold',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             lineHeight: 1.2,
         },
         statLabel: {
@@ -390,7 +390,7 @@ const Clausula79BisEntrada = () => {
         },
         // Buscador
         searchCard: {
-            backgroundColor: 'rgba(255,255,255,0.95)',
+            backgroundColor: 'var(--sn-glass-bg)',
             backdropFilter: 'blur(10px)',
             borderRadius: '20px',
             boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
@@ -426,12 +426,12 @@ const Clausula79BisEntrada = () => {
             borderRadius: '25px',
             outline: 'none',
             transition: 'all 0.3s ease',
-            backgroundColor: '#f0f2f5',
+            backgroundColor: 'var(--sn-surface-soft)',
             height: '50px',
         },
         btnSearch: {
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
+            backgroundColor: 'var(--sn-primary)',
+            color: '#fff',
             border: 'none',
             padding: '0.7rem 1.5rem',
             borderRadius: '25px',
@@ -446,7 +446,7 @@ const Clausula79BisEntrada = () => {
         },
         // Resultado
         resultCard: {
-            backgroundColor: 'rgba(255,255,255,0.95)',
+            backgroundColor: 'var(--sn-glass-bg)',
             backdropFilter: 'blur(10px)',
             borderRadius: '20px',
             boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
@@ -467,7 +467,7 @@ const Clausula79BisEntrada = () => {
         resultNombre: {
             fontSize: '1.3rem',
             fontWeight: 'bold',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             margin: 0,
         },
         resultGrid: {
@@ -489,7 +489,7 @@ const Clausula79BisEntrada = () => {
         resultValue: {
             fontSize: '0.95rem',
             fontWeight: '500',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
         },
         btnEntrada: {
             backgroundColor: '#28a745',
@@ -571,7 +571,7 @@ const Clausula79BisEntrada = () => {
                         </Link>
                         <div>
                             <h1 style={styles.title}>
-                                <FaQrcode style={{ color: '#3EAEF4' }} /> Entrada 79Bis
+                                <FaQrcode style={{ color: '#2563EB' }} /> Entrada 79Bis
                             </h1>
                             <p style={styles.subtitle}>
                                 Registro de asistencia para el festejo
@@ -645,7 +645,7 @@ const Clausula79BisEntrada = () => {
                         disabled={loading}
                         onMouseEnter={(e) => {
                             e.currentTarget.style.transform = 'translateY(-2px)';
-                            e.currentTarget.style.boxShadow = '0 4px 16px rgba(62,174,244,0.3)';
+                            e.currentTarget.style.boxShadow = '0 4px 16px rgba(37,99,235,0.3)';
                         }}
                         onMouseLeave={(e) => {
                             e.currentTarget.style.transform = 'translateY(0)';
@@ -679,7 +679,7 @@ const Clausula79BisEntrada = () => {
                                 </span>
                             )}
                             {!registro.entrada_trabajador && registro.sin_registro != 1 && (
-                                <span style={{ ...styles.checkBadge, backgroundColor: '#ffc107', color: '#0A0F1E' }}>
+                                <span style={{ ...styles.checkBadge, backgroundColor: '#ffc107', color: 'var(--sn-text)' }}>
                                     <FaClock /> Pendiente
                                 </span>
                             )}

@@ -18,30 +18,31 @@ const styles = {
         padding: '2rem 1rem',
     },
     card: {
-        backgroundColor: 'rgba(255,255,255,0.95)',
-        backdropFilter: 'blur(10px)',
-        borderRadius: '20px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06)',
+        backgroundColor: 'var(--sn-glass-bg)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderRadius: '24px',
+        boxShadow: '0 12px 35px -8px rgba(15,23,42,0.12), inset 0 1px 2px rgba(255,255,255,0.95)',
         overflow: 'hidden',
-        border: '1px solid rgba(255,255,255,0.5)',
+        border: '1px solid var(--sn-glass-border)',
     },
     cardHeader: {
-        background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%)',
+        background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
         padding: '1.8rem 2rem',
         textAlign: 'center',
-        borderBottom: '4px solid #3EAEF4',
+        borderBottom: '4px solid #3B82F6',
     },
     cardHeaderTitle: {
         fontSize: '1.8rem',
         fontWeight: 'bold',
-        background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+        background: 'linear-gradient(135deg, #fff 30%, #93C5FD 100%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
         margin: 0,
     },
     cardHeaderSubtitle: {
-        color: '#aaa',
+        color: '#E0E7FF',
         fontSize: '0.9rem',
         margin: '0.3rem 0 0 0',
     },
@@ -70,16 +71,16 @@ const styles = {
         justifyContent: 'center',
         fontSize: '1rem',
         fontWeight: 'bold',
-        backgroundColor: active ? '#3EAEF4' : completed ? '#28a745' : '#e9ecef',
-        color: active || completed ? '#0A0F1E' : '#6c757d',
-        border: active ? '3px solid #3EAEF4' : completed ? '3px solid #28a745' : '3px solid #dee2e6',
+        backgroundColor: active ? '#2563EB' : completed ? '#10B981' : '#e9ecef',
+        color: active || completed ? '#fff' : '#6c757d',
+        border: active ? '3px solid #2563EB' : completed ? '3px solid #10B981' : '3px solid #dee2e6',
         transition: 'all 0.3s ease',
-        boxShadow: active ? '0 0 0 4px rgba(255,215,0,0.2)' : 'none',
+        boxShadow: active ? '0 0 0 4px rgba(37,99,235,0.2)' : 'none',
     }),
     stepLabel: (active) => ({
         fontSize: '0.7rem',
         fontWeight: active ? 'bold' : 'normal',
-        color: active ? '#3EAEF4' : '#6c757d',
+        color: active ? '#2563EB' : '#6c757d',
         marginTop: '0.3rem',
         textTransform: 'uppercase',
         letterSpacing: '0.5px',
@@ -90,15 +91,15 @@ const styles = {
         left: '50%',
         width: '100%',
         height: '2px',
-        backgroundColor: active ? '#3EAEF4' : '#dee2e6',
+        backgroundColor: active ? '#2563EB' : '#dee2e6',
         zIndex: -1,
     }),
     userCard: {
-        backgroundColor: '#f8f9fa',
+        backgroundColor: 'var(--sn-surface)',
         borderRadius: '16px',
         padding: '1.5rem',
         marginBottom: '1.5rem',
-        border: '1px solid #e9ecef',
+        border: '1px solid var(--sn-glass-border)',
         position: 'relative',
         overflow: 'hidden',
     },
@@ -108,12 +109,12 @@ const styles = {
         gap: '0.5rem',
         marginBottom: '1rem',
         paddingBottom: '0.5rem',
-        borderBottom: '2px solid #3EAEF4',
+        borderBottom: '2px solid var(--sn-primary)',
     },
     userCardTitle: {
         fontSize: '1rem',
         fontWeight: 'bold',
-        color: '#0A0F1E',
+        color: 'var(--sn-text)',
         margin: 0,
     },
     userDataGrid: {
@@ -135,7 +136,7 @@ const styles = {
     userDataValue: {
         fontSize: '0.95rem',
         fontWeight: '600',
-        color: '#0A0F1E',
+        color: 'var(--sn-text)',
         margin: 0,
     },
     inputGroup: {
@@ -157,10 +158,10 @@ const styles = {
         transition: 'all 0.3s ease',
         outline: 'none',
         backgroundColor: 'white',
-        color: '#0A0F1E',
+        color: 'var(--sn-text)',
     },
     inputFocus: {
-        borderColor: '#3EAEF4',
+        borderColor: '#2563EB',
         boxShadow: '0 0 0 3px rgba(255,215,0,0.15)',
     },
     inputGroupWrapper: {
@@ -178,8 +179,8 @@ const styles = {
         paddingLeft: '2.5rem',
     },
     btnPrimary: {
-        backgroundColor: '#3EAEF4',
-        color: '#0A0F1E',
+        backgroundColor: '#2563EB',
+        color: 'var(--sn-text)',
         border: 'none',
         padding: '0.7rem 1.5rem',
         borderRadius: '12px',
@@ -252,12 +253,12 @@ const styles = {
         cursor: 'pointer',
     },
     fileInputHover: {
-        borderColor: '#3EAEF4',
+        borderColor: '#2563EB',
         boxShadow: '0 0 0 3px rgba(255,215,0,0.1)',
     },
     checkbox: {
         marginRight: '0.5rem',
-        accentColor: '#3EAEF4',
+        accentColor: '#2563EB',
         width: '18px',
         height: '18px',
         cursor: 'pointer',
@@ -272,7 +273,7 @@ const styles = {
         height: '120px',
         borderRadius: '50%',
         objectFit: 'cover',
-        border: '3px solid #3EAEF4',
+        border: '3px solid #2563EB',
         boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
         marginTop: '0.5rem',
     },
@@ -299,7 +300,7 @@ const styles = {
         fontSize: '0.9rem',
     },
     link: {
-        color: '#3EAEF4',
+        color: '#2563EB',
         textDecoration: 'none',
         fontWeight: 'bold',
         cursor: 'pointer',
@@ -430,7 +431,7 @@ const Registro = () => {
                     id: data.usuario.idSeccion,
                     romano: data.usuario.seccion_romano || 'N/A',
                     nombre: data.usuario.seccion_nombre || 'Sin nombre',
-                    color: data.usuario.seccion_color || '#3EAEF4'
+                    color: data.usuario.seccion_color || '#2563EB'
                 };
                 setSeccionUsuario(seccionData);
                 
@@ -761,7 +762,7 @@ const Registro = () => {
         <form onSubmit={handleBuscarUsuario}>
             <div style={styles.inputGroup}>
                 <label style={styles.label}>
-                    <FaUserAlt className="me-2" style={{ color: '#3EAEF4' }} /> Matrícula
+                    <FaUserAlt className="me-2" style={{ color: '#2563EB' }} /> Matrícula
                 </label>
                 <input
                     type="text"
@@ -780,7 +781,7 @@ const Registro = () => {
 
             <div style={styles.inputGroup}>
                 <label style={styles.label}>
-                    <FaIdCard className="me-2" style={{ color: '#3EAEF4' }} /> CURP
+                    <FaIdCard className="me-2" style={{ color: '#2563EB' }} /> CURP
                 </label>
                 <input
                     type="text"
@@ -847,7 +848,7 @@ const Registro = () => {
                             </span>
                             <span style={{
                                 ...styles.userDataValue,
-                                color: seccionUsuario.color || '#3EAEF4',
+                                color: seccionUsuario.color || '#2563EB',
                                 fontWeight: 'bold'
                             }}>
                                 {seccionUsuario.romano} - {seccionUsuario.nombre}
@@ -859,13 +860,13 @@ const Registro = () => {
                     <div style={{ 
                         marginTop: '0.8rem', 
                         padding: '0.8rem', 
-                        backgroundColor: `${seccionUsuario.color || '#3EAEF4'}15`,
-                        borderLeft: `4px solid ${seccionUsuario.color || '#3EAEF4'}`,
+                        backgroundColor: `${seccionUsuario.color || '#2563EB'}15`,
+                        borderLeft: `4px solid ${seccionUsuario.color || '#2563EB'}`,
                         borderRadius: '8px'
                     }}>
                         <small style={{ color: '#333' }}>
-                            <FaCheckCircle style={{ color: seccionUsuario.color || '#3EAEF4', marginRight: '0.5rem' }} />
-                            Tu sección asignada en el padrón es: <strong style={{ color: seccionUsuario.color || '#3EAEF4' }}>
+                            <FaCheckCircle style={{ color: seccionUsuario.color || '#2563EB', marginRight: '0.5rem' }} />
+                            Tu sección asignada en el padrón es: <strong style={{ color: seccionUsuario.color || '#2563EB' }}>
                                 {seccionUsuario.romano} - {seccionUsuario.nombre}
                             </strong>
                         </small>
@@ -893,7 +894,7 @@ const Registro = () => {
 
                 <div style={styles.inputGroup}>
                     <label style={styles.label}>
-                        <FaPhone className="me-2" style={{ color: '#3EAEF4' }} /> Teléfono
+                        <FaPhone className="me-2" style={{ color: '#2563EB' }} /> Teléfono
                     </label>
                     <input
                         type="text"
@@ -913,7 +914,7 @@ const Registro = () => {
 
                 <div style={styles.inputGroup}>
                     <label style={styles.label}>
-                        <FaEnvelope className="me-2" style={{ color: '#3EAEF4' }} /> Correo Electrónico
+                        <FaEnvelope className="me-2" style={{ color: '#2563EB' }} /> Correo Electrónico
                     </label>
                     <input
                         type="email"
@@ -928,7 +929,7 @@ const Registro = () => {
 
                 <div style={styles.inputGroup}>
                     <label style={styles.label}>
-                        <FaLock className="me-2" style={{ color: '#3EAEF4' }} /> Contraseña
+                        <FaLock className="me-2" style={{ color: '#2563EB' }} /> Contraseña
                     </label>
                     <div style={styles.inputGroupWrapper}>
                         <input
@@ -953,7 +954,7 @@ const Registro = () => {
 
                 <div style={styles.inputGroup}>
                     <label style={styles.label}>
-                        <FaLock className="me-2" style={{ color: '#3EAEF4' }} /> Confirmar Contraseña
+                        <FaLock className="me-2" style={{ color: '#2563EB' }} /> Confirmar Contraseña
                     </label>
                     <div style={styles.inputGroupWrapper}>
                         <input
@@ -1046,7 +1047,7 @@ const Registro = () => {
 
             <div style={styles.inputGroup}>
                 <label style={styles.label}>
-                    <FaCamera className="me-2" style={{ color: '#3EAEF4' }} /> Foto de Busto para Perfil
+                    <FaCamera className="me-2" style={{ color: '#2563EB' }} /> Foto de Busto para Perfil
                 </label>
                 <input
                     type="file"

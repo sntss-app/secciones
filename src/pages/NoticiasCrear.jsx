@@ -18,7 +18,7 @@ const styles = {
         maxWidth: '1400px',
         margin: '0 auto',
         padding: '2rem 1.5rem',
-        background: '#f0f4f8',
+        background: 'transparent',
         minHeight: 'calc(100vh - 200px)',
         '@media (max-width: 768px)': {
             padding: '1rem 0.8rem',
@@ -26,11 +26,11 @@ const styles = {
     },
     // Header con glow
     header: {
-        background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
+        background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
         borderRadius: '20px',
         padding: '2.5rem 2rem',
         marginBottom: '2rem',
-        borderBottom: '4px solid #3EAEF4',
+        borderBottom: '4px solid #3B82F6',
         boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
         position: 'relative',
         overflow: 'hidden',
@@ -48,7 +48,7 @@ const styles = {
         width: '400px',
         height: '400px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(62,174,244,0.1) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(147,197,253,0.2) 0%, transparent 70%)',
         pointerEvents: 'none',
     },
     headerContent: {
@@ -77,7 +77,7 @@ const styles = {
     headerTitle: {
         fontSize: '2rem',
         fontWeight: 'bold',
-        background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+        background: 'linear-gradient(135deg, #fff 30%, #93C5FD 100%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
@@ -94,7 +94,7 @@ const styles = {
         },
     },
     headerSubtitle: {
-        color: '#aab',
+        color: '#E0E7FF',
         fontSize: '0.95rem',
         margin: 0,
         '@media (max-width: 768px)': {
@@ -103,8 +103,8 @@ const styles = {
     },
     headerBadge: {
         display: 'inline-block',
-        backgroundColor: '#3EAEF4',
-        color: '#0A0F1E',
+        backgroundColor: 'var(--sn-primary)',
+        color: '#fff',
         padding: '0.3rem 1rem',
         borderRadius: '20px',
         fontSize: '0.75rem',
@@ -148,7 +148,7 @@ const styles = {
     },
     // Card
     card: {
-        backgroundColor: 'rgba(255,255,255,0.9)',
+        backgroundColor: 'var(--sn-glass-card-bg)',
         backdropFilter: 'blur(10px)',
         borderRadius: '20px',
         boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
@@ -158,14 +158,14 @@ const styles = {
         transition: 'all 0.3s ease',
     },
     cardHeader: {
-        background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%)',
+        background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
         padding: '1.2rem 1.5rem',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         flexWrap: 'wrap',
         gap: '0.5rem',
-        borderBottom: '4px solid #3EAEF4',
+        borderBottom: '4px solid #3B82F6',
         '@media (max-width: 480px)': {
             padding: '1rem',
             flexDirection: 'column',
@@ -175,7 +175,7 @@ const styles = {
     cardHeaderTitle: {
         fontSize: '1.2rem',
         fontWeight: 'bold',
-        background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+        background: 'linear-gradient(135deg, #fff 30%, #93C5FD 100%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
@@ -219,8 +219,8 @@ const styles = {
         borderRadius: '12px',
         transition: 'all 0.3s ease',
         outline: 'none',
-        backgroundColor: 'white',
-        color: '#0A0F1E',
+        backgroundColor: 'var(--sn-surface)',
+        color: 'var(--sn-text)',
     },
     textarea: {
         width: '100%',
@@ -230,7 +230,7 @@ const styles = {
         borderRadius: '12px',
         transition: 'all 0.3s ease',
         outline: 'none',
-        backgroundColor: 'white',
+        backgroundColor: 'var(--sn-surface)',
         minHeight: '100px',
         resize: 'vertical',
     },
@@ -247,12 +247,12 @@ const styles = {
         },
     },
     dropzoneActive: {
-        borderColor: '#3EAEF4',
+        borderColor: '#2563EB',
         backgroundColor: 'rgba(255,215,0,0.05)',
     },
     dropzoneIcon: {
         fontSize: '2rem',
-        color: '#3EAEF4',
+        color: '#2563EB',
         marginBottom: '0.3rem',
     },
     toggleGroup: {
@@ -267,9 +267,9 @@ const styles = {
     toggleBtn: (active) => ({
         padding: '0.4rem 1rem',
         borderRadius: '20px',
-        border: active ? '2px solid #3EAEF4' : '1px solid #ddd',
+        border: active ? '2px solid #2563EB' : '1px solid #ddd',
         backgroundColor: active ? 'rgba(255,215,0,0.1)' : 'transparent',
-        color: active ? '#0A0F1E' : '#6c757d',
+        color: active ? '#fff' : 'var(--sn-text-muted)',
         fontWeight: active ? 'bold' : 'normal',
         cursor: 'pointer',
         transition: 'all 0.3s ease',
@@ -283,8 +283,8 @@ const styles = {
         },
     }),
     btnPrimary: {
-        backgroundColor: '#3EAEF4',
-        color: '#0A0F1E',
+        backgroundColor: 'var(--sn-primary)',
+        color: '#fff',
         border: 'none',
         padding: '0.7rem 1.5rem',
         borderRadius: '12px',
@@ -342,7 +342,7 @@ const styles = {
         },
     },
     noticiaItem: {
-        backgroundColor: 'white',
+        backgroundColor: 'var(--sn-surface)',
         borderRadius: '12px',
         padding: '1rem',
         marginBottom: '1rem',
@@ -356,7 +356,7 @@ const styles = {
         fontSize: '1rem',
         fontWeight: 'bold',
         margin: 0,
-        color: '#0A0F1E',
+        color: 'var(--sn-text)',
         '@media (max-width: 480px)': {
             fontSize: '0.9rem',
         },
@@ -467,7 +467,7 @@ const styles = {
         },
     },
     modalContent: {
-        backgroundColor: 'white',
+        backgroundColor: 'var(--sn-surface)',
         borderRadius: '20px',
         maxWidth: '900px',
         width: '100%',
@@ -514,7 +514,7 @@ const styles = {
         fontSize: '1.8rem',
         fontWeight: 'bold',
         marginBottom: '0.5rem',
-        color: '#0A0F1E',
+        color: 'var(--sn-text)',
         '@media (max-width: 768px)': {
             fontSize: '1.4rem',
         },
@@ -722,7 +722,7 @@ const GaleriaCarrusel = ({ items, onRemove }) => {
                                     width: '10px',
                                     height: '10px',
                                     borderRadius: '50%',
-                                    backgroundColor: index === currentIndex ? '#3EAEF4' : 'rgba(255,255,255,0.5)',
+                                    backgroundColor: index === currentIndex ? '#2563EB' : 'rgba(255,255,255,0.5)',
                                     border: 'none',
                                     cursor: 'pointer',
                                     transition: 'all 0.3s ease',
@@ -1336,7 +1336,7 @@ const NoticiasCrear = () => {
     };
 
     const getBadgeColor = (visible, fijada) => {
-        if (fijada) return '#3EAEF4';
+        if (fijada) return '#2563EB';
         if (visible) return '#28a745';
         return '#dc3545';
     };
@@ -1363,7 +1363,7 @@ const NoticiasCrear = () => {
                     <div style={styles.headerLeft}>
                         <div>
                             <h2 style={styles.headerTitle}>
-                                <FaRocket style={{ color: '#3EAEF4' }} /> 
+                                <FaRocket style={{ color: '#2563EB' }} /> 
                                 {editando ? ' Editar Noticia' : ' Crear Noticia'}
                             </h2>
                             <p style={styles.headerSubtitle}>

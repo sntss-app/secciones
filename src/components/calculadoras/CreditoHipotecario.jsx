@@ -56,7 +56,7 @@ const CreditoHipotecario = () => {
         headerTitle: {
             fontSize: '1.5rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #0A0F1E, #4A90D9)',
+            background: 'linear-gradient(135deg, var(--sn-text), #4A90D9)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -92,7 +92,7 @@ const CreditoHipotecario = () => {
             display: 'block',
             fontWeight: '600',
             fontSize: '0.85rem',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             marginBottom: '0.3rem',
         },
         labelIcon: {
@@ -107,8 +107,8 @@ const CreditoHipotecario = () => {
             borderRadius: '10px',
             outline: 'none',
             transition: 'all 0.3s ease',
-            backgroundColor: 'white',
-            color: '#0A0F1E',
+            backgroundColor: 'var(--sn-surface)',
+            color: 'var(--sn-text)',
         },
         inputFull: {
             gridColumn: '1 / -1',
@@ -141,7 +141,7 @@ const CreditoHipotecario = () => {
             fontWeight: 'bold',
             textAlign: 'center',
             marginBottom: '1rem',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             fontSize: '1rem',
         },
         resultadoItem: {

@@ -105,7 +105,7 @@ const Clausula79BisValidador = () => {
         const map = {
             1: { color: '#6c757d', icon: <FaClock />, label: 'Preregistro', bg: 'linear-gradient(135deg, #6c757d, #495057)', textColor: 'white' },
             2: { color: '#28a745', icon: <FaCheckCircle />, label: 'Aprobado', bg: 'linear-gradient(135deg, #28a745, #20c997)', textColor: 'white' },
-            3: { color: '#ffc107', icon: <FaExclamationTriangle />, label: 'Observaciones', bg: 'linear-gradient(135deg, #ffc107, #fd7e14)', textColor: '#0A0F1E' },
+            3: { color: '#ffc107', icon: <FaExclamationTriangle />, label: 'Observaciones', bg: 'linear-gradient(135deg, #ffc107, #fd7e14)', textcolor: 'var(--sn-text)' },
             4: { color: '#fd7e14', icon: <FaInfoCircle />, label: 'Incompleto', bg: 'linear-gradient(135deg, #fd7e14, #dc3545)', textColor: 'white' },
             5: { color: '#dc3545', icon: <FaTimesCircle />, label: 'Denegado', bg: 'linear-gradient(135deg, #dc3545, #c82333)', textColor: 'white' }
         };
@@ -164,7 +164,7 @@ const Clausula79BisValidador = () => {
             html: `¿Estás seguro de guardar esta validación?<br><small style="color:#6c757d;">El usuario recibirá notificación del cambio.</small>`,
             icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#3EAEF4',
+            confirmButtonColor: '#2563EB',
             cancelButtonColor: '#6c757d',
             confirmButtonText: '✅ Sí, guardar',
             cancelButtonText: '❌ Cancelar',
@@ -245,11 +245,11 @@ const Clausula79BisValidador = () => {
             maxWidth: '1400px',
             margin: '0 auto',
             padding: '2rem 1.5rem',
-            background: '#f0f4f8',
+            background: 'transparent',
             minHeight: 'calc(100vh - 200px)',
         },
         header: {
-            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
+            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
             borderRadius: '20px',
             padding: '2.5rem 2rem',
             marginBottom: '2rem',
@@ -305,7 +305,7 @@ const Clausula79BisValidador = () => {
             margin: 0,
         },
         subtitle: {
-            color: '#aab',
+            color: '#E0E7FF',
             fontSize: '0.95rem',
             margin: 0,
         },
@@ -352,7 +352,7 @@ const Clausula79BisValidador = () => {
             borderRadius: '25px',
             outline: 'none',
             transition: 'all 0.3s ease',
-            backgroundColor: '#f0f2f5',
+            backgroundColor: 'var(--sn-surface-soft)',
             height: '46px',
         },
         filterSelect: {
@@ -361,7 +361,7 @@ const Clausula79BisValidador = () => {
             border: '1px solid #ddd',
             borderRadius: '25px',
             outline: 'none',
-            backgroundColor: '#f0f2f5',
+            backgroundColor: 'var(--sn-surface-soft)',
             cursor: 'pointer',
             minWidth: '150px',
             height: '46px',
@@ -372,14 +372,14 @@ const Clausula79BisValidador = () => {
             gap: '0.5rem',
             padding: '0.4rem 1.2rem',
             borderRadius: '20px',
-            background: '#f0f2f5',
+            background: 'transparent',
             color: '#6c757d',
             fontSize: '0.9rem',
             fontWeight: '500',
         },
         refreshButton: {
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
+            backgroundColor: 'var(--sn-primary)',
+            color: '#fff',
             border: 'none',
             padding: '0.5rem 1.2rem',
             borderRadius: '25px',
@@ -397,7 +397,7 @@ const Clausula79BisValidador = () => {
             gap: '1.5rem',
         },
         card: {
-            backgroundColor: 'rgba(255,255,255,0.95)',
+            backgroundColor: 'var(--sn-glass-bg)',
             backdropFilter: 'blur(10px)',
             borderRadius: '16px',
             boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
@@ -406,7 +406,7 @@ const Clausula79BisValidador = () => {
             transition: 'all 0.3s ease',
         },
         cardHeader: {
-            background: 'linear-gradient(135deg, #0A0F1E, #1a1f2e)',
+            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
             color: 'white',
             padding: '1rem 1.25rem',
             display: 'flex',
@@ -441,7 +441,7 @@ const Clausula79BisValidador = () => {
         infoValue: {
             fontSize: '0.95rem',
             fontWeight: '600',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             marginBottom: '0.2rem',
         },
         documentosRow: {
@@ -472,7 +472,7 @@ const Clausula79BisValidador = () => {
             borderRadius: '10px',
             outline: 'none',
             transition: 'all 0.3s ease',
-            backgroundColor: 'white',
+            backgroundColor: 'var(--sn-surface)',
             resize: 'vertical',
             minHeight: '60px',
             fontFamily: 'inherit',
@@ -484,7 +484,7 @@ const Clausula79BisValidador = () => {
             border: '1px solid #ddd',
             borderRadius: '10px',
             outline: 'none',
-            backgroundColor: 'white',
+            backgroundColor: 'var(--sn-surface)',
             cursor: 'pointer',
             transition: 'all 0.3s ease',
         },
@@ -628,7 +628,7 @@ const Clausula79BisValidador = () => {
             {registrosFiltrados.length === 0 ? (
                 <div style={styles.emptyState}>
                     <FaInfoCircle style={{ fontSize: '4rem', color: '#8E44AD', marginBottom: '1rem', opacity: 0.3 }} />
-                    <h4 style={{ color: '#0A0F1E' }}>No hay registros</h4>
+                    <h4 style={{ color: 'var(--sn-text)' }}>No hay registros</h4>
                     <p style={{ color: '#6c757d' }}>No se encontraron registros que coincidan con los filtros.</p>
                 </div>
             ) : (

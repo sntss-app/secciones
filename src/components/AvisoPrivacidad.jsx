@@ -34,7 +34,7 @@ const AvisoPrivacidad = ({ show, onHide }) => {
             backdropFilter: 'blur(4px)',
         },
         modalContent: {
-            backgroundColor: 'rgba(255,255,255,0.95)',
+            backgroundColor: 'var(--sn-glass-bg)',
             backdropFilter: 'blur(10px)',
             borderRadius: '24px',
             maxWidth: '900px',
@@ -42,18 +42,18 @@ const AvisoPrivacidad = ({ show, onHide }) => {
             maxHeight: '90vh',
             overflow: 'hidden',
             boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-            border: '1px solid rgba(255,255,255,0.5)',
+            border: '1px solid var(--sn-glass-border)',
             display: 'flex',
             flexDirection: 'column',
         },
         modalHeader: {
-            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%)',
+            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
             color: 'white',
             padding: '1.5rem 2rem',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            borderBottom: '4px solid #3EAEF4',
+            borderBottom: '4px solid #3B82F6',
             flexShrink: 0,
             position: 'sticky',
             top: 0,
@@ -66,12 +66,12 @@ const AvisoPrivacidad = ({ show, onHide }) => {
         },
         headerIcon: {
             fontSize: '2rem',
-            color: '#3EAEF4',
+            color: '#93C5FD',
         },
         headerTitle: {
             fontSize: '1.5rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+            background: 'linear-gradient(135deg, #fff 30%, #93C5FD 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -79,8 +79,8 @@ const AvisoPrivacidad = ({ show, onHide }) => {
         },
         headerBadge: {
             display: 'inline-block',
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
+            backgroundColor: 'rgba(255,255,255,0.2)',
+            color: '#fff',
             padding: '0.2rem 0.8rem',
             borderRadius: '12px',
             fontSize: '0.65rem',
@@ -107,19 +107,19 @@ const AvisoPrivacidad = ({ show, onHide }) => {
             flex: 1,
             fontSize: '0.9rem',
             lineHeight: '1.7',
-            color: '#333',
+            color: 'var(--sn-text-muted)',
         },
         modalFooter: {
             padding: '1rem 2rem',
-            borderTop: '1px solid #e9ecef',
+            borderTop: '1px solid var(--sn-glass-border)',
             display: 'flex',
             justifyContent: 'flex-end',
             gap: '0.5rem',
             flexShrink: 0,
-            background: '#f8fafc',
+            background: 'var(--sn-surface-soft)',
         },
         btnClose: {
-            backgroundColor: '#6c757d',
+            backgroundColor: '#64748B',
             color: 'white',
             border: 'none',
             padding: '0.6rem 1.5rem',
@@ -130,8 +130,8 @@ const AvisoPrivacidad = ({ show, onHide }) => {
             transition: 'all 0.3s ease',
         },
         btnAccept: {
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
+            backgroundColor: 'var(--sn-primary)',
+            color: '#fff',
             border: 'none',
             padding: '0.6rem 1.5rem',
             borderRadius: '12px',
@@ -144,21 +144,21 @@ const AvisoPrivacidad = ({ show, onHide }) => {
         sectionTitle: {
             fontSize: '1.1rem',
             fontWeight: 'bold',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             marginTop: '1.5rem',
             marginBottom: '0.5rem',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            borderBottom: '2px solid #3EAEF4',
+            borderBottom: '2px solid var(--sn-primary)',
             paddingBottom: '0.3rem',
         },
         sectionIcon: {
-            color: '#3EAEF4',
+            color: 'var(--sn-primary)',
         },
         highlightBox: {
-            backgroundColor: 'rgba(62,174,244,0.08)',
-            borderLeft: '4px solid #3EAEF4',
+            backgroundColor: 'rgba(37,99,235,0.08)',
+            borderLeft: '4px solid var(--sn-primary)',
             padding: '1rem',
             borderRadius: '8px',
             margin: '1rem 0',
@@ -332,10 +332,10 @@ const AvisoPrivacidad = ({ show, onHide }) => {
                         style={styles.btnClose}
                         onClick={() => handleClose()}
                         onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = '#5a6268';
+                            e.currentTarget.style.backgroundColor = '#52525B';
                         }}
                         onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = '#6c757d';
+                            e.currentTarget.style.backgroundColor = '#64748B';
                         }}
                     >
                         <FaTimes style={{ marginRight: '6px' }} /> Cerrar
@@ -345,7 +345,7 @@ const AvisoPrivacidad = ({ show, onHide }) => {
                         onClick={() => handleClose()}
                         onMouseEnter={(e) => {
                             e.currentTarget.style.transform = 'translateY(-2px)';
-                            e.currentTarget.style.boxShadow = '0 4px 16px rgba(62,174,244,0.3)';
+                            e.currentTarget.style.boxShadow = '0 4px 16px rgba(37,99,235,0.3)';
                         }}
                         onMouseLeave={(e) => {
                             e.currentTarget.style.transform = 'translateY(0)';

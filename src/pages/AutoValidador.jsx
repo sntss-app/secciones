@@ -32,7 +32,7 @@ const AutoValidador = () => {
     const [secciones, setSecciones] = useState([]);
     const [seccionSeleccionada, setSeccionSeleccionada] = useState(0);
     const [esSuperAdmin, setEsSuperAdmin] = useState(false);
-    const [colorPrincipal, setColorPrincipal] = useState('#3EAEF4');
+    const [colorPrincipal, setColorPrincipal] = useState('#2563EB');
 
     const [paginaActual, setPaginaActual] = useState(1);
     const itemsPorPagina = 10;
@@ -243,14 +243,14 @@ const AutoValidador = () => {
             maxWidth: '1400px',
             margin: '0 auto',
             padding: '1.5rem',
-            background: '#f0f4f8',
+            background: 'transparent',
             minHeight: 'calc(100vh - 200px)',
             '@media (max-width: 768px)': {
                 padding: '1rem 0.8rem',
             },
         },
         header: {
-            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
+            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
             borderRadius: '20px',
             padding: '2.5rem 2rem',
             marginBottom: '2rem',
@@ -259,7 +259,7 @@ const AutoValidador = () => {
             alignItems: 'center',
             flexWrap: 'wrap',
             gap: '1rem',
-            borderBottom: `4px solid ${colorPrincipal || '#3EAEF4'}`,
+            borderBottom: `4px solid ${colorPrincipal || '#2563EB'}`,
             boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
             position: 'relative',
             overflow: 'hidden',
@@ -276,13 +276,13 @@ const AutoValidador = () => {
             width: '400px',
             height: '400px',
             borderRadius: '50%',
-            background: `radial-gradient(circle, ${colorPrincipal || '#3EAEF4'}20 0%, transparent 70%)`,
+            background: `radial-gradient(circle, ${colorPrincipal || '#2563EB'}20 0%, transparent 70%)`,
             pointerEvents: 'none',
         },
         headerTitle: {
             fontSize: '2rem',
             fontWeight: 'bold',
-            background: `linear-gradient(135deg, #fff 30%, ${colorPrincipal || '#3EAEF4'} 100%)`,
+            background: `linear-gradient(135deg, #fff 30%, ${colorPrincipal || '#2563EB'} 100%)`,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -298,7 +298,7 @@ const AutoValidador = () => {
             },
         },
         headerSubtitle: {
-            color: '#aab',
+            color: '#E0E7FF',
             fontSize: '0.95rem',
             margin: 0,
             position: 'relative',
@@ -309,8 +309,8 @@ const AutoValidador = () => {
         },
         headerBadge: {
             display: 'inline-block',
-            backgroundColor: colorPrincipal || '#3EAEF4',
-            color: '#0A0F1E',
+            backgroundColor: colorPrincipal || '#2563EB',
+            color: '#fff',
             padding: '0.3rem 1rem',
             borderRadius: '20px',
             fontSize: '0.8rem',
@@ -321,8 +321,8 @@ const AutoValidador = () => {
         },
         btnOutline: {
             backgroundColor: 'transparent',
-            color: colorPrincipal || '#3EAEF4',
-            border: `2px solid ${colorPrincipal || '#3EAEF4'}`,
+            color: colorPrincipal || '#2563EB',
+            border: `2px solid ${colorPrincipal || '#2563EB'}`,
             padding: '0.5rem 1.5rem',
             borderRadius: '30px',
             fontWeight: 'bold',
@@ -339,28 +339,28 @@ const AutoValidador = () => {
             },
         },
         filterBar: {
-            backgroundColor: 'rgba(255,255,255,0.9)',
+            backgroundColor: 'var(--sn-glass-card-bg)',
             backdropFilter: 'blur(10px)',
             borderRadius: '16px',
             padding: '1.5rem',
             marginBottom: '2rem',
-            border: `1px solid ${colorPrincipal || '#3EAEF4'}30`,
+            border: `1px solid ${colorPrincipal || '#2563EB'}30`,
             boxShadow: `0 4px 20px rgba(0,0,0,0.06)`,
         },
         card: {
-            backgroundColor: 'rgba(255,255,255,0.9)',
+            backgroundColor: 'var(--sn-glass-card-bg)',
             backdropFilter: 'blur(10px)',
             borderRadius: '16px',
             boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
             transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
             height: '100%',
-            border: `1px solid ${colorPrincipal || '#3EAEF4'}20`,
+            border: `1px solid ${colorPrincipal || '#2563EB'}20`,
             overflow: 'hidden',
         },
         cardHeader: {
-            background: `linear-gradient(135deg, #0A0F1E, #1a1f2e)`,
+            background: `linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)`,
             color: 'white',
-            borderBottom: `3px solid ${colorPrincipal || '#3EAEF4'}`,
+            borderBottom: `3px solid ${colorPrincipal || '#2563EB'}`,
             padding: '1rem 1.25rem',
             display: 'flex',
             justifyContent: 'space-between',
@@ -394,11 +394,11 @@ const AutoValidador = () => {
         infoValue: {
             fontSize: '0.95rem',
             fontWeight: '600',
-            color: colorPrincipal || '#0A0F1E',
+            color: colorPrincipal || 'var(--sn-text)',
         },
         btnPrimary: {
-            background: `linear-gradient(135deg, ${colorPrincipal || '#3EAEF4'}, ${colorPrincipal || '#3EAEF4'}cc)`,
-            color: '#0A0F1E',
+            background: `linear-gradient(135deg, ${colorPrincipal || '#2563EB'}, ${colorPrincipal || '#2563EB'}cc)`,
+            color: '#fff',
             border: 'none',
             padding: '0.6rem 1.5rem',
             borderRadius: '25px',
@@ -417,7 +417,7 @@ const AutoValidador = () => {
             padding: '0.6rem 1rem',
             width: '100%',
             outline: 'none',
-            backgroundColor: 'white',
+            backgroundColor: 'var(--sn-surface)',
             cursor: 'pointer',
             transition: 'border-color 0.3s ease',
         },
@@ -438,7 +438,7 @@ const AutoValidador = () => {
             width: '100%',
             outline: 'none',
             transition: 'all 0.3s ease',
-            backgroundColor: 'white',
+            backgroundColor: 'var(--sn-surface)',
         },
         selectorWrapper: {
             display: 'flex',
@@ -502,7 +502,7 @@ const AutoValidador = () => {
                 <div style={styles.headerGlow} />
                 <div>
                     <h2 style={styles.headerTitle}>
-                        <FaShieldAlt style={{ color: colorPrincipal || '#3EAEF4' }} /> Validador de Crédito Automotriz
+                        <FaShieldAlt style={{ color: colorPrincipal || '#2563EB' }} /> Validador de Crédito Automotriz
                     </h2>
                     <p style={styles.headerSubtitle}>
                         Gestiona y valida las solicitudes de los agremiados
@@ -541,7 +541,7 @@ const AutoValidador = () => {
                                 borderRadius: '25px',
                                 textAlign: 'center',
                                 fontWeight: 'bold',
-                                borderColor: colorPrincipal || '#3EAEF4',
+                                borderColor: colorPrincipal || '#2563EB',
                             }}
                             value={seccionSeleccionada}
                             onChange={(e) => {
@@ -566,7 +566,7 @@ const AutoValidador = () => {
                     <div className="col-md-5">
                         <div className="input-group">
                             <span className="input-group-text bg-white border-0" style={{ borderRadius: '25px 0 0 25px' }}>
-                                <FaSearch style={{ color: colorPrincipal || '#3EAEF4' }} />
+                                <FaSearch style={{ color: colorPrincipal || '#2563EB' }} />
                             </span>
                             <input
                                 type="text"
@@ -605,7 +605,7 @@ const AutoValidador = () => {
                     </div>
                     <div className="col-md-2">
                         <span className="text-muted" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <FaEye style={{ color: colorPrincipal || '#3EAEF4' }} /> {solicitudesFiltradas.length} solicitudes
+                            <FaEye style={{ color: colorPrincipal || '#2563EB' }} /> {solicitudesFiltradas.length} solicitudes
                         </span>
                     </div>
                     <div className="col-md-2 text-end">
@@ -630,10 +630,10 @@ const AutoValidador = () => {
                             borderRadius: '16px',
                             padding: '4rem 2rem',
                             textAlign: 'center',
-                            border: `1px solid ${colorPrincipal || '#3EAEF4'}30`,
+                            border: `1px solid ${colorPrincipal || '#2563EB'}30`,
                         }}>
-                            <FaInfoCircle style={{ fontSize: '3rem', color: colorPrincipal || '#3EAEF4', marginBottom: '1rem' }} />
-                            <h4 style={{ color: '#0A0F1E' }}>No hay solicitudes para mostrar</h4>
+                            <FaInfoCircle style={{ fontSize: '3rem', color: colorPrincipal || '#2563EB', marginBottom: '1rem' }} />
+                            <h4 style={{ color: 'var(--sn-text)' }}>No hay solicitudes para mostrar</h4>
                             <p className="text-muted">Los registros aparecerán aquí cuando los agremiados soliciten su crédito</p>
                         </div>
                     </div>
@@ -642,7 +642,7 @@ const AutoValidador = () => {
                         const draft = getDraft(solicitud);
                         const statusInfo = getStatusInfo(solicitud.estatus);
                         const isSaving = validandoId === getDraftKey(solicitud);
-                        const seccionColor = solicitud.seccion_color || '#3EAEF4';
+                        const seccionColor = solicitud.seccion_color || '#2563EB';
 
                         return (
                             <div className="col-12 col-xl-6" key={solicitud.id || solicitud.matricula || idx}>
@@ -877,8 +877,8 @@ const AutoValidador = () => {
                                 <button 
                                     className="page-link rounded-pill" 
                                     style={paginaSegura === num ? 
-                                        { backgroundColor: colorPrincipal || '#3EAEF4', borderColor: colorPrincipal || '#3EAEF4', color: '#0A0F1E', fontWeight: 'bold' } : 
-                                        { border: 'none', background: 'rgba(255,255,255,0.8)', color: '#0A0F1E' }
+                                        { backgroundColor: colorPrincipal || '#2563EB', borderColor: colorPrincipal || '#2563EB', color: '#fff', fontWeight: 'bold' } : 
+                                        { border: 'none', background: 'rgba(255,255,255,0.8)', color: 'var(--sn-text)' }
                                     }
                                     onClick={() => setPaginaActual(num)}
                                 >

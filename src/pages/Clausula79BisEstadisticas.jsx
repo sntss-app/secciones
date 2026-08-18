@@ -101,12 +101,12 @@ const Clausula79BisEstadisticas = () => {
                 estadisticas.total_personas || 0
             ],
             backgroundColor: [
-                'rgba(62,174,244,0.8)',
+                'rgba(37,99,235,0.8)',
                 'rgba(142,68,173,0.8)',
                 'rgba(40,167,69,0.8)'
             ],
             borderColor: [
-                '#3EAEF4',
+                '#2563EB',
                 '#8E44AD',
                 '#28a745'
             ],
@@ -154,15 +154,15 @@ const Clausula79BisEstadisticas = () => {
             maxWidth: '1400px',
             margin: '0 auto',
             padding: '2rem 1.5rem',
-            background: '#f0f4f8',
+            background: 'transparent',
             minHeight: 'calc(100vh - 200px)',
         },
         header: {
-            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
+            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
             borderRadius: '20px',
             padding: '2.5rem 2rem',
             marginBottom: '2rem',
-            borderBottom: '4px solid #3EAEF4',
+            borderBottom: '4px solid #3B82F6',
             boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
             position: 'relative',
             overflow: 'hidden',
@@ -174,7 +174,7 @@ const Clausula79BisEstadisticas = () => {
             width: '400px',
             height: '400px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(62,174,244,0.1) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(147,197,253,0.2) 0%, transparent 70%)',
             pointerEvents: 'none',
         },
         headerContent: {
@@ -207,21 +207,21 @@ const Clausula79BisEstadisticas = () => {
         title: {
             fontSize: '2rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+            background: 'linear-gradient(135deg, #fff 30%, #93C5FD 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
             margin: 0,
         },
         subtitle: {
-            color: '#aab',
+            color: '#E0E7FF',
             fontSize: '0.95rem',
             margin: 0,
         },
         headerBadge: {
             display: 'inline-block',
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
+            backgroundColor: 'var(--sn-primary)',
+            color: '#fff',
             padding: '0.3rem 1rem',
             borderRadius: '20px',
             fontSize: '0.75rem',
@@ -235,7 +235,7 @@ const Clausula79BisEstadisticas = () => {
             marginBottom: '2rem',
         },
         statCard: {
-            backgroundColor: 'rgba(255,255,255,0.9)',
+            backgroundColor: 'var(--sn-glass-card-bg)',
             backdropFilter: 'blur(10px)',
             borderRadius: '16px',
             padding: '1.2rem',
@@ -247,7 +247,7 @@ const Clausula79BisEstadisticas = () => {
         statNumber: {
             fontSize: '2.2rem',
             fontWeight: 'bold',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             lineHeight: 1.2,
         },
         statLabel: {
@@ -270,7 +270,7 @@ const Clausula79BisEstadisticas = () => {
             marginBottom: '2rem',
         },
         chartCard: {
-            backgroundColor: 'rgba(255,255,255,0.95)',
+            backgroundColor: 'var(--sn-glass-bg)',
             backdropFilter: 'blur(10px)',
             borderRadius: '20px',
             boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
@@ -281,7 +281,7 @@ const Clausula79BisEstadisticas = () => {
         chartTitle: {
             fontSize: '1rem',
             fontWeight: 'bold',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             marginBottom: '1rem',
             textAlign: 'center',
             display: 'flex',
@@ -295,7 +295,7 @@ const Clausula79BisEstadisticas = () => {
         },
         // Tabla de registros recientes
         tableCard: {
-            backgroundColor: 'rgba(255,255,255,0.95)',
+            backgroundColor: 'var(--sn-glass-bg)',
             backdropFilter: 'blur(10px)',
             borderRadius: '20px',
             boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
@@ -307,7 +307,7 @@ const Clausula79BisEstadisticas = () => {
         tableTitle: {
             fontSize: '1rem',
             fontWeight: 'bold',
-            color: '#0A0F1E',
+            color: 'var(--sn-text)',
             marginBottom: '1rem',
             display: 'flex',
             alignItems: 'center',
@@ -350,8 +350,8 @@ const Clausula79BisEstadisticas = () => {
             color: '#6c757d',
         },
         refreshButton: {
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
+            backgroundColor: 'var(--sn-primary)',
+            color: '#fff',
             border: 'none',
             padding: '0.5rem 1.2rem',
             borderRadius: '25px',
@@ -403,7 +403,7 @@ const Clausula79BisEstadisticas = () => {
                         </Link>
                         <div>
                             <h1 style={styles.title}>
-                                <FaChartPie style={{ color: '#3EAEF4' }} /> Estadísticas 79Bis
+                                <FaChartPie style={{ color: '#2563EB' }} /> Estadísticas 79Bis
                             </h1>
                             <p style={styles.subtitle}>
                                 Resumen del festejo de Intendencia y Limpieza
@@ -463,7 +463,7 @@ const Clausula79BisEstadisticas = () => {
                 {/* Gráfica de estatus */}
                 <div style={styles.chartCard}>
                     <div style={styles.chartTitle}>
-                        <FaChartPie style={{ color: '#3EAEF4' }} /> Distribución por Estatus
+                        <FaChartPie style={{ color: '#2563EB' }} /> Distribución por Estatus
                     </div>
                     <div style={styles.chartContainer}>
                         <Pie data={statusData} options={chartOptions} />
@@ -484,26 +484,26 @@ const Clausula79BisEstadisticas = () => {
             {/* Resumen ejecutivo */}
             <div style={styles.tableCard}>
                 <div style={styles.tableTitle}>
-                    <FaInfoCircle style={{ color: '#3EAEF4' }} /> Resumen Ejecutivo
+                    <FaInfoCircle style={{ color: '#2563EB' }} /> Resumen Ejecutivo
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                     <div style={{ padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '12px', textAlign: 'center' }}>
                         <div style={{ fontSize: '0.7rem', color: '#6c757d', textTransform: 'uppercase' }}>Mesas necesarias</div>
-                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0A0F1E' }}>
+                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--sn-text)' }}>
                             {Math.ceil(totalAsistentes / 10)}
                         </div>
                         <div style={{ fontSize: '0.65rem', color: '#6c757d' }}>10 personas por mesa</div>
                     </div>
                     <div style={{ padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '12px', textAlign: 'center' }}>
                         <div style={{ fontSize: '0.7rem', color: '#6c757d', textTransform: 'uppercase' }}>Comida necesaria</div>
-                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0A0F1E' }}>
+                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--sn-text)' }}>
                             {totalAsistentes}
                         </div>
                         <div style={{ fontSize: '0.65rem', color: '#6c757d' }}>porciones</div>
                     </div>
                     <div style={{ padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '12px', textAlign: 'center' }}>
                         <div style={{ fontSize: '0.7rem', color: '#6c757d', textTransform: 'uppercase' }}>Regalos necesarios</div>
-                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0A0F1E' }}>
+                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--sn-text)' }}>
                             {estadisticas.check_in_trabajadores || 0}
                         </div>
                         <div style={{ fontSize: '0.65rem', color: '#6c757d' }}>para trabajadores</div>
@@ -514,7 +514,7 @@ const Clausula79BisEstadisticas = () => {
             {/* Últimos registros (opcional - se puede agregar después) */}
             <div style={styles.tableCard}>
                 <div style={styles.tableTitle}>
-                    <FaUsers style={{ color: '#3EAEF4' }} /> Últimos Registros
+                    <FaUsers style={{ color: '#2563EB' }} /> Últimos Registros
                 </div>
                 <p style={{ color: '#6c757d', fontSize: '0.85rem' }}>
                     Los últimos registros aparecerán aquí con su estatus y hora de entrada.

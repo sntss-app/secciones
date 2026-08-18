@@ -1,25 +1,23 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  /* ===== PALETA DEL DISEÑO (modo claro) ===== */
+  --sn-primary: #2563eb;
+  --sn-primary-strong: #1d4ed8;
+  --sn-text: #172554;
+  --sn-text-muted: #475569;
+  --sn-text-light: #64748b;
+  --sn-surface: #ffffff;
+  --sn-surface-soft: #f8fafc;
+  --sn-glass-bg: rgba(255, 255, 255, 0.72);
+  --sn-glass-border: rgba(255, 255, 255, 0.85);
+  --sn-glass-card-bg: rgba(255, 255, 255, 0.68);
+  --sn-glass-card-border: rgba(255, 255, 255, 0.9);
+  --sn-page-bg: linear-gradient(135deg, #e2e8f0 0%, #edf2f7 50%, #e2e8f0 100%);
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
+  font: 18px/145% 'Poppins', system-ui, 'Segoe UI', Roboto, sans-serif;
   letter-spacing: 0.18px;
   color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
+  color: var(--sn-text-muted);
+  background: var(--sn-page-bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -30,28 +28,30 @@
   }
 }
 
+/* ===== MODO OSCURO (adaptación del mismo diseño) ===== */
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+    --sn-primary: #3b82f6;
+    --sn-primary-strong: #2563eb;
+    --sn-text: #e2e8f0;
+    --sn-text-muted: #94a3b8;
+    --sn-text-light: #94a3b8;
+    --sn-surface: #1e293b;
+    --sn-surface-soft: #0f172a;
+    --sn-glass-bg: rgba(30, 41, 59, 0.75);
+    --sn-glass-border: rgba(148, 163, 184, 0.2);
+    --sn-glass-card-bg: rgba(30, 41, 59, 0.65);
+    --sn-glass-card-border: rgba(148, 163, 184, 0.18);
+    --sn-page-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
   }
 }
 
 body {
   margin: 0;
+  min-height: 100svh;
+  background: var(--sn-page-bg);
+  background-attachment: fixed;
+  font-family: 'Poppins', system-ui, 'Segoe UI', Roboto, sans-serif;
 }
 
 #root {
@@ -63,45 +63,80 @@ body {
 }
 
 h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+h2,
+h3,
+h4,
+h5 {
+  font-family: 'Poppins', system-ui, 'Segoe UI', Roboto, sans-serif;
+  color: var(--sn-text);
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
 p {
   margin: 0;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+a {
+  text-decoration: none;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+/* ===== HELPERS DEL DISEÑO GLASSMORPHISM ===== */
+
+/* Contenedor de cristal */
+.glass {
+  background: var(--sn-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--sn-glass-border);
+  box-shadow: 0 12px 35px -8px rgba(15, 23, 42, 0.08),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
+}
+
+/* Tarjeta de cristal */
+.glass-card {
+  background: var(--sn-glass-card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--sn-glass-card-border);
+  box-shadow: 0 8px 25px -5px rgba(30, 41, 59, 0.06);
+}
+
+/* Patrón de puntos (decorativo) */
+.dot-pattern {
+  background-image: radial-gradient(rgba(37, 99, 235, 0.22) 1.5px, transparent 1.5px);
+  background-size: 14px 14px;
+}
+
+/* Fondo decorativo global de la página (capa fija) */
+.sn-decor {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  user-select: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dot-pattern {
+    background-image: radial-gradient(rgba(59, 130, 246, 0.22) 1.5px, transparent 1.5px);
+  }
+}
+
+/* Texto con degradado azul (como el mockup) */
+.text-gradient-blue {
+  background: linear-gradient(135deg, #172554 30%, #2563eb 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  .text-gradient-blue {
+    background: linear-gradient(135deg, #e2e8f0 30%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
 }

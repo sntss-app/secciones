@@ -16,26 +16,26 @@ const styles = {
         padding: '2rem 1rem',
     },
     card: {
-        backgroundColor: 'white',
+        backgroundColor: 'var(--sn-surface)',
         borderRadius: '20px',
         boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06)',
         overflow: 'hidden',
         border: 'none',
     },
     cardHeader: {
-        background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%)',
+        background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
         padding: '1.5rem 2rem',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         flexWrap: 'wrap',
         gap: '1rem',
-        borderBottom: '4px solid #3EAEF4',
+        borderBottom: '4px solid #3B82F6',
     },
     cardHeaderTitle: {
         fontSize: '1.5rem',
         fontWeight: 'bold',
-        background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
+        background: 'linear-gradient(135deg, #fff 30%, #93C5FD 100%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
@@ -53,9 +53,9 @@ const styles = {
         alignItems: 'center',
         gap: '1.5rem',
         padding: '1.2rem 1.5rem',
-        backgroundColor: `${color || '#3EAEF4'}10`,
+        backgroundColor: `${color || '#2563EB'}10`,
         borderRadius: '12px',
-        border: `2px solid ${color || '#3EAEF4'}`,
+        border: `2px solid ${color || '#2563EB'}`,
         marginBottom: '1.5rem',
         flexWrap: 'wrap',
     }),
@@ -66,7 +66,7 @@ const styles = {
         borderRadius: '12px',
         border: '2px solid #e9ecef',
         padding: '6px',
-        backgroundColor: 'white',
+        backgroundColor: 'var(--sn-surface)',
     },
     seccionInfo: {
         flex: 1,
@@ -77,7 +77,7 @@ const styles = {
     seccionNombre: (color) => ({
         fontSize: '1.1rem',
         fontWeight: 'bold',
-        color: color || '#0A0F1E',
+        color: color || 'var(--sn-text)',
     }),
     seccionDetalle: {
         fontSize: '0.9rem',
@@ -85,8 +85,8 @@ const styles = {
     },
     // ✅ BOTÓN DE CONVOCATORIA SIEMPRE VISIBLE
     convocatoriaBtn: (color) => ({
-        backgroundColor: color || '#3EAEF4',
-        color: '#0A0F1E',
+        backgroundColor: color || '#2563EB',
+        color: 'var(--sn-text)',
         border: 'none',
         padding: '0.6rem 1.5rem',
         borderRadius: '12px',
@@ -113,12 +113,12 @@ const styles = {
         gap: '0.5rem',
         marginBottom: '1rem',
         paddingBottom: '0.5rem',
-        borderBottom: '2px solid #3EAEF4',
+        borderBottom: '2px solid #2563EB',
     },
     userCardTitle: {
         fontSize: '1rem',
         fontWeight: 'bold',
-        color: '#0A0F1E',
+        color: 'var(--sn-text)',
         margin: 0,
     },
     userDataGrid: {
@@ -140,7 +140,7 @@ const styles = {
     userDataValue: {
         fontSize: '0.95rem',
         fontWeight: '600',
-        color: '#0A0F1E',
+        color: 'var(--sn-text)',
         margin: 0,
     },
     statusCard: (color) => ({
@@ -165,12 +165,12 @@ const styles = {
     calcCard: {
         borderRadius: '16px',
         marginBottom: '1.5rem',
-        border: '2px solid #3EAEF4',
+        border: '2px solid #2563EB',
         overflow: 'hidden',
     },
     calcHeader: {
-        backgroundColor: '#3EAEF4',
-        color: '#0A0F1E',
+        backgroundColor: 'var(--sn-primary)',
+        color: '#fff',
         padding: '0.75rem 1.5rem',
         display: 'flex',
         alignItems: 'center',
@@ -179,7 +179,7 @@ const styles = {
     },
     calcBody: {
         padding: '1.5rem',
-        backgroundColor: '#fff',
+        backgroundColor: 'var(--sn-surface)',
     },
     docCard: {
         borderRadius: '16px',
@@ -198,7 +198,7 @@ const styles = {
     },
     docBody: {
         padding: '1.5rem',
-        backgroundColor: '#fff',
+        backgroundColor: 'var(--sn-surface)',
     },
     inputGroup: {
         marginBottom: '1rem',
@@ -207,7 +207,7 @@ const styles = {
         display: 'block',
         fontWeight: '600',
         fontSize: '0.85rem',
-        color: '#333',
+        color: 'var(--sn-text-muted)',
         marginBottom: '0.3rem',
     },
     input: {
@@ -218,12 +218,12 @@ const styles = {
         borderRadius: '12px',
         transition: 'all 0.3s ease',
         outline: 'none',
-        backgroundColor: 'white',
-        color: '#0A0F1E',
+        backgroundColor: 'var(--sn-surface)',
+        color: 'var(--sn-text)',
     },
     btnPrimary: {
-        backgroundColor: '#3EAEF4',
-        color: '#0A0F1E',
+        backgroundColor: 'var(--sn-primary)',
+        color: '#fff',
         border: 'none',
         padding: '0.7rem 1.5rem',
         borderRadius: '12px',
@@ -283,7 +283,7 @@ const styles = {
         borderRadius: '12px',
         transition: 'all 0.3s ease',
         outline: 'none',
-        backgroundColor: 'white',
+        backgroundColor: 'var(--sn-surface)',
         cursor: 'pointer',
     },
     alertError: {
@@ -329,7 +329,7 @@ const styles = {
     resultMonto: {
         fontSize: '1.8rem',
         fontWeight: 'bold',
-        color: '#0A0F1E',
+        color: 'var(--sn-text)',
     },
 };
 
@@ -398,7 +398,7 @@ const cargarRecursosProceso = useCallback(async (idSeccion) => {
                         id: data.usuario.idSeccion,
                         romano: data.usuario.seccion_romano || 'N/A',
                         nombre: data.usuario.seccion_nombre || 'Sin sección',
-                        color: data.usuario.seccion_color || '#3EAEF4'
+                        color: data.usuario.seccion_color || '#2563EB'
                     });
                     
                     // ✅ Cargar recursos del proceso auto para esta sección
@@ -584,11 +584,11 @@ const cargarRecursosProceso = useCallback(async (idSeccion) => {
                         <span style={styles.badge(color)}>
                             Status: {registroExistente.estatus}
                         </span>
-                        <span style={{ ...styles.badge('#e9ecef'), color: '#333', marginLeft: '0.5rem' }}>
+                        <span style={{ ...styles.badge('#e9ecef'), color: 'var(--sn-text-muted)', marginLeft: '0.5rem' }}>
                             Registrado: {registroExistente.fecha}
                         </span>
                         {registroExistente.fecha_validado && (
-                            <span style={{ ...styles.badge('#e9ecef'), color: '#333', marginLeft: '0.5rem' }}>
+                            <span style={{ ...styles.badge('#e9ecef'), color: 'var(--sn-text-muted)', marginLeft: '0.5rem' }}>
                                 Validado: {registroExistente.fecha_validado}
                             </span>
                         )}
@@ -617,7 +617,7 @@ const cargarRecursosProceso = useCallback(async (idSeccion) => {
         );
     }
 
-    const colorPrincipal = seccionInfo?.color || '#3EAEF4';
+    const colorPrincipal = seccionInfo?.color || '#2563EB';
 
     return (
         <div style={styles.container}>
@@ -678,7 +678,7 @@ const cargarRecursosProceso = useCallback(async (idSeccion) => {
                                     display: 'flex', 
                                     alignItems: 'center', 
                                     justifyContent: 'center', 
-                                    backgroundColor: '#f0f4f8',
+                                    backgroundColor: 'var(--sn-surface-soft)',
                                     fontSize: '40px',
                                     color: colorPrincipal
                                 }}>

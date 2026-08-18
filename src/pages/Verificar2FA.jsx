@@ -110,7 +110,7 @@ const Verificar2FA = () => {
     if (loading) {
         return (
             <div className="text-center py-5">
-                <div className="spinner-border" style={{ color: '#3EAEF4' }} role="status"></div>
+                <div className="spinner-border" style={{ color: '#2563EB' }} role="status"></div>
                 <p className="mt-3">Cargando...</p>
             </div>
         );
