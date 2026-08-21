@@ -202,6 +202,14 @@ const Footer = () => {
             color: '#3EAEF4',
             marginLeft: '5px',
         },
+            academicNote: {
+            fontSize: '18px',        // Más grande que el texto normal
+            color: '#FFF',
+            textAlign: 'center',
+            marginTop: '15px',
+            fontWeight: '500',       // Un poco más grueso
+            lineHeight: '1.6'        // Mejor legibilidad
+        }
     };
 
     const socialStyles = `
@@ -256,6 +264,9 @@ const Footer = () => {
                 </div>
                 <div style={styles.content}>
                     <div style={styles.mainInfo}>
+                        <p style={styles.academicNote}>
+                            Este sitio es un proyecto didáctico desarrollado con fines exclusivamente académicos y escolares.
+                        </p>
                         <h3 style={styles.title}>{getTitulo()}</h3>
                         <p style={styles.slogan}>✨ {getSlogan()}</p>
                         <div style={styles.contactInfo}>

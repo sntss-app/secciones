@@ -236,7 +236,7 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false, 
-        'message' => 'Error al consultar la base de datos: ' . $e->getMessage()
+        'message' => 'El usuario no se encontró en la base de datos: Favor de comunicarse a su sección'
     ]);
 }
 ?>

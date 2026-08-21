@@ -42,7 +42,7 @@ const Dashboard = () => {
     
     const [noticias, setNoticias] = useState([]);
     const [loadingNoticias, setLoadingNoticias] = useState(true);
-    const [tabActiva, setTabActiva] = useState('calculadoras');
+    const [tabActiva, setTabActiva] = useState('cen'); // CAMBIADO: 'cen' por defecto
     
     const [hasAutoValidatorRole, setHasAutoValidatorRole] = useState(() => {
         const roleIds = getStoredRoleIds();
@@ -98,13 +98,11 @@ const Dashboard = () => {
                             id: data.usuario.idSeccion,
                             romano: data.usuario.seccion_romano || seccionGuardada?.romano || 'N/A',
                             nombre: data.usuario.seccion_nombre || seccionGuardada?.nombre || 'Sin sección',
-                            slogan: data.usuario.seccion_slogan || seccionGuardada?.slogan || null,  // ✅ AGREGADO
-                            direccion: data.usuario.seccion_direccion || seccionGuardada?.direccion || null,  // ✅ AGREGADO
+                            slogan: data.usuario.seccion_slogan || seccionGuardada?.slogan || null,
+                            direccion: data.usuario.seccion_direccion || seccionGuardada?.direccion || null,
                             color: data.usuario.seccion_color || seccionGuardada?.color || '#3EAEF4',
                             logo: data.usuario.seccion_logo || assets.logo,
                             banner: data.usuario.seccion_banner || assets.banner,
-                            // No borrar las redes recibidas en Login al refrescar
-                            // el perfil; obtener_perfil.php también las devuelve.
                             redes: data.usuario.redes_sociales ?? seccionGuardada?.redes ?? seccionGuardada?.redes_sociales ?? {}
                         };
                         localStorage.setItem('seccionUsuario', JSON.stringify(seccionData));
@@ -261,11 +259,101 @@ const Dashboard = () => {
         },
     ];
 
-    // ===== RENDER DE PESTAÑAS =====
+    // ===== RENDER DE PESTAÑA CEN (COMITÉ EJECUTIVO NACIONAL) =====
+    const renderTabCEN = () => (
+        <div>
+            <div style={styles.sectionTitle}>
+                <FaNewspaper style={{ color: '#E74C3C' }} /> Noticias del Comité Ejecutivo Nacional
+                <span style={styles.sectionTitleLine} />
+            </div>
+            
+            {/* Aviso importante */}
+            <div style={{
+                backgroundColor: '#FFF3CD',
+                borderLeft: '5px solid #FFC107',
+                padding: '1rem 1.5rem',
+                borderRadius: '12px',
+                marginBottom: '2rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1rem'
+            }}>
+                <FaInfoCircle style={{ fontSize: '1.5rem', color: '#FFC107' }} />
+                <div>
+                    <strong style={{ color: '#856404' }}>Información oficial del CEN</strong>
+                    <p style={{ margin: 0, color: '#856404', fontSize: '0.9rem' }}>
+                        Aquí encontrarás comunicados, convocatorias y noticias de carácter nacional emitidas por el Comité Ejecutivo Nacional.
+                    </p>
+                </div>
+            </div>
+
+            {/* Noticias del CEN */}
+            <div style={styles.gridNoticiasCEN}>
+                <div style={styles.cardNoticiaCEN}>
+                    <div style={styles.cardNoticiaCENIcon}>
+                        <FaRocket style={{ fontSize: '2.5rem', color: '#3EAEF4' }} />
+                    </div>
+                    <h3 style={styles.cardNoticiaCENTitle}>Próximos eventos nacionales</h3>
+                    <p style={styles.cardNoticiaCENDesc}>
+                        Mantente al tanto de los eventos y reuniones nacionales del SNTSS.
+                    </p>
+                    <div style={styles.cardNoticiaCENMeta}>
+                        <span>📅 Fecha por definir</span>
+                    </div>
+                </div>
+
+                <div style={styles.cardNoticiaCEN}>
+                    <div style={styles.cardNoticiaCENIcon}>
+                        <FaShieldAlt style={{ fontSize: '2.5rem', color: '#E74C3C' }} />
+                    </div>
+                    <h3 style={styles.cardNoticiaCENTitle}>Comunicados oficiales</h3>
+                    <p style={styles.cardNoticiaCENDesc}>
+                        Consulta los comunicados y circulares emitidos por la dirigencia nacional.
+                    </p>
+                    <div style={styles.cardNoticiaCENMeta}>
+                        <span>📄 Última actualización: 2026</span>
+                    </div>
+                </div>
+
+                <div style={styles.cardNoticiaCEN}>
+                    <div style={styles.cardNoticiaCENIcon}>
+                        <FaFileContract style={{ fontSize: '2.5rem', color: '#27AE60' }} />
+                    </div>
+                    <h3 style={styles.cardNoticiaCENTitle}>Convocatorias nacionales</h3>
+                    <p style={styles.cardNoticiaCENDesc}>
+                        Participa en las convocatorias y procesos a nivel nacional.
+                    </p>
+                    <div style={styles.cardNoticiaCENMeta}>
+                        <span>📌 Próximamente</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Mensaje para usuarios no logueados */}
+            {!isLoggedIn && (
+                <div style={{
+                    marginTop: '2rem',
+                    padding: '1.5rem',
+                    backgroundColor: 'rgba(62,174,244,0.08)',
+                    borderRadius: '12px',
+                    textAlign: 'center',
+                    border: '1px dashed #3EAEF4'
+                }}>
+                    <p style={{ margin: 0, color: '#6c757d' }}>
+                        🔒 <Link to="/login" style={{ color: '#3EAEF4', fontWeight: 'bold', textDecoration: 'none' }}>
+                            Inicia sesión
+                        </Link> para ver las convocatorias y noticias de tu sección.
+                    </p>
+                </div>
+            )}
+        </div>
+    );
+
+    // ===== RENDER DE PESTAÑA CALCULADORAS =====
     const renderTabCalculadoras = () => (
         <div>
             <div style={styles.sectionTitle}>
-                <FaCalculator style={{ color: '#3EAEF4' }} /> Calculadoras
+                <FaCalculator style={{ color: '#3EAEF4' }} /> Calculadoras y Herramientas
                 <span style={styles.sectionTitleLine} />
             </div>
             <div style={styles.grid}>
@@ -336,6 +424,7 @@ const Dashboard = () => {
         </div>
     );
 
+    // ===== RENDER DE PESTAÑA PROCESO (SECCIÓN) =====
     const renderTabProceso = () => (
     <div>
         {/* ===== GRID RESPONSIVE CON FLEXBOX (Noticias + Sidebar) ===== */}
@@ -344,7 +433,7 @@ const Dashboard = () => {
             <div style={styles.colNoticias}>
                 <div style={styles.cardNoticias}>
                     <div style={styles.cardTitleNoticias}>
-                        <FaNewspaper style={{ color: '#3EAEF4' }} /> Noticias y Avisos
+                        <FaNewspaper style={{ color: '#3EAEF4' }} /> Noticias y Avisos de tu Sección
                     </div>
                     <div style={styles.cardBody}>
                         {loadingNoticias ? (
@@ -381,12 +470,7 @@ const Dashboard = () => {
                                 </div>
                             ))
                         ) : (
-                            <p className="text-muted">No hay noticias disponibles.</p>
-                        )}
-                        {!isLoggedIn && noticias.length > 0 && (
-                            <div style={{ marginTop: '0.5rem', color: '#3EAEF4', fontSize: '0.85rem' }}>
-                                🔒 Inicia sesión para ver todas las noticias
-                            </div>
+                            <p className="text-muted">No hay noticias disponibles para tu sección.</p>
                         )}
                     </div>
                     <div style={styles.cardTitleNoticias}>
@@ -399,7 +483,7 @@ const Dashboard = () => {
             <div style={{ ...styles.colSidebar}}>
                 <div style={styles.sidebar}>
                     <div style={styles.sidebarTitle}>
-                        <FaInfoCircle /> Convocatorias y Procesos
+                        <FaInfoCircle /> Convocatorias y Procesos de tu Sección
                     </div>
                     <p style={{ 
                         fontSize: '0.85rem', 
@@ -743,9 +827,11 @@ const Dashboard = () => {
             border: '1px solid rgba(255,255,255,0.5)',
             boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
             overflow: 'hidden',
-            '@media (max-width: 480px)': {
-                flexDirection: 'column',
-                gap: '0.3rem',
+            flexWrap: 'wrap',
+            '@media (max-width: 768px)': {
+                flexDirection: 'column', // ← CAMBIADO: en móvil se apilan verticalmente
+                gap: '0.4rem',
+                padding: '0.4rem',
             },
         },
         tab: (activa) => ({
@@ -761,14 +847,32 @@ const Dashboard = () => {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '0.5rem',
-            background: activa ? 'linear-gradient(135deg, #3EAEF4, #2d8fd4)' : 'transparent',
+            background: activa ? 'linear-gradient(135deg, #3EAEF4, #2d8fd4)' : 'rgba(255,255,255,0.5)',
             color: activa ? '#0A0F1E' : '#6c757d',
-            boxShadow: activa ? '0 4px 16px rgba(62,174,244,0.3)' : 'none',
-            '@media (max-width: 480px)': {
+            boxShadow: activa ? '0 4px 16px rgba(62,174,244,0.3)' : '0 2px 8px rgba(0,0,0,0.04)',
+            textAlign: 'center',
+            lineHeight: 1.3,
+            borderBottom: activa ? '3px solid #0A0F1E' : '3px solid transparent', // ← AGREGADO: indicador visual
+            position: 'relative',
+            '@media (max-width: 768px)': {
                 width: '100%',
-                padding: '0.6rem 1rem',
-                fontSize: '0.85rem',
+                justifyContent: 'center',
+                fontSize: '0.9rem',
+                padding: '0.7rem 1rem',
+                borderBottom: activa ? '3px solid #0A0F1E' : '1px solid #e9ecef', // ← Separador entre pestañas
+                borderRadius: '10px',
+                background: activa ? 'linear-gradient(135deg, #3EAEF4, #2d8fd4)' : 'rgba(255,255,255,0.6)',
+                boxShadow: activa ? '0 4px 16px rgba(62,174,244,0.3)' : '0 1px 4px rgba(0,0,0,0.04)',
             },
+            '@media (max-width: 480px)': {
+                fontSize: '0.8rem',
+                padding: '0.6rem 0.8rem',
+            },
+            // Efecto hover
+            '&:hover': {
+                background: activa ? 'linear-gradient(135deg, #3EAEF4, #2d8fd4)' : 'rgba(62,174,244,0.08)',
+                transform: 'scale(1.02)',
+            }
         }),
         sectionTitle: {
             fontSize: '1.5rem',
@@ -791,6 +895,43 @@ const Dashboard = () => {
             gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
             gap: '1.5rem',
             marginBottom: '3rem',
+        },
+        gridNoticiasCEN: {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: '1.5rem',
+            marginBottom: '2rem',
+        },
+        cardNoticiaCEN: {
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '1.8rem 1.5rem',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+            border: '1px solid rgba(255,255,255,0.5)',
+            textAlign: 'center',
+            transition: 'all 0.3s ease',
+        },
+        cardNoticiaCENIcon: {
+            marginBottom: '1rem',
+        },
+        cardNoticiaCENTitle: {
+            fontSize: '1.1rem',
+            fontWeight: 'bold',
+            color: '#0A0F1E',
+            marginBottom: '0.5rem',
+        },
+        cardNoticiaCENDesc: {
+            fontSize: '0.9rem',
+            color: '#6c757d',
+            lineHeight: 1.5,
+            marginBottom: '0.8rem',
+        },
+        cardNoticiaCENMeta: {
+            fontSize: '0.8rem',
+            color: '#adb5bd',
+            borderTop: '1px solid #e9ecef',
+            paddingTop: '0.8rem',
         },
         card: {
             backgroundColor: 'rgba(255,255,255,0.9)',
@@ -1103,6 +1244,14 @@ const Dashboard = () => {
             border: '1px solid rgba(255,255,255,0.1)',
             transition: 'all 0.3s ease',
         },
+        academicNote: {
+            fontSize: '16px',
+            color: '#FFF',
+            textAlign: 'center',
+            marginTop: '10px',
+            fontStyle: 'italic',
+            letterSpacing: '0.3px',
+        },
         bannerImageContent: {
             width: '100%',
             height: 'auto',
@@ -1121,16 +1270,13 @@ const Dashboard = () => {
 
     // ✅ Determinar la URL del banner según la sesión
     const getBannerUrl = () => {
-        // Si hay sección y tiene banner
         if (seccionUsuario?.banner) {
             console.log('📸 Banner de sección:', seccionUsuario.banner);
             return seccionUsuario.banner;
         }
-        // Si no, usar el banner por defecto
         console.log('📸 Banner por defecto');
         return '/images/seccionesBanner/bannerD.jpg';
     };
-
 
     // ✅ Determinar el título del banner
     const getBannerTitle = () => {
@@ -1160,11 +1306,14 @@ const Dashboard = () => {
                 <div style={styles.heroGlow} />
                 <div style={styles.heroContent}>
                     <div style={styles.heroLeft}>
+                        <p style={styles.academicNote}>
+                            Este sitio es un proyecto didáctico desarrollado con fines exclusivamente académicos y escolares.
+                        </p>
                         <h1 style={styles.heroTitle}>
                             {isLoggedIn ? `¡Bienvenido, ${userName}!` : 'SNTSS'}
                         </h1>
                         <p style={styles.heroSubtitle}>
-                            Comité Ejecutivo Seccional al Servicio de los trabajadores
+                            Comité Ejecutivo Nacional al Servicio de los trabajadores
                         </p>
                         
                         {/* ✅ MOSTRAR LA SECCIÓN DEL USUARIO DEBAJO DEL NOMBRE (solo si está logueado) */}
@@ -1257,21 +1406,94 @@ const Dashboard = () => {
             {/* ===== TABS ===== */}
             <div style={styles.tabsContainer}>
                 <button 
+                    style={styles.tab(tabActiva === 'cen')}
+                    onClick={() => setTabActiva('cen')}
+                    onMouseEnter={(e) => {
+                        if (tabActiva !== 'cen') {
+                            e.currentTarget.style.background = 'rgba(62,174,244,0.08)';
+                            e.currentTarget.style.transform = 'scale(1.02)';
+                        }
+                    }}
+                    onMouseLeave={(e) => {
+                        if (tabActiva !== 'cen') {
+                            e.currentTarget.style.background = 'rgba(255,255,255,0.5)';
+                            e.currentTarget.style.transform = 'scale(1)';
+                        }
+                    }}
+                >
+                    <FaNewspaper style={{ 
+                        fontSize: '1.3rem', 
+                        flexShrink: 0,
+                        color: tabActiva === 'cen' ? '#0A0F1E' : '#3EAEF4'
+                    }} /> 
+                    <span style={{ display: 'inline-block' }}>
+                        Noticias relevantes del<br /> Comité Ejecutivo Nacional
+                    </span>
+                </button>
+                
+                <button 
                     style={styles.tab(tabActiva === 'calculadoras')}
                     onClick={() => setTabActiva('calculadoras')}
+                    onMouseEnter={(e) => {
+                        if (tabActiva !== 'calculadoras') {
+                            e.currentTarget.style.background = 'rgba(62,174,244,0.08)';
+                            e.currentTarget.style.transform = 'scale(1.02)';
+                        }
+                    }}
+                    onMouseLeave={(e) => {
+                        if (tabActiva !== 'calculadoras') {
+                            e.currentTarget.style.background = 'rgba(255,255,255,0.5)';
+                            e.currentTarget.style.transform = 'scale(1)';
+                        }
+                    }}
                 >
-                    <FaCalculator /> Calculadoras y Herramientas
+                    <FaCalculator style={{ 
+                        fontSize: '1.3rem', 
+                        flexShrink: 0,
+                        color: tabActiva === 'calculadoras' ? '#0A0F1E' : '#3EAEF4'
+                    }} /> 
+                    <span style={{ display: 'inline-block' }}>
+                        Calculadoras y <br /> Herramientas
+                    </span>
                 </button>
+                
                 <button 
                     style={styles.tab(tabActiva === 'proceso')}
-                    onClick={() => setTabActiva('proceso')}
+                    onClick={() => {
+                        if (!isLoggedIn) {
+                            window.location.href = '/login';
+                            return;
+                        }
+                        setTabActiva('proceso');
+                    }}
+                    onMouseEnter={(e) => {
+                        if (tabActiva !== 'proceso') {
+                            e.currentTarget.style.background = 'rgba(62,174,244,0.08)';
+                            e.currentTarget.style.transform = 'scale(1.02)';
+                        }
+                    }}
+                    onMouseLeave={(e) => {
+                        if (tabActiva !== 'proceso') {
+                            e.currentTarget.style.background = 'rgba(255,255,255,0.5)';
+                            e.currentTarget.style.transform = 'scale(1)';
+                        }
+                    }}
                 >
-                    <FaClipboardList /> Proceso y Noticias
+                    <FaClipboardList style={{ 
+                        fontSize: '1.3rem', 
+                        flexShrink: 0,
+                        color: tabActiva === 'proceso' ? '#0A0F1E' : '#3EAEF4'
+                    }} /> 
+                    <span style={{ display: 'inline-block' }}>
+                        Convocatorias y <br /> Noticias de tu sección
+                    </span>
                 </button>
             </div>
 
             {/* ===== CONTENIDO DE LAS TABS ===== */}
-            {tabActiva === 'calculadoras' ? renderTabCalculadoras() : renderTabProceso()}
+            {tabActiva === 'cen' ? renderTabCEN() : 
+             tabActiva === 'calculadoras' ? renderTabCalculadoras() : 
+             renderTabProceso()}
 
             {/* ===== MODAL DE CALCULADORA ===== */}
             <Modal show={showModal} onHide={cerrarCalculadora} centered size="lg">

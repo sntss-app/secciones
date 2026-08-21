@@ -164,6 +164,10 @@ const Navbar = () => {
             .navbar-socials {
                 display: none !important;
             }
+            .navbar-subtitle {
+                font-size: 0.5rem !important;
+                max-width: 150px !important;
+            }
         }
         @media (max-width: 480px) {
             .navbar-title {
@@ -171,6 +175,10 @@ const Navbar = () => {
             }
             .navbar-badge {
                 font-size: 0.6rem !important;
+            }
+            .navbar-subtitle {
+                font-size: 0.45rem !important;
+                max-width: 120px !important;
             }
         }
     `;
@@ -199,6 +207,8 @@ const Navbar = () => {
             alignItems: 'center',
             gap: '1rem',
             cursor: 'pointer',
+            textDecoration: 'none',
+            flex: '1 1 auto',
         },
         logo: {
             height: '55px',
@@ -211,6 +221,7 @@ const Navbar = () => {
         titleContainer: {
             display: 'flex',
             flexDirection: 'column',
+            lineHeight: 1.2,
         },
         title: {
             fontSize: '1.4rem',
@@ -221,6 +232,18 @@ const Navbar = () => {
             backgroundClip: 'text',
             letterSpacing: '1px',
             margin: 0,
+        },
+        subtitle: {
+            fontSize: '0.55rem',
+            color: '#8ac4f0',
+            fontWeight: '400',
+            fontStyle: 'italic',
+            letterSpacing: '0.3px',
+            borderTop: '1px solid rgba(255,255,255,0.08)',
+            paddingTop: '2px',
+            marginTop: '2px',
+            maxWidth: '300px',
+            opacity: 0.9,
         },
         badge: {
             fontSize: '0.7rem',
@@ -310,19 +333,36 @@ const Navbar = () => {
         },
     };
 
-    // ✅ Determinar el título y badge según la sesión
+    // ✅ DETERMINAR EL TÍTULO Y SUBTÍTULO
     const getTitulo = () => {
         if (!isLoggedIn) {
             return 'SNTSS';
         }
-        return `SNTSS Sección ${seccionUsuario?.romano || 'XXXIII'}`;
+        if (seccionUsuario?.romano) {
+            return `SNTSS Sección ${seccionUsuario.romano}`;
+        }
+        return 'SNTSS';
     };
 
     const getBadge = () => {
         if (!isLoggedIn) {
-            return '"Sindicato Nacional de Trabajadores del Seguro Social"';
+            return 'Sindicato Nacional de Trabajadores del Seguro Social';
         }
         return seccionUsuario?.nombre || 'Sindicato Nacional de Trabajadores del Seguro Social';
+    };
+
+    // ✅ NUEVA FUNCIÓN PARA EL SUBTÍTULO ACADÉMICO
+    const getSubtitulo = () => {
+        if (!isLoggedIn) {
+            return '📘 Proyecto didáctico - Fines académicos y escolares';
+        }
+        if (seccionUsuario?.slogan) {
+            return `"${seccionUsuario.slogan}"`;
+        }
+        if (seccionUsuario?.nombre) {
+            return `"${seccionUsuario.nombre}"`;
+        }
+        return '📘 Proyecto didáctico - Fines académicos y escolares';
     };
 
     // ✅ REDES SOCIALES DEL NAVBAR (dinámicas o fallback)
@@ -335,7 +375,7 @@ const Navbar = () => {
             <nav style={styles.navbar}>
                 <div style={styles.container} className="navbar-container">
                     {/* ✅ LOGO DINÁMICO SEGÚN SECCIÓN */}
-                    <div style={styles.logoContainer} onClick={() => navigate('/')}>
+                    <Link to="/" style={styles.logoContainer}>
                         <img 
                             src={logo} 
                             alt={getTitulo()}
@@ -352,8 +392,12 @@ const Navbar = () => {
                             <span style={styles.badge} className="navbar-badge">
                                 ✨ {getBadge()}
                             </span>
+                            {/* ✅ SUBTÍTULO ACADÉMICO */}
+                            <span style={styles.subtitle} className="navbar-subtitle">
+                                {getSubtitulo()}
+                            </span>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* ✅ REDES SOCIALES DINÁMICAS EN EL NAVBAR */}
                     <div style={styles.socials} className="navbar-socials">
