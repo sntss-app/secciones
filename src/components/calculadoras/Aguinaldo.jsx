@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaCalculator, FaGift, FaCalendarAlt, FaMoneyBillWave, FaInfoCircle } from 'react-icons/fa';
+import { FaGift, FaInfoCircle, FaCalculator } from 'react-icons/fa';
 
 const Aguinaldo = () => {
     const [c02, setC02] = useState('');
@@ -11,8 +11,8 @@ const Aguinaldo = () => {
         const c02Num = parseFloat(c02);
         const c11Num = parseFloat(c11);
         
-        if (isNaN(c02Num) || isNaN(c11Num)) {
-            alert('Ingresa los conceptos 002 y 011.');
+        if (isNaN(c02Num) || isNaN(c11Num) || c02Num <= 0 || c11Num <= 0) {
+            alert('Ingresa montos válidos para los conceptos 002 y 011.');
             return;
         }
 
@@ -35,315 +35,98 @@ const Aguinaldo = () => {
         minimumFractionDigits: 2
     });
 
-    const styles = {
-        container: {
-            padding: '1.5rem',
-            background: 'rgba(255,255,255,0.9)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255,255,255,0.5)',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-        },
-        header: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.8rem',
-            marginBottom: '1.5rem',
-            paddingBottom: '0.5rem',
-            borderBottom: '3px solid #3EAEF4',
-        },
-        headerIcon: {
-            fontSize: '2rem',
-            color: '#3EAEF4',
-        },
-        headerTitle: {
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #0A0F1E, #3EAEF4)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            margin: 0,
-        },
-        headerSubtitle: {
-            color: '#6c757d',
-            fontSize: '0.85rem',
-            marginTop: '0.2rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-        },
-        infoBox: {
-            backgroundColor: 'rgba(62,174,244,0.08)',
-            borderLeft: '4px solid #3EAEF4',
-            padding: '0.8rem 1rem',
-            borderRadius: '8px',
-            marginBottom: '1.5rem',
-            fontSize: '0.85rem',
-            color: '#495057',
-        },
-        grid: {
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '1rem',
-            marginBottom: '1rem',
-        },
-        inputGroup: {
-            marginBottom: '1rem',
-        },
-        label: {
-            display: 'block',
-            fontWeight: '600',
-            fontSize: '0.85rem',
-            color: '#0A0F1E',
-            marginBottom: '0.3rem',
-        },
-        labelIcon: {
-            marginRight: '0.3rem',
-            color: '#3EAEF4',
-        },
-        input: {
-            width: '100%',
-            padding: '0.6rem 1rem',
-            fontSize: '0.95rem',
-            border: '1px solid #ddd',
-            borderRadius: '10px',
-            outline: 'none',
-            transition: 'all 0.3s ease',
-            backgroundColor: 'white',
-            color: '#0A0F1E',
-        },
-        inputFull: {
-            gridColumn: '1 / -1',
-        },
-        button: {
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
-            border: 'none',
-            padding: '0.7rem 1.5rem',
-            borderRadius: '12px',
-            fontWeight: 'bold',
-            fontSize: '0.95rem',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            width: '100%',
-            marginTop: '0.5rem',
-        },
-        resultadoContainer: {
-            marginTop: '1.5rem',
-            padding: '1.25rem',
-            backgroundColor: '#f8fafc',
-            borderRadius: '12px',
-            border: '1px solid #e9ecef',
-        },
-        resultadoTitle: {
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginBottom: '1rem',
-            color: '#0A0F1E',
-            fontSize: '1rem',
-        },
-        resultadoItem: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '0.6rem 1rem',
-            borderBottom: '1px solid #e9ecef',
-            alignItems: 'center',
-        },
-        resultadoItemLast: {
-            borderBottom: 'none',
-        },
-        resultadoLabel: {
-            color: '#495057',
-            fontSize: '0.9rem',
-        },
-        resultadoMonto: {
-            fontWeight: 'bold',
-            fontSize: '1.1rem',
-            color: '#003c82',
-        },
-        resultadoMontoVerde: {
-            fontWeight: 'bold',
-            fontSize: '1.1rem',
-            color: '#28a745',
-        },
-        resultadoTotal: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '0.8rem 1rem',
-            backgroundColor: 'rgba(62,174,244,0.08)',
-            borderRadius: '8px',
-            marginTop: '0.5rem',
-            alignItems: 'center',
-        },
-        resultadoTotalLabel: {
-            fontWeight: 'bold',
-            color: '#0A0F1E',
-            fontSize: '1rem',
-        },
-        resultadoTotalMonto: {
-            fontWeight: 'bold',
-            fontSize: '1.2rem',
-            color: '#003c82',
-        },
-        smallText: {
-            display: 'block',
-            textAlign: 'center',
-            color: '#6c757d',
-            fontSize: '0.75rem',
-            marginTop: '0.8rem',
-            fontStyle: 'italic',
-        },
-        // Responsive
-        '@media (max-width: 480px)': {
-            grid: {
-                gridTemplateColumns: '1fr',
-            },
-        },
-    };
-
     return (
-        <div style={styles.container}>
-            {/* Header */}
-            <div style={styles.header}>
-                <FaGift style={styles.headerIcon} />
+        <div className="space-y-4">
+            <div className="flex items-center space-x-3 pb-3 border-b border-slate-100">
+                <div className="w-12 h-12 bg-orange-500 rounded-2xl flex items-center justify-center text-white text-xl shadow-md shadow-orange-500/30">
+                    <FaGift />
+                </div>
                 <div>
-                    <h3 style={styles.headerTitle}>Aguinaldo</h3>
-                    <div style={styles.headerSubtitle}>
-                        <FaInfoCircle size={12} /> Concepto 049 - 90 días de sueldo proporcional
-                    </div>
+                    <h3 className="text-lg font-black text-[#486DAA] m-0">Estimador de Gratificación Anual / Aguinaldo</h3>
+                    <p className="text-xs text-slate-500 m-0">Cálculo de entregas (Enero, Agosto y Diciembre)</p>
                 </div>
             </div>
 
-            {/* Info Box */}
-            <div style={styles.infoBox}>
-                <FaInfoCircle style={{ color: '#3EAEF4', marginRight: '0.5rem' }} />
-                El aguinaldo se calcula con base en el sueldo diario integrado. 
-                Incluye concepto 002 + 011 (el 011 se multiplica por 2 por ser bono quincenal).
+            <div className="p-3.5 bg-orange-50/80 rounded-2xl border border-orange-200 text-xs text-orange-900 flex items-start space-x-2.5">
+                <FaInfoCircle className="text-base text-orange-600 flex-shrink-0 mt-0.5" />
+                <div className="leading-relaxed">
+                    Estimación proporcional de gratificación y aguinaldo según CCT y días laborados en el año.
+                </div>
             </div>
 
-            {/* Formulario */}
-            <div style={styles.grid}>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>
-                        <FaMoneyBillWave style={styles.labelIcon} /> Concepto 002
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                    <label className="block text-xs font-bold text-[#486DAA] mb-1 pl-2">
+                        Concepto 002
                     </label>
                     <input 
-                        type="number" 
-                        style={styles.input} 
-                        value={c02} 
-                        onChange={(e) => setC02(e.target.value)} 
-                        placeholder="Ej: 2437.73"
-                        onFocus={(e) => {
-                            e.target.style.borderColor = '#3EAEF4';
-                            e.target.style.boxShadow = '0 0 0 3px rgba(62,174,244,0.15)';
-                        }}
-                        onBlur={(e) => {
-                            e.target.style.borderColor = '#ddd';
-                            e.target.style.boxShadow = 'none';
-                        }}
+                        type="number"
+                        step="0.01"
+                        value={c02}
+                        onChange={(e) => setC02(e.target.value)}
+                        placeholder="Sueldo"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-full py-2 px-3 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA]"
                     />
                 </div>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>
-                        <FaMoneyBillWave style={styles.labelIcon} /> Concepto 011
+
+                <div>
+                    <label className="block text-xs font-bold text-[#486DAA] mb-1 pl-2">
+                        Concepto 011
                     </label>
                     <input 
-                        type="number" 
-                        style={styles.input} 
-                        value={c11} 
-                        onChange={(e) => setC11(e.target.value)} 
-                        placeholder="Ej: 2002.60"
-                        onFocus={(e) => {
-                            e.target.style.borderColor = '#3EAEF4';
-                            e.target.style.boxShadow = '0 0 0 3px rgba(62,174,244,0.15)';
-                        }}
-                        onBlur={(e) => {
-                            e.target.style.borderColor = '#ddd';
-                            e.target.style.boxShadow = 'none';
-                        }}
+                        type="number"
+                        step="0.01"
+                        value={c11}
+                        onChange={(e) => setC11(e.target.value)}
+                        placeholder="Renta"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-full py-2 px-3 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA]"
                     />
                 </div>
-                <div style={{ ...styles.inputGroup, ...styles.inputFull }}>
-                    <label style={styles.label}>
-                        <FaCalendarAlt style={styles.labelIcon} /> Días trabajados
+
+                <div>
+                    <label className="block text-xs font-bold text-[#486DAA] mb-1 pl-2">
+                        Días Laborados
                     </label>
                     <input 
-                        type="number" 
-                        style={styles.input} 
-                        value={dias} 
-                        onChange={(e) => setDias(Number(e.target.value))}
-                        onFocus={(e) => {
-                            e.target.style.borderColor = '#3EAEF4';
-                            e.target.style.boxShadow = '0 0 0 3px rgba(62,174,244,0.15)';
-                        }}
-                        onBlur={(e) => {
-                            e.target.style.borderColor = '#ddd';
-                            e.target.style.boxShadow = 'none';
-                        }}
+                        type="number"
+                        value={dias}
+                        onChange={(e) => setDias(e.target.value)}
+                        placeholder="365"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-full py-2 px-3 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA]"
                     />
                 </div>
             </div>
 
-            {/* Botón Calcular */}
             <button 
-                style={styles.button}
+                type="button"
                 onClick={calcular}
-                onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(62,174,244,0.3)';
-                }}
-                onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                }}
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-3 px-6 rounded-full shadow-md shadow-orange-500/30 hover:scale-[1.01] transition duration-200 text-xs flex items-center justify-center space-x-2 border-0 cursor-pointer"
             >
-                <FaCalculator /> Calcular Aguinaldo
+                <FaCalculator />
+                <span>Calcular Aguinaldo y Gratificaciones</span>
             </button>
 
-            {/* Resultados */}
             {resultado && (
-                <div style={styles.resultadoContainer}>
-                    <div style={styles.resultadoTitle}>
-                        <FaGift style={{ color: '#3EAEF4', marginRight: '0.5rem' }} />
-                        Montos estimados
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
+                        <span className="text-[9px] font-extrabold text-slate-500 uppercase block mb-1">Enero (15d)</span>
+                        <span className="text-sm font-black text-slate-800 block">{formatter.format(resultado.enero)}</span>
                     </div>
 
-                    <div style={styles.resultadoItem}>
-                        <span style={styles.resultadoLabel}>Anticipo enero (15 días)</span>
-                        <span style={styles.resultadoMonto}>{formatter.format(resultado.enero)}</span>
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
+                        <span className="text-[9px] font-extrabold text-slate-500 uppercase block mb-1">Agosto (30d)</span>
+                        <span className="text-sm font-black text-slate-800 block">{formatter.format(resultado.agosto)}</span>
                     </div>
 
-                    <div style={styles.resultadoItem}>
-                        <span style={styles.resultadoLabel}>Adelanto agosto (30 días)</span>
-                        <span style={styles.resultadoMonto}>{formatter.format(resultado.agosto)}</span>
+                    <div className="p-3 bg-orange-50 rounded-xl border border-orange-200 text-center">
+                        <span className="text-[9px] font-extrabold text-orange-700 uppercase block mb-1">Dic c/anticipo</span>
+                        <span className="text-sm font-black text-orange-600 block">{formatter.format(resultado.diciembreCon)}</span>
                     </div>
 
-                    <div style={styles.resultadoItem}>
-                        <span style={styles.resultadoLabel}>Diciembre (con adelanto)</span>
-                        <span style={styles.resultadoMonto}>{formatter.format(resultado.diciembreCon)}</span>
+                    <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-center">
+                        <span className="text-[9px] font-extrabold text-emerald-700 uppercase block mb-1">Dic s/anticipo</span>
+                        <span className="text-sm font-black text-emerald-600 block">{formatter.format(resultado.diciembreSin)}</span>
                     </div>
-
-                    <div style={{ ...styles.resultadoItem, ...styles.resultadoItemLast }}>
-                        <span style={styles.resultadoLabel}>Diciembre (sin adelanto)</span>
-                        <span style={styles.resultadoMontoVerde}>{formatter.format(resultado.diciembreSin)}</span>
-                    </div>
-
-                    <div style={styles.resultadoTotal}>
-                        <span style={styles.resultadoTotalLabel}>Total estimado</span>
-                        <span style={styles.resultadoTotalMonto}>
-                            {formatter.format(resultado.diciembreSin)}
-                        </span>
-                    </div>
-
-                    <small style={styles.smallText}>
-                        * Cálculo estimado basado en los datos proporcionados. 
-                        Puede variar según incidencias y prestaciones adicionales.
-                    </small>
                 </div>
             )}
         </div>

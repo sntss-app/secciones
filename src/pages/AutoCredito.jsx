@@ -1,878 +1,345 @@
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
     FaCar, FaFilePdf, FaUser, FaCalculator, FaCheckCircle, 
     FaExclamationTriangle, FaArrowLeft, FaInfoCircle, FaSync, 
     FaTimesCircle, FaClock, FaIdCard, FaBuilding, FaUserAlt,
-    FaDownload
+    FaDownload, FaUpload
 } from 'react-icons/fa';
 import { apiUrl } from '../config';
-
-// Estilos en linea
-const styles = {
-    container: {
-        maxWidth: '900px',
-        margin: '0 auto',
-        padding: '2rem 1rem',
-    },
-    card: {
-        backgroundColor: 'white',
-        borderRadius: '20px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06)',
-        overflow: 'hidden',
-        border: 'none',
-    },
-    cardHeader: {
-        background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%)',
-        padding: '1.5rem 2rem',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: '1rem',
-        borderBottom: '4px solid #3EAEF4',
-    },
-    cardHeaderTitle: {
-        fontSize: '1.5rem',
-        fontWeight: 'bold',
-        background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text',
-        margin: 0,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-    },
-    cardBody: {
-        padding: '2rem',
-    },
-    // ✅ BANNER DE SECCIÓN (siempre visible)
-    seccionBanner: (color) => ({
-        display: 'flex',
-        alignItems: 'center',
-        gap: '1.5rem',
-        padding: '1.2rem 1.5rem',
-        backgroundColor: `${color || '#3EAEF4'}10`,
-        borderRadius: '12px',
-        border: `2px solid ${color || '#3EAEF4'}`,
-        marginBottom: '1.5rem',
-        flexWrap: 'wrap',
-    }),
-    seccionLogo: {
-        height: '80px',
-        width: '80px',
-        objectFit: 'contain',
-        borderRadius: '12px',
-        border: '2px solid #e9ecef',
-        padding: '6px',
-        backgroundColor: 'white',
-    },
-    seccionInfo: {
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '0.2rem',
-    },
-    seccionNombre: (color) => ({
-        fontSize: '1.1rem',
-        fontWeight: 'bold',
-        color: color || '#0A0F1E',
-    }),
-    seccionDetalle: {
-        fontSize: '0.9rem',
-        color: '#6c757d',
-    },
-    // ✅ BOTÓN DE CONVOCATORIA SIEMPRE VISIBLE
-    convocatoriaBtn: (color) => ({
-        backgroundColor: color || '#3EAEF4',
-        color: '#0A0F1E',
-        border: 'none',
-        padding: '0.6rem 1.5rem',
-        borderRadius: '12px',
-        fontWeight: 'bold',
-        fontSize: '0.9rem',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        textDecoration: 'none',
-        whiteSpace: 'nowrap',
-    }),
-    userCard: {
-        backgroundColor: '#f8f9fa',
-        borderRadius: '16px',
-        padding: '1.5rem',
-        marginBottom: '1.5rem',
-        border: '1px solid #e9ecef',
-    },
-    userCardHeader: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        marginBottom: '1rem',
-        paddingBottom: '0.5rem',
-        borderBottom: '2px solid #3EAEF4',
-    },
-    userCardTitle: {
-        fontSize: '1rem',
-        fontWeight: 'bold',
-        color: '#0A0F1E',
-        margin: 0,
-    },
-    userDataGrid: {
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '0.5rem 1.5rem',
-    },
-    userDataItem: {
-        display: 'flex',
-        flexDirection: 'column',
-    },
-    userDataLabel: {
-        fontSize: '0.7rem',
-        fontWeight: '600',
-        color: '#6c757d',
-        textTransform: 'uppercase',
-        letterSpacing: '0.3px',
-    },
-    userDataValue: {
-        fontSize: '0.95rem',
-        fontWeight: '600',
-        color: '#0A0F1E',
-        margin: 0,
-    },
-    statusCard: (color) => ({
-        borderRadius: '16px',
-        marginBottom: '1.5rem',
-        border: `2px solid ${color}`,
-        overflow: 'hidden',
-    }),
-    statusHeader: (color) => ({
-        backgroundColor: color,
-        color: 'white',
-        padding: '0.75rem 1.5rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        fontWeight: 'bold',
-    }),
-    statusBody: {
-        padding: '1.5rem',
-        backgroundColor: '#f8f9fa',
-    },
-    calcCard: {
-        borderRadius: '16px',
-        marginBottom: '1.5rem',
-        border: '2px solid #3EAEF4',
-        overflow: 'hidden',
-    },
-    calcHeader: {
-        backgroundColor: '#3EAEF4',
-        color: '#0A0F1E',
-        padding: '0.75rem 1.5rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        fontWeight: 'bold',
-    },
-    calcBody: {
-        padding: '1.5rem',
-        backgroundColor: '#fff',
-    },
-    docCard: {
-        borderRadius: '16px',
-        marginBottom: '1.5rem',
-        border: '1px solid #e9ecef',
-        overflow: 'hidden',
-    },
-    docHeader: {
-        backgroundColor: '#6c757d',
-        color: 'white',
-        padding: '0.75rem 1.5rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        fontWeight: 'bold',
-    },
-    docBody: {
-        padding: '1.5rem',
-        backgroundColor: '#fff',
-    },
-    inputGroup: {
-        marginBottom: '1rem',
-    },
-    label: {
-        display: 'block',
-        fontWeight: '600',
-        fontSize: '0.85rem',
-        color: '#333',
-        marginBottom: '0.3rem',
-    },
-    input: {
-        width: '100%',
-        padding: '0.6rem 1rem',
-        fontSize: '1rem',
-        border: '1px solid #ddd',
-        borderRadius: '12px',
-        transition: 'all 0.3s ease',
-        outline: 'none',
-        backgroundColor: 'white',
-        color: '#0A0F1E',
-    },
-    btnPrimary: {
-        backgroundColor: '#3EAEF4',
-        color: '#0A0F1E',
-        border: 'none',
-        padding: '0.7rem 1.5rem',
-        borderRadius: '12px',
-        fontWeight: 'bold',
-        fontSize: '1rem',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.5rem',
-    },
-    btnSuccess: {
-        backgroundColor: '#28a745',
-        color: 'white',
-        border: 'none',
-        padding: '0.7rem 1.5rem',
-        borderRadius: '12px',
-        fontWeight: 'bold',
-        fontSize: '1rem',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.5rem',
-        width: '100%',
-    },
-    btnOutline: {
-        backgroundColor: 'transparent',
-        color: '#6c757d',
-        border: '1px solid #ddd',
-        padding: '0.7rem 1.5rem',
-        borderRadius: '12px',
-        fontWeight: 'bold',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.5rem',
-        textDecoration: 'none',
-    },
-    flexRow: {
-        display: 'flex',
-        gap: '0.5rem',
-        marginTop: '1rem',
-    },
-    flexGrow: {
-        flex: 1,
-    },
-    fileInput: {
-        width: '100%',
-        padding: '0.6rem 1rem',
-        fontSize: '1rem',
-        border: '1px solid #ddd',
-        borderRadius: '12px',
-        transition: 'all 0.3s ease',
-        outline: 'none',
-        backgroundColor: 'white',
-        cursor: 'pointer',
-    },
-    alertError: {
-        backgroundColor: '#fee2e2',
-        color: '#dc2626',
-        padding: '0.75rem 1rem',
-        borderRadius: '12px',
-        marginBottom: '1.5rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        fontSize: '0.9rem',
-    },
-    alertSuccess: {
-        backgroundColor: '#d4edda',
-        color: '#155724',
-        padding: '0.75rem 1rem',
-        borderRadius: '12px',
-        marginBottom: '1.5rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        fontSize: '0.9rem',
-    },
-    badge: (color) => ({
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '0.3rem',
-        padding: '0.3rem 0.8rem',
-        borderRadius: '20px',
-        fontSize: '0.75rem',
-        fontWeight: 'bold',
-        backgroundColor: color,
-        color: 'white',
-    }),
-    resultBox: {
-        backgroundColor: '#e9ecef',
-        borderRadius: '12px',
-        padding: '1rem',
-        textAlign: 'center',
-        marginTop: '1rem',
-    },
-    resultMonto: {
-        fontSize: '1.8rem',
-        fontWeight: 'bold',
-        color: '#0A0F1E',
-    },
-};
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const AutoCredito = () => {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
-    const [errorMsg, setErrorMsg] = useState('');
-    const [successMsg, setSuccessMsg] = useState('');
-    
-    const [userData, setUserData] = useState(() => ({
-        matricula: localStorage.getItem('matricula') || '',
-        nombre: localStorage.getItem('nombre') || '',
-        adscripcion: localStorage.getItem('adscripcion') || '',
-        categoria: localStorage.getItem('categoria') || ''
-    }));
-
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [usuario, setUsuario] = useState(null);
     const [registroExistente, setRegistroExistente] = useState(null);
-    const [cargandoRegistro, setCargandoRegistro] = useState(true);
-    
-    // ✅ NUEVOS ESTADOS para convocatoria y logo
-    const [convocatoriaUrl, setConvocatoriaUrl] = useState(null);
-    const [logoAutoUrl, setLogoAutoUrl] = useState(null);
-    const [seccionInfo, setSeccionInfo] = useState(null);
-
-    const [tarjetonFile, setTarjetonFile] = useState(null);
-    const [ineFile, setIneFile] = useState(null);
-    const [tarjetonName, setTarjetonName] = useState('');
-    const [ineName, setIneName] = useState('');
-
     const [c02, setC02] = useState('');
     const [c11, setC11] = useState('');
-    const [montoAuto, setMontoAuto] = useState(null);
-    const [mostrarResultado, setMostrarResultado] = useState(false);
+    const [montoMaximo, setMontoMaximo] = useState(0);
+    const [montoCalculado, setMontoCalculado] = useState(false);
 
-    // ✅ Cargar recursos del proceso auto para la sección del usuario
-const cargarRecursosProceso = useCallback(async (idSeccion) => {
-    if (!idSeccion) return;
-    try {
-        const response = await fetch(apiUrl(`/obtener_recursos_proceso.php?idSeccion=${idSeccion}&proceso=auto`));
-        const data = await response.json();
-        if (data.success) {
-            setConvocatoriaUrl(data.convocatoria_url || null);
-            setLogoAutoUrl(data.logo_url || null);
-        }
-    } catch (error) {
-        console.error('Error cargando recursos del proceso:', error);
-    }
-}, []);
+    // Archivos
+    const [tarjetonFile, setTarjetonFile] = useState(null);
+    const [ineFrenteFile, setIneFrenteFile] = useState(null);
+    const [ineReversoFile, setIneReversoFile] = useState(null);
+    const [comprobanteFile, setComprobanteFile] = useState(null);
 
-    // ✅ cargarDatosUsuario (limpio y sin duplicados)
-    const cargarDatosUsuario = useCallback(async (matricula) => {
+    const matricula = localStorage.getItem('matricula');
+
+    const cargarDatos = useCallback(async () => {
+        setLoading(true);
         try {
-            const response = await fetch(apiUrl(`/obtener_perfil.php?matricula=${matricula}`));
-            const data = await response.json();
-            if (data.success) {
-                setUserData({
-                    matricula: data.usuario.matricula,
-                    nombre: data.usuario.nombre,
-                    adscripcion: data.usuario.adscripcion || '',
-                    categoria: data.usuario.categoria || ''
-                });
-                
-                // ✅ Guardar info de la sección
-                if (data.usuario.idSeccion) {
-                    setSeccionInfo({
-                        id: data.usuario.idSeccion,
-                        romano: data.usuario.seccion_romano || 'N/A',
-                        nombre: data.usuario.seccion_nombre || 'Sin sección',
-                        color: data.usuario.seccion_color || '#3EAEF4'
-                    });
-                    
-                    // ✅ Cargar recursos del proceso auto para esta sección
-                    cargarRecursosProceso(data.usuario.idSeccion);
-                }
+            // 1. Cargar perfil
+            const resPerfil = await fetch(apiUrl(`/obtener_perfil.php?matricula=${matricula}`));
+            const dataPerfil = await resPerfil.json();
+            if (dataPerfil.success) {
+                setUsuario(dataPerfil.usuario);
+            }
+
+            // 2. Cargar registro de auto si existe
+            const resAuto = await fetch(apiUrl(`/obtener_auto.php?matricula=${matricula}`));
+            const dataAuto = await resAuto.json();
+            if (dataAuto.success && dataAuto.registro) {
+                setRegistroExistente(dataAuto.registro);
             }
         } catch (error) {
             console.error('Error cargando datos:', error);
-        }
-    }, [cargarRecursosProceso]); // 👈 IMPORTANTE: agregar dependencia
-
-
-    const verificarRegistro = useCallback(async (matricula) => {
-        setCargandoRegistro(true);
-        try {
-            const response = await fetch(apiUrl(`/obtener_auto.php?matricula=${matricula}`));
-            const data = await response.json();
-            
-            if (data.success && data.credit) {
-                setRegistroExistente(data.credit);
-            } else {
-                setRegistroExistente(null);
-            }
-        } catch (error) {
-            console.error('Error verificando registro:', error);
-            setRegistroExistente(null);
         } finally {
-            setCargandoRegistro(false);
+            setLoading(false);
         }
-    }, []);
+    }, [matricula]);
 
     useEffect(() => {
-        const matricula = localStorage.getItem('matricula');
         if (!matricula) {
             navigate('/login');
             return;
         }
+        cargarDatos();
+    }, [matricula, navigate, cargarDatos]);
 
-        const loadTimer = setTimeout(() => {
-            cargarDatosUsuario(matricula);
-            verificarRegistro(matricula);
-        }, 0);
-
-        return () => clearTimeout(loadTimer);
-    }, [cargarDatosUsuario, navigate, verificarRegistro]);
-
-    const formatter = new Intl.NumberFormat('es-MX', {
-        style: 'currency',
-        currency: 'MXN',
-        minimumFractionDigits: 2
-    });
-
-    const calcularAuto = () => {
+    const calcularMonto = () => {
         const c02Num = parseFloat(c02);
         const c11Num = parseFloat(c11);
-        
-        if (isNaN(c02Num) || isNaN(c11Num)) {
-            setErrorMsg('Por favor ingresa ambos conceptos (002 y 011).');
+        if (isNaN(c02Num) || isNaN(c11Num) || c02Num <= 0 || c11Num <= 0) {
+            Swal.fire({
+                title: '⚠️ Montos inválidos',
+                text: 'Ingresa montos numéricos válidos mayores a cero para los conceptos 002 y 011.',
+                icon: 'warning',
+                confirmButtonColor: '#486DAA',
+            });
             return;
         }
-        
-        const sumaQuincenal = c02Num + c11Num;
-        const mensualBase = sumaQuincenal * 2;
-        const mensualIntegrado = mensualBase * 1.20;
-        const monto = mensualIntegrado * 24;
-        setMontoAuto(monto);
-        setMostrarResultado(true);
-        setErrorMsg('');
-    };
-
-    const handleFileChange = (e, tipo) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        if (tipo === 'tarjeton') {
-            if (file.type !== 'application/pdf') {
-                setErrorMsg('El tarjetón debe ser un archivo PDF.');
-                return;
-            }
-            if (file.size > 5 * 1024 * 1024) {
-                setErrorMsg('El tarjetón no debe superar los 5MB.');
-                return;
-            }
-            setTarjetonFile(file);
-            setTarjetonName(file.name);
-        } else if (tipo === 'ine') {
-            if (file.type !== 'application/pdf') {
-                setErrorMsg('El INE debe ser un archivo PDF.');
-                return;
-            }
-            if (file.size > 5 * 1024 * 1024) {
-                setErrorMsg('El INE no debe superar los 5MB.');
-                return;
-            }
-            setIneFile(file);
-            setIneName(file.name);
-        }
-        setErrorMsg('');
-    };
-
-    const handleReintentar = () => {
-        setTarjetonFile(null);
-        setTarjetonName('');
-        setIneFile(null);
-        setIneName('');
-        setRegistroExistente(null);
-        setErrorMsg('');
-        setSuccessMsg('');
+        const suma = c02Num + c11Num;
+        const mensual = suma * 2;
+        const integrado = mensual * 1.20;
+        const total = integrado * 24;
+        setMontoMaximo(total);
+        setMontoCalculado(true);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrorMsg('');
-        setSuccessMsg('');
-        setLoading(true);
-
-        if (!tarjetonFile || !ineFile) {
-            setErrorMsg('Debes subir tanto el tarjetón como el INE.');
-            setLoading(false);
+        if (!montoCalculado || montoMaximo <= 0) {
+            Swal.fire({
+                title: '⚠️ Calcula el monto',
+                text: 'Por favor haz clic en "Calcular Monto Máximo" antes de enviar tu solicitud.',
+                icon: 'warning',
+                confirmButtonColor: '#486DAA',
+            });
             return;
         }
 
-        const formData = new FormData();
-        formData.append('matricula', userData.matricula);
-        formData.append('tarjeton', tarjetonFile);
-        formData.append('ine', ineFile);
+        if (!tarjetonFile || !ineFrenteFile || !ineReversoFile || !comprobanteFile) {
+            Swal.fire({
+                title: '⚠️ Documentación incompleta',
+                text: 'Debes adjuntar los 4 documentos solicitados en formato PDF.',
+                icon: 'warning',
+                confirmButtonColor: '#486DAA',
+            });
+            return;
+        }
 
+        setSaving(true);
         try {
+            const formData = new FormData();
+            formData.append('matricula', matricula);
+            formData.append('c02', c02);
+            formData.append('c11', c11);
+            formData.append('monto_maximo', montoMaximo);
+            formData.append('idSeccion', usuario?.idSeccion || 1);
+            formData.append('tarjeton', tarjetonFile);
+            formData.append('ine_frente', ineFrenteFile);
+            formData.append('ine_reverso', ineReversoFile);
+            formData.append('comprobante', comprobanteFile);
+
             const response = await fetch(apiUrl('/registro_auto.php'), {
                 method: 'POST',
                 body: formData
             });
-
             const data = await response.json();
 
-            if (!response.ok || !data.success) {
-                throw new Error(data.message || 'Error al guardar la solicitud.');
+            if (data.success) {
+                await Swal.fire({
+                    title: '🎉 ¡Solicitud Registrada!',
+                    text: 'Tu preregistro al crédito automotriz ha sido enviado a validación.',
+                    icon: 'success',
+                    confirmButtonColor: '#10B981',
+                });
+                cargarDatos();
+            } else {
+                throw new Error(data.message || 'Error al enviar la solicitud.');
             }
-
-            setSuccessMsg('¡Solicitud de crédito automotriz registrada exitosamente!');
-            await verificarRegistro(userData.matricula);
-            setTimeout(() => navigate('/dashboard'), 3000);
-        } catch (err) {
-            setErrorMsg(err.message);
+        } catch (error) {
+            Swal.fire({
+                title: '❌ Error',
+                text: error.message,
+                icon: 'error',
+                confirmButtonColor: '#dc3545',
+            });
         } finally {
-            setLoading(false);
+            setSaving(false);
         }
     };
 
-    const getStatusInfo = (estatus) => {
-        const map = {
-            'preregistro': { color: '#6c757d', icon: <FaClock />, label: 'Preregistro recibido', text: 'Tu solicitud está en revisión. Espera la validación de tu documentación.' },
-            'aprobado': { color: '#28a745', icon: <FaCheckCircle />, label: 'Validado', text: '¡Felicidades! Tu crédito ha sido validado.' },
-            'observaciones': { color: '#ffc107', icon: <FaExclamationTriangle />, label: 'Con observaciones', text: 'Tu documentación requiere correcciones.' },
-            'sinconcluir': { color: '#fd7e14', icon: <FaInfoCircle />, label: 'Registro inconcluso', text: 'Tu registro está inconcluso.' },
-            'denegado': { color: '#dc3545', icon: <FaTimesCircle />, label: 'Denegado', text: 'Tu solicitud ha sido denegada.' }
-        };
-        return map[estatus] || map['preregistro'];
+    const formatearMoneda = (cantidad) => {
+        return new Intl.NumberFormat('es-MX', {
+            style: 'currency',
+            currency: 'MXN'
+        }).format(cantidad);
     };
 
-    const renderStatus = () => {
-        if (!registroExistente) return null;
-
-        const statusInfo = getStatusInfo(registroExistente.estatus);
-        const color = statusInfo.color;
-
-        return (
-            <div style={styles.statusCard(color)}>
-                <div style={styles.statusHeader(color)}>
-                    {statusInfo.icon} {statusInfo.label}
-                </div>
-                <div style={styles.statusBody}>
-                    <p className="mb-2">{statusInfo.text}</p>
-                    
-                    {registroExistente.observaciones && (
-                        <div className="alert alert-warning mt-2">
-                            <strong>Observaciones:</strong>
-                            <p className="mb-0">{registroExistente.observaciones}</p>
-                        </div>
-                    )}
-                    
-                    <div className="mt-2">
-                        <span style={styles.badge(color)}>
-                            Status: {registroExistente.estatus}
-                        </span>
-                        <span style={{ ...styles.badge('#e9ecef'), color: '#333', marginLeft: '0.5rem' }}>
-                            Registrado: {registroExistente.fecha}
-                        </span>
-                        {registroExistente.fecha_validado && (
-                            <span style={{ ...styles.badge('#e9ecef'), color: '#333', marginLeft: '0.5rem' }}>
-                                Validado: {registroExistente.fecha_validado}
-                            </span>
-                        )}
-                    </div>
-
-                    {registroExistente.estatus === 'observaciones' && (
-                        <button 
-                            className="btn btn-warning btn-sm mt-3"
-                            onClick={handleReintentar}
-                            style={{ borderRadius: '12px' }}
-                        >
-                            <FaSync className="me-1" /> Reintentar registro
-                        </button>
-                    )}
-                </div>
-            </div>
-        );
+    const statusBadge = (status) => {
+        if (status === 'aprobado' || status === 1) {
+            return <span className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold">✅ Aprobado</span>;
+        }
+        if (status === 'rechazado' || status === 2) {
+            return <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold">❌ Rechazado</span>;
+        }
+        return <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-bold">⏳ En Revisión</span>;
     };
-
-    if (cargandoRegistro) {
-        return (
-            <div className="container py-5 text-center">
-                <div className="spinner-border text-warning" role="status"></div>
-                <p className="mt-3">Verificando tu registro...</p>
-            </div>
-        );
-    }
-
-    const colorPrincipal = seccionInfo?.color || '#3EAEF4';
 
     return (
-        <div style={styles.container}>
-            <div style={styles.card}>
-                <div style={styles.cardHeader}>
-                    <h3 style={styles.cardHeaderTitle}>
-                        <FaCar /> Crédito Automotriz
-                    </h3>
-                    <Link to="/dashboard" style={styles.btnOutline}>
-                        <FaArrowLeft className="me-1" /> Volver
+        <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+            
+            {/* Header AutoCredito */}
+            <div className="bg-white rounded-[2.5rem] p-6 sm:p-8 ui-shadow border border-white mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center space-x-4">
+                    <Link to="/dashboard" className="w-10 h-10 rounded-full bg-slate-100 text-slate-600 hover:bg-[#486DAA] hover:text-white flex items-center justify-center transition text-decoration-none">
+                        <FaArrowLeft />
                     </Link>
+                    <div>
+                        <span className="inline-block bg-[#486DAA]/10 text-[#486DAA] text-[10px] font-extrabold px-3 py-0.5 rounded-full mb-1 border border-[#486DAA]/20">
+                            Prestaciones Sindicales
+                        </span>
+                        <h2 className="text-xl sm:text-2xl font-black text-[#486DAA] tracking-tight m-0">
+                            Preregistro Crédito Automotriz
+                        </h2>
+                    </div>
                 </div>
-                <div style={styles.cardBody}>
-                    {errorMsg && (
-                        <div style={styles.alertError}>
-                            <FaExclamationTriangle /> {errorMsg}
-                            <button type="button" style={{ background: 'none', border: 'none', marginLeft: 'auto', color: 'inherit' }} onClick={() => setErrorMsg('')}>✕</button>
-                        </div>
-                    )}
-                    {successMsg && (
-                        <div style={styles.alertSuccess}>
-                            <FaCheckCircle /> {successMsg}
-                        </div>
-                    )}
 
-                    {/* ✅ BANNER DE SECCIÓN CON LOGO Y CONVOCATORIA - SIEMPRE VISIBLE */}
-                    {seccionInfo && (
-                        <div style={styles.seccionBanner(colorPrincipal)}>
-                            {logoAutoUrl ? (
-                                <img 
-                                    src={logoAutoUrl} 
-                                    alt={`Logo crédito auto ${seccionInfo.nombre}`}
-                                    style={styles.seccionLogo}
-                                    onError={(e) => { 
-                                        e.target.style.display = 'none'; 
-                                        // Mostrar icono de auto como fallback
-                                        const parent = e.target.parentElement;
-                                        const icon = document.createElement('div');
-                                        icon.style.cssText = `
-                                            height: 80px;
-                                            width: 80px;
-                                            display: flex;
-                                            align-items: center;
-                                            justify-content: center;
-                                            border-radius: 12px;
-                                            border: 2px solid #e9ecef;
-                                            background-color: #f0f4f8;
-                                            font-size: 40px;
-                                            color: ${colorPrincipal};
-                                        `;
-                                        icon.innerHTML = '<svg ...>'; // Simplificado, mejor usar el fallback del render
-                                        parent.appendChild(icon);
-                                    }}
-                                />
-                            ) : (
-                                <div style={{ 
-                                    ...styles.seccionLogo, 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    justifyContent: 'center', 
-                                    backgroundColor: '#f0f4f8',
-                                    fontSize: '40px',
-                                    color: colorPrincipal
-                                }}>
-                                    <FaCar />
-                                </div>
-                            )}
-                            <div style={styles.seccionInfo}>
-                                <span style={styles.seccionNombre(colorPrincipal)}>
-                                    Crédito Automotriz - Sección {seccionInfo.romano}
-                                </span>
-                                <span style={styles.seccionDetalle}>
-                                    {seccionInfo.nombre}
-                                </span>
-                            </div>
-                            {/* ✅ BOTÓN DE CONVOCATORIA SIEMPRE VISIBLE */}
-                            <a 
-                                href={convocatoriaUrl || '#'} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                style={convocatoriaUrl ? styles.convocatoriaBtn(colorPrincipal) : { ...styles.convocatoriaBtn(colorPrincipal), opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'none' }}
-                                onMouseEnter={(e) => {
-                                    if (convocatoriaUrl) {
-                                        e.target.style.transform = 'translateY(-2px)';
-                                        e.target.style.boxShadow = `0 4px 12px ${colorPrincipal}40`;
-                                    }
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.target.style.transform = 'translateY(0)';
-                                    e.target.style.boxShadow = 'none';
-                                }}
-                            >
-                                <FaDownload /> {convocatoriaUrl ? 'Descargar Convocatoria' : 'Convocatoria no disponible'}
-                            </a>
-                        </div>
-                    )}
-
-                    {registroExistente && renderStatus()}
-
-                    {(!registroExistente || registroExistente.estatus === 'observaciones') && (
-                        <form onSubmit={handleSubmit}>
-                            {/* Datos del usuario */}
-                            <div style={styles.userCard}>
-                                <div style={styles.userCardHeader}>
-                                    <FaUserAlt style={{ color: colorPrincipal }} />
-                                    <h5 style={styles.userCardTitle}>Tus datos</h5>
-                                </div>
-                                <div style={styles.userDataGrid}>
-                                    <div style={styles.userDataItem}>
-                                        <span style={styles.userDataLabel}><FaIdCard className="me-1" /> Matrícula</span>
-                                        <span style={styles.userDataValue}>{userData.matricula}</span>
-                                    </div>
-                                    <div style={styles.userDataItem}>
-                                        <span style={styles.userDataLabel}><FaUser className="me-1" /> Nombre</span>
-                                        <span style={styles.userDataValue}>{userData.nombre}</span>
-                                    </div>
-                                    <div style={styles.userDataItem}>
-                                        <span style={styles.userDataLabel}><FaBuilding className="me-1" /> Adscripción</span>
-                                        <span style={styles.userDataValue}>{userData.adscripcion || 'N/A'}</span>
-                                    </div>
-                                    <div style={styles.userDataItem}>
-                                        <span style={styles.userDataLabel}><FaUserAlt className="me-1" /> Categoría</span>
-                                        <span style={styles.userDataValue}>{userData.categoria || 'N/A'}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Calculadora */}
-                            <div style={styles.calcCard}>
-                                <div style={styles.calcHeader}>
-                                    <FaCalculator /> Debes calcular el monto de tu préstamo antes de subir tus documentos.
-                                </div>
-                                <div style={styles.calcBody}>
-                                    <p className="text-muted small mb-3">
-                                        El cálculo se basa en los conceptos 002 y 011 de tu tarjetón. 
-                                        Se suma el 20% de prestaciones y se multiplica por 24 veces.
-                                    </p>
-                                    <div className="row g-3">
-                                        <div className="col-md-6">
-                                            <label style={styles.label}>Concepto 002 (quincenal)</label>
-                                            <input
-                                                type="number"
-                                                step="0.01"
-                                                style={styles.input}
-                                                value={c02}
-                                                onChange={(e) => setC02(e.target.value)}
-                                                placeholder="Ej: 2437.73"
-                                            />
-                                        </div>
-                                        <div className="col-md-6">
-                                            <label style={styles.label}>Concepto 011 (quincenal)</label>
-                                            <input
-                                                type="number"
-                                                step="0.01"
-                                                style={styles.input}
-                                                value={c11}
-                                                onChange={(e) => setC11(e.target.value)}
-                                                placeholder="Ej: 2002.60"
-                                            />
-                                        </div>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        style={styles.btnPrimary}
-                                        onClick={calcularAuto}
-                                        className="mt-3"
-                                        onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 4px 12px rgba(255,215,0,0.3)'; }}
-                                        onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
-                                    >
-                                        <FaCalculator /> Calcular
-                                    </button>
-
-                                    {mostrarResultado && montoAuto !== null && (
-                                        <div style={styles.resultBox}>
-                                            <p className="fw-bold mb-1">Monto del préstamo para auto:</p>
-                                            <div style={styles.resultMonto}>
-                                                {formatter.format(montoAuto)}
-                                            </div>
-                                            <small className="text-muted">
-                                                Por 24 veces el sueldo mensual integrado (incluye 20% de prestaciones)
-                                            </small>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Documentos */}
-                            <div style={styles.docCard}>
-                                <div style={styles.docHeader}>
-                                    <FaFilePdf /> Documentos requeridos
-                                </div>
-                                <div style={styles.docBody}>
-                                    <p className="text-muted small">
-                                        Sube los siguientes documentos en formato <strong>PDF</strong>.
-                                        Tamaño máximo: <strong>5MB</strong> por archivo.
-                                    </p>
-                                    
-                                    <div style={styles.inputGroup}>
-                                        <label style={styles.label}>📄 Último tarjetón de pago</label>
-                                        <input
-                                            type="file"
-                                            style={styles.fileInput}
-                                            accept=".pdf"
-                                            onChange={(e) => handleFileChange(e, 'tarjeton')}
-                                            disabled={loading}
-                                            required
-                                        />
-                                        {tarjetonName && (
-                                            <small className="text-success">✅ {tarjetonName}</small>
-                                        )}
-                                    </div>
-
-                                    <div style={styles.inputGroup}>
-                                        <label style={styles.label}>🪪 Identificación oficial (INE)</label>
-                                        <input
-                                            type="file"
-                                            style={styles.fileInput}
-                                            accept=".pdf"
-                                            onChange={(e) => handleFileChange(e, 'ine')}
-                                            disabled={loading}
-                                            required
-                                        />
-                                        {ineName && (
-                                            <small className="text-success">✅ {ineName}</small>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div style={styles.flexRow}>
-                                <button
-                                    type="submit"
-                                    style={{ ...styles.btnSuccess, ...styles.flexGrow }}
-                                    disabled={loading}
-                                    onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 4px 12px rgba(40,167,69,0.3)'; }}
-                                    onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
-                                >
-                                    {loading ? 'Guardando...' : 'Guardar solicitud'}
-                                </button>
-                                <Link to="/dashboard" style={styles.btnOutline}>
-                                    Cancelar
-                                </Link>
-                            </div>
-                        </form>
-                    )}
-
-                    {registroExistente && registroExistente.estatus !== 'observaciones' && (
-                        <div className="text-center mt-3">
-                            <Link to="/dashboard" style={styles.btnPrimary}>
-                                Volver 
-                            </Link>
-                        </div>
-                    )}
+                <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white text-xl shadow-lg shadow-orange-500/30">
+                    <FaCar />
                 </div>
             </div>
+
+            {loading ? (
+                <div className="text-center py-16 text-slate-400 font-medium text-xs">
+                    Cargando expediente...
+                </div>
+            ) : registroExistente ? (
+                /* Vista si ya tiene solicitud */
+                <div className="bg-white rounded-[2.5rem] p-8 ui-shadow border border-white space-y-6">
+                    <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                        <div>
+                            <h3 className="text-lg font-black text-[#486DAA] m-0">Estado de tu Solicitud</h3>
+                            <p className="text-xs text-slate-500 m-0">Folio: #{registroExistente.id || 'N/A'}</p>
+                        </div>
+                        <div>
+                            {statusBadge(registroExistente.status)}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-100 text-xs">
+                        <div>
+                            <span className="font-bold text-slate-500 block">Concepto 002:</span>
+                            <span className="font-bold text-slate-800 text-sm">{formatearMoneda(registroExistente.c02 || 0)}</span>
+                        </div>
+                        <div>
+                            <span className="font-bold text-slate-500 block">Concepto 011:</span>
+                            <span className="font-bold text-slate-800 text-sm">{formatearMoneda(registroExistente.c11 || 0)}</span>
+                        </div>
+                        <div>
+                            <span className="font-bold text-slate-500 block">Monto Solicitado:</span>
+                            <span className="font-bold text-[#486DAA] text-sm">{formatearMoneda(registroExistente.monto_maximo || 0)}</span>
+                        </div>
+                    </div>
+
+                    {registroExistente.observaciones && (
+                        <div className="p-4 bg-blue-50 rounded-2xl border border-blue-200 text-xs text-blue-900">
+                            <strong>Observaciones del validador:</strong> {registroExistente.observaciones}
+                        </div>
+                    )}
+                </div>
+            ) : (
+                /* Formulario de nueva solicitud */
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    
+                    {/* Tarjeta de Datos del Agremiado */}
+                    <div className="bg-white rounded-[2.5rem] p-7 ui-shadow border border-white">
+                        <h3 className="text-base font-black text-[#486DAA] mb-4 pb-2 border-b border-slate-100 flex items-center space-x-2">
+                            <FaUser />
+                            <span>Datos del Solicitante</span>
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs text-slate-600">
+                            <div><span className="font-bold block text-slate-400">Nombre:</span> {usuario?.nombre}</div>
+                            <div><span className="font-bold block text-slate-400">Matrícula:</span> {usuario?.matricula}</div>
+                            <div><span className="font-bold block text-slate-400">Adscripción:</span> {usuario?.adscripcion || 'N/A'}</div>
+                            <div><span className="font-bold block text-slate-400">Categoría:</span> {usuario?.categoria || 'N/A'}</div>
+                        </div>
+                    </div>
+
+                    {/* Tarjeta de Cálculo de Capacidad */}
+                    <div className="bg-white rounded-[2.5rem] p-7 ui-shadow border border-white">
+                        <h3 className="text-base font-black text-[#486DAA] mb-4 pb-2 border-b border-slate-100 flex items-center space-x-2">
+                            <FaCalculator />
+                            <span>Cálculo de Capacidad Financiera</span>
+                        </h3>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label className="block text-xs font-bold text-[#486DAA] mb-1 pl-2">
+                                    Concepto 002 (Sueldo Quincenal)
+                                </label>
+                                <input 
+                                    type="number"
+                                    step="0.01"
+                                    value={c02}
+                                    onChange={(e) => setC02(e.target.value)}
+                                    placeholder="Ej. 4500.50"
+                                    required
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 px-4 text-xs text-slate-700 outline-none focus:border-[#486DAA]"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-[#486DAA] mb-1 pl-2">
+                                    Concepto 011 (Ayuda de Renta)
+                                </label>
+                                <input 
+                                    type="number"
+                                    step="0.01"
+                                    value={c11}
+                                    onChange={(e) => setC11(e.target.value)}
+                                    placeholder="Ej. 1200.00"
+                                    required
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 px-4 text-xs text-slate-700 outline-none focus:border-[#486DAA]"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                            <button 
+                                type="button"
+                                onClick={calcularMonto}
+                                className="bg-[#486DAA] hover:bg-[#355386] text-white font-bold px-6 py-2.5 rounded-full text-xs transition duration-200 border-0 cursor-pointer shadow-md"
+                            >
+                                Calcular Monto Máximo
+                            </button>
+
+                            {montoCalculado && (
+                                <div className="text-right">
+                                    <span className="text-[10px] font-bold text-slate-400 block uppercase">Monto Estimado:</span>
+                                    <span className="text-lg font-black text-emerald-600">{formatearMoneda(montoMaximo)}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Tarjeta de Documentación PDF */}
+                    <div className="bg-white rounded-[2.5rem] p-7 ui-shadow border border-white">
+                        <h3 className="text-base font-black text-[#486DAA] mb-4 pb-2 border-b border-slate-100 flex items-center space-x-2">
+                            <FaFilePdf className="text-red-500" />
+                            <span>Documentación en PDF (Máx. 5MB c/u)</span>
+                        </h3>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                                <label className="block text-xs font-bold text-slate-700 mb-1.5">1. Último Tarjetón de Pago</label>
+                                <input type="file" accept=".pdf" onChange={(e) => setTarjetonFile(e.target.files[0])} required className="w-full text-xs text-slate-500" />
+                            </div>
+
+                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                                <label className="block text-xs font-bold text-slate-700 mb-1.5">2. INE Frontal</label>
+                                <input type="file" accept=".pdf" onChange={(e) => setIneFrenteFile(e.target.files[0])} required className="w-full text-xs text-slate-500" />
+                            </div>
+
+                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                                <label className="block text-xs font-bold text-slate-700 mb-1.5">3. INE Reverso</label>
+                                <input type="file" accept=".pdf" onChange={(e) => setIneReversoFile(e.target.files[0])} required className="w-full text-xs text-slate-500" />
+                            </div>
+
+                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                                <label className="block text-xs font-bold text-slate-700 mb-1.5">4. Comprobante de Domicilio</label>
+                                <input type="file" accept=".pdf" onChange={(e) => setComprobanteFile(e.target.files[0])} required className="w-full text-xs text-slate-500" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <button 
+                        type="submit"
+                        disabled={saving}
+                        className="w-full bg-gradient-to-r from-[#486DAA] to-[#355386] hover:from-[#3b598d] hover:to-[#2e4771] text-white font-bold py-3.5 px-6 rounded-full shadow-lg shadow-[#486DAA]/30 hover:scale-[1.01] transition duration-200 text-xs sm:text-sm flex items-center justify-center space-x-2 border-0 cursor-pointer"
+                    >
+                        <FaUpload />
+                        <span>{saving ? 'Enviando trámite...' : 'Enviar Solicitud de Crédito Automotriz'}</span>
+                    </button>
+
+                </form>
+            )}
+
         </div>
     );
 };

@@ -134,22 +134,22 @@ const NoticiasPapelera = () => {
         Swal.fire(config);
     };
 
-    // ========== ESTILOS MODERNOS ==========
+    // ========== ESTILOS MODERNOS (SECCIÓN 5) ==========
     const styles = {
         container: {
             maxWidth: '1400px',
             margin: '0 auto',
             padding: '2rem 1.5rem',
-            background: '#f0f4f8',
+            background: 'transparent',
             minHeight: 'calc(100vh - 200px)',
         },
         header: {
-            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
-            borderRadius: '20px',
-            padding: '2.5rem 2rem',
+            background: 'white',
+            borderRadius: '2.5rem',
+            padding: '2rem 2.5rem',
             marginBottom: '2rem',
-            borderBottom: '4px solid #dc3545',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+            boxShadow: '0 20px 40px -15px rgba(72, 109, 170, 0.12), 0 8px 16px -6px rgba(0, 0, 0, 0.03)',
+            border: '1px solid white',
             position: 'relative',
             overflow: 'hidden',
         },
@@ -160,7 +160,7 @@ const NoticiasPapelera = () => {
             width: '400px',
             height: '400px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(220,53,69,0.1) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(239,68,68,0.08) 0%, transparent 70%)',
             pointerEvents: 'none',
         },
         headerContent: {
@@ -178,25 +178,22 @@ const NoticiasPapelera = () => {
             gap: '1rem',
         },
         backButton: {
-            color: 'white',
-            backgroundColor: 'rgba(255,255,255,0.1)',
-            padding: '0.7rem 1.2rem',
-            borderRadius: '12px',
+            color: '#475569',
+            backgroundColor: '#f1f5f9',
+            padding: '0.6rem 1.2rem',
+            borderRadius: '9999px',
             transition: 'all 0.3s ease',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
             textDecoration: 'none',
-            fontSize: '0.9rem',
-            fontWeight: '500',
+            fontSize: '0.85rem',
+            fontWeight: '700',
         },
         title: {
-            fontSize: '2rem',
-            fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #dc3545 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
+            fontSize: '1.8rem',
+            fontWeight: '900',
+            color: '#486DAA',
             margin: 0,
             display: 'flex',
             alignItems: 'center',

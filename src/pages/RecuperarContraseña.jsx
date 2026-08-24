@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { FaUserAlt, FaEnvelope, FaPaperPlane, FaCheckCircle, FaExclamationTriangle, FaArrowLeft } from 'react-icons/fa';
+import { FaUserAlt, FaEnvelope, FaPaperPlane, FaCheckCircle, FaExclamationTriangle, FaArrowLeft, FaKey } from 'react-icons/fa';
 import { apiUrl } from '../config';
 
 const RecuperarContraseña = () => {
@@ -14,14 +14,8 @@ const RecuperarContraseña = () => {
         correo: ''
     });
 
-    const validarMatricula = (matricula) => {
-        return /^\d{8,9}$/.test(matricula);
-    };
-
-    const validarCorreo = (correo) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(correo);
-    };
+    const validarMatricula = (matricula) => /^\d{8,9}$/.test(matricula);
+    const validarCorreo = (correo) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -60,7 +54,6 @@ const RecuperarContraseña = () => {
             setSuccessMsg(data.message || 'Se ha enviado un correo con tu contraseña temporal.');
             setFormData({ matricula: '', correo: '' });
             
-            // Redirigir al login después de 3 segundos
             setTimeout(() => {
                 navigate('/login');
             }, 4000);
@@ -71,212 +64,94 @@ const RecuperarContraseña = () => {
         }
     };
 
-    const styles = {
-        container: {
-            minHeight: 'calc(100vh - 200px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '2rem',
-            backgroundColor: '#f0f2f5',
-        },
-        card: {
-            maxWidth: '450px',
-            width: '100%',
-            backgroundColor: 'white',
-            borderRadius: '16px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)',
-            overflow: 'hidden',
-        },
-        header: {
-            backgroundColor: '#0A0F1E',
-            padding: '2rem',
-            textAlign: 'center',
-            borderBottom: '4px solid #3EAEF4',
-        },
-        title: {
-            fontSize: '1.6rem',
-            fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            marginBottom: '0.5rem',
-        },
-        subtitle: {
-            color: '#aaa',
-            fontSize: '0.85rem',
-        },
-        body: {
-            padding: '2rem',
-        },
-        inputGroup: {
-            marginBottom: '1.5rem',
-        },
-        label: {
-            display: 'block',
-            marginBottom: '0.5rem',
-            fontWeight: '600',
-            color: '#333',
-            fontSize: '0.9rem',
-        },
-        inputWrapper: {
-            position: 'relative',
-        },
-        inputIcon: {
-            position: 'absolute',
-            left: '12px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            color: '#999',
-        },
-        input: {
-            width: '100%',
-            padding: '0.75rem 0.75rem 0.75rem 2.5rem',
-            fontSize: '1rem',
-            border: '1px solid #ddd',
-            borderRadius: '8px',
-            transition: 'all 0.2s ease',
-            outline: 'none',
-            boxSizing: 'border-box',
-        },
-        button: {
-            width: '100%',
-            padding: '0.75rem',
-            fontSize: '1rem',
-            fontWeight: '600',
-            color: '#0A0F1E',
-            backgroundColor: '#3EAEF4',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-        },
-        successAlert: {
-            backgroundColor: '#d4edda',
-            color: '#155724',
-            padding: '0.75rem 1rem',
-            borderRadius: '8px',
-            marginBottom: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.85rem',
-        },
-        errorAlert: {
-            backgroundColor: '#fee2e2',
-            color: '#dc2626',
-            padding: '0.75rem 1rem',
-            borderRadius: '8px',
-            marginBottom: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.85rem',
-        },
-        footer: {
-            textAlign: 'center',
-            marginTop: '1.5rem',
-            paddingTop: '1rem',
-            borderTop: '1px solid #eee',
-        },
-        footerLink: {
-            color: '#3EAEF4',
-            textDecoration: 'none',
-            fontWeight: '500',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-        },
-    };
-
     return (
-        <div style={styles.container}>
-            <div style={styles.card}>
-                <div style={styles.header}>
-                    <h2 style={styles.title}>Recuperar Contraseña</h2>
-                    <p style={styles.subtitle}>SNTSS Sección XXXIII</p>
+        <div className="relative min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-10">
+            <div className="relative z-10 w-full max-w-md bg-white rounded-[2.5rem] p-8 sm:p-10 ui-shadow border border-white text-center">
+                
+                <div className="w-16 h-16 bg-[#486DAA] rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-lg shadow-[#486DAA]/30">
+                    <FaKey />
                 </div>
                 
-                <div style={styles.body}>
-                    {successMsg && (
-                        <div style={styles.successAlert}>
-                            <FaCheckCircle />
-                            <span>{successMsg}</span>
-                        </div>
-                    )}
-                    
-                    {errorMsg && (
-                        <div style={styles.errorAlert}>
-                            <FaExclamationTriangle />
-                            <span>{errorMsg}</span>
-                        </div>
-                    )}
-                    
-                    <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '1.5rem' }}>
-                        Ingresa tu matrícula y el correo electrónico con el que te registraste. 
-                        Te enviaremos una contraseña temporal de acceso.
-                    </p>
-                    
-                    <form onSubmit={handleSubmit}>
-                        <div style={styles.inputGroup}>
-                            <label style={styles.label}>
-                                <FaUserAlt style={{ marginRight: '8px' }} /> Matrícula
-                            </label>
-                            <div style={styles.inputWrapper}>
-                                <FaUserAlt style={styles.inputIcon} />
-                                <input
-                                    type="text"
-                                    style={styles.input}
-                                    placeholder="Ej. 97123456"
-                                    value={formData.matricula}
-                                    onChange={(e) => setFormData({ ...formData, matricula: e.target.value })}
-                                    disabled={loading}
-                                    required
-                                />
-                            </div>
-                            <small style={{ color: '#666', fontSize: '0.7rem' }}>8 o 9 dígitos numéricos</small>
-                        </div>
-                        
-                        <div style={styles.inputGroup}>
-                            <label style={styles.label}>
-                                <FaEnvelope style={{ marginRight: '8px' }} /> Correo Electrónico
-                            </label>
-                            <div style={styles.inputWrapper}>
-                                <FaEnvelope style={styles.inputIcon} />
-                                <input
-                                    type="email"
-                                    style={styles.input}
-                                    placeholder="tu@email.com"
-                                    value={formData.correo}
-                                    onChange={(e) => setFormData({ ...formData, correo: e.target.value })}
-                                    disabled={loading}
-                                    required
-                                />
-                            </div>
-                        </div>
-                        
-                        <button type="submit" style={styles.button} disabled={loading}>
-                            {loading ? (
-                                'Enviando solicitud...'
-                            ) : (
-                                <>
-                                    <FaPaperPlane /> Enviar contraseña temporal
-                                </>
-                            )}
-                        </button>
-                    </form>
-                    
-                    <div style={styles.footer}>
-                        <Link to="/login" style={styles.footerLink}>
-                            <FaArrowLeft /> Volver al inicio de sesión
-                        </Link>
+                <span className="inline-block bg-[#486DAA]/10 text-[#486DAA] text-[10px] font-extrabold px-3 py-1 rounded-full mb-2 border border-[#486DAA]/20">
+                    Restablecer Credenciales
+                </span>
+                
+                <h2 className="text-2xl font-black text-[#486DAA] tracking-tight m-0">
+                    Recuperar Contraseña
+                </h2>
+                
+                <p className="text-xs text-slate-500 mt-1 mb-6 font-medium">
+                    Ingresa tu matrícula y correo registrado para enviarte una clave temporal
+                </p>
+
+                {errorMsg && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-600 mb-4 text-center">
+                        {errorMsg}
                     </div>
+                )}
+
+                {successMsg && (
+                    <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-700 mb-4 flex items-center justify-center space-x-2 text-center">
+                        <FaCheckCircle className="flex-shrink-0" />
+                        <span>{successMsg}</span>
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4 text-left">
+                    <div>
+                        <label className="block text-xs font-bold text-[#486DAA] mb-1.5 pl-2">
+                            Matrícula Institucional
+                        </label>
+                        <div className="relative flex items-center">
+                            <span className="absolute left-4 text-slate-400 text-sm"><FaUserAlt /></span>
+                            <input 
+                                type="text"
+                                value={formData.matricula}
+                                onChange={(e) => setFormData({ ...formData, matricula: e.target.value.replace(/\D/g, '').slice(0, 9) })}
+                                placeholder="Ej. 97158643"
+                                maxLength={9}
+                                required
+                                disabled={loading}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-full py-3 pl-11 pr-4 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA]"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-bold text-[#486DAA] mb-1.5 pl-2">
+                            Correo Electrónico Registrado
+                        </label>
+                        <div className="relative flex items-center">
+                            <span className="absolute left-4 text-slate-400 text-sm"><FaEnvelope /></span>
+                            <input 
+                                type="email"
+                                value={formData.correo}
+                                onChange={(e) => setFormData({ ...formData, correo: e.target.value })}
+                                placeholder="tu_correo@dominio.com"
+                                required
+                                disabled={loading}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-full py-3 pl-11 pr-4 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA]"
+                            />
+                        </div>
+                    </div>
+
+                    <button 
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-gradient-to-r from-[#486DAA] to-[#355386] hover:from-[#3b598d] hover:to-[#2e4771] text-white font-bold py-3.5 px-6 rounded-full shadow-lg shadow-[#486DAA]/30 hover:scale-[1.02] transition duration-200 text-xs sm:text-sm flex items-center justify-center space-x-2 border-0 cursor-pointer mt-4"
+                    >
+                        <FaPaperPlane />
+                        <span>{loading ? 'Enviando correo...' : 'Enviar Instrucciones'}</span>
+                    </button>
+                </form>
+
+                <div className="mt-8 pt-6 border-t border-slate-100">
+                    <Link to="/login" className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#486DAA] hover:underline text-decoration-none">
+                        <FaArrowLeft />
+                        <span>Regresar a Iniciar Sesión</span>
+                    </Link>
                 </div>
+
             </div>
         </div>
     );

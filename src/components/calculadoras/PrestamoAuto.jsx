@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaCalculator, FaCar, FaMoneyBillWave, FaInfoCircle, FaChartLine, FaCheckCircle } from 'react-icons/fa';
+import { FaCar, FaInfoCircle, FaCheckCircle, FaCalculator } from 'react-icons/fa';
 
 const PrestamoAuto = () => {
     const [c02, setC02] = useState('');
@@ -10,7 +10,7 @@ const PrestamoAuto = () => {
         const c02Num = parseFloat(c02);
         const c11Num = parseFloat(c11);
         
-        if (isNaN(c02Num) || isNaN(c11Num)) {
+        if (isNaN(c02Num) || isNaN(c11Num) || c02Num <= 0 || c11Num <= 0) {
             alert('Por favor ingresa ambos conceptos (002 y 011).');
             return;
         }
@@ -27,308 +27,72 @@ const PrestamoAuto = () => {
         minimumFractionDigits: 2
     });
 
-    const styles = {
-        container: {
-            padding: '1.5rem',
-            background: 'rgba(255,255,255,0.9)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255,255,255,0.5)',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-        },
-        header: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.8rem',
-            marginBottom: '1.5rem',
-            paddingBottom: '0.5rem',
-            borderBottom: '3px solid #F2994A',
-        },
-        headerIcon: {
-            fontSize: '2rem',
-            color: '#F2994A',
-        },
-        headerTitle: {
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #0A0F1E, #F2994A)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            margin: 0,
-        },
-        headerSubtitle: {
-            color: '#6c757d',
-            fontSize: '0.85rem',
-            marginTop: '0.2rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-        },
-        infoBox: {
-            backgroundColor: 'rgba(242,153,74,0.08)',
-            borderLeft: '4px solid #F2994A',
-            padding: '0.8rem 1rem',
-            borderRadius: '8px',
-            marginBottom: '1.5rem',
-            fontSize: '0.85rem',
-            color: '#495057',
-        },
-        grid: {
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '1rem',
-            marginBottom: '1rem',
-        },
-        inputGroup: {
-            marginBottom: '1rem',
-        },
-        label: {
-            display: 'block',
-            fontWeight: '600',
-            fontSize: '0.85rem',
-            color: '#0A0F1E',
-            marginBottom: '0.3rem',
-        },
-        labelIcon: {
-            marginRight: '0.3rem',
-            color: '#F2994A',
-        },
-        input: {
-            width: '100%',
-            padding: '0.6rem 1rem',
-            fontSize: '0.95rem',
-            border: '1px solid #ddd',
-            borderRadius: '10px',
-            outline: 'none',
-            transition: 'all 0.3s ease',
-            backgroundColor: 'white',
-            color: '#0A0F1E',
-        },
-        button: {
-            backgroundColor: '#F2994A',
-            color: 'white',
-            border: 'none',
-            padding: '0.7rem 1.5rem',
-            borderRadius: '12px',
-            fontWeight: 'bold',
-            fontSize: '0.95rem',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            width: '100%',
-            marginTop: '0.5rem',
-        },
-        resultadoContainer: {
-            marginTop: '1.5rem',
-            padding: '1.25rem',
-            backgroundColor: '#f8fafc',
-            borderRadius: '12px',
-            border: '1px solid #e9ecef',
-        },
-        resultadoTitle: {
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginBottom: '1rem',
-            color: '#0A0F1E',
-            fontSize: '1rem',
-        },
-        resultadoItem: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '0.8rem 1rem',
-            borderRadius: '8px',
-            backgroundColor: 'rgba(242,153,74,0.08)',
-            borderLeft: '4px solid #F2994A',
-            marginBottom: '0.5rem',
-        },
-        resultadoLabel: {
-            color: '#495057',
-            fontSize: '0.9rem',
-        },
-        resultadoLabelSmall: {
-            display: 'block',
-            fontSize: '0.75rem',
-            color: '#6c757d',
-            marginTop: '0.1rem',
-        },
-        resultadoMonto: {
-            fontWeight: 'bold',
-            fontSize: '1.3rem',
-            color: '#003c82',
-        },
-        resultadoDetalle: {
-            marginTop: '0.8rem',
-            padding: '0.8rem',
-            backgroundColor: '#fff',
-            borderRadius: '8px',
-            border: '1px solid #e9ecef',
-        },
-        detalleItem: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '0.3rem 0',
-            fontSize: '0.85rem',
-            color: '#495057',
-            borderBottom: '1px solid #f8f9fa',
-        },
-        detalleItemLast: {
-            borderBottom: 'none',
-        },
-        smallText: {
-            display: 'block',
-            textAlign: 'center',
-            color: '#6c757d',
-            fontSize: '0.75rem',
-            marginTop: '0.8rem',
-            fontStyle: 'italic',
-        },
-        badge: {
-            display: 'inline-block',
-            backgroundColor: 'rgba(242,153,74,0.15)',
-            color: '#F2994A',
-            padding: '0.2rem 0.6rem',
-            borderRadius: '12px',
-            fontSize: '0.7rem',
-            fontWeight: 'bold',
-            marginTop: '0.3rem',
-        },
-        '@media (max-width: 480px)': {
-            grid: {
-                gridTemplateColumns: '1fr',
-            },
-        },
-    };
-
     return (
-        <div style={styles.container}>
-            {/* Header */}
-            <div style={styles.header}>
-                <FaCar style={styles.headerIcon} />
+        <div className="space-y-4">
+            <div className="flex items-center space-x-3 pb-3 border-b border-slate-100">
+                <div className="w-12 h-12 bg-orange-500 rounded-2xl flex items-center justify-center text-white text-xl shadow-md shadow-orange-500/30">
+                    <FaCar />
+                </div>
                 <div>
-                    <h3 style={styles.headerTitle}>Préstamo de Auto</h3>
-                    <div style={styles.headerSubtitle}>
-                        <FaInfoCircle size={12} /> Financiamiento para la compra de tu vehículo
-                    </div>
+                    <h3 className="text-lg font-black text-[#486DAA] m-0">Préstamo de Automóvil</h3>
+                    <p className="text-xs text-slate-500 m-0">Financiamiento automotriz de hasta 24 meses de sueldo integrado</p>
                 </div>
             </div>
 
-            {/* Info Box */}
-            <div style={styles.infoBox}>
-                <FaInfoCircle style={{ color: '#F2994A', marginRight: '0.5rem' }} />
-                El préstamo para auto se calcula con base en el Salario Mensual Integrado 
-                (Sueldo Base + 20% de prestaciones). Se puede financiar hasta 24 veces el salario.
+            <div className="p-3.5 bg-orange-50/80 rounded-2xl border border-orange-200 text-xs text-orange-900 flex items-start space-x-2.5">
+                <FaInfoCircle className="text-base text-orange-600 flex-shrink-0 mt-0.5" />
+                <div className="leading-relaxed">
+                    Monto máximo calculado con la fórmula oficial: <strong>(C002 + C011) × 2 × 1.20 × 24</strong>.
+                </div>
             </div>
 
-            {/* Formulario */}
-            <div style={styles.grid}>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>
-                        <FaMoneyBillWave style={styles.labelIcon} /> Concepto 002 (quincenal)
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-xs font-bold text-[#486DAA] mb-1 pl-2">
+                        Concepto 002 (Sueldo Quincenal)
                     </label>
                     <input 
-                        type="number" 
+                        type="number"
                         step="0.01"
-                        style={styles.input} 
-                        value={c02} 
-                        onChange={(e) => setC02(e.target.value)} 
-                        placeholder="Ej: 2437.73"
-                        onFocus={(e) => {
-                            e.target.style.borderColor = '#F2994A';
-                            e.target.style.boxShadow = '0 0 0 3px rgba(242,153,74,0.15)';
-                        }}
-                        onBlur={(e) => {
-                            e.target.style.borderColor = '#ddd';
-                            e.target.style.boxShadow = 'none';
-                        }}
+                        value={c02}
+                        onChange={(e) => setC02(e.target.value)}
+                        placeholder="Ej. 4500.50"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 px-4 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA] focus:bg-white transition"
                     />
                 </div>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>
-                        <FaMoneyBillWave style={styles.labelIcon} /> Concepto 011 (quincenal)
+
+                <div>
+                    <label className="block text-xs font-bold text-[#486DAA] mb-1 pl-2">
+                        Concepto 011 (Ayuda de Renta)
                     </label>
                     <input 
-                        type="number" 
+                        type="number"
                         step="0.01"
-                        style={styles.input} 
-                        value={c11} 
-                        onChange={(e) => setC11(e.target.value)} 
-                        placeholder="Ej: 2002.60"
-                        onFocus={(e) => {
-                            e.target.style.borderColor = '#F2994A';
-                            e.target.style.boxShadow = '0 0 0 3px rgba(242,153,74,0.15)';
-                        }}
-                        onBlur={(e) => {
-                            e.target.style.borderColor = '#ddd';
-                            e.target.style.boxShadow = 'none';
-                        }}
+                        value={c11}
+                        onChange={(e) => setC11(e.target.value)}
+                        placeholder="Ej. 1200.00"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 px-4 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA] focus:bg-white transition"
                     />
                 </div>
             </div>
 
-            {/* Botón Calcular */}
             <button 
-                style={styles.button}
+                type="button"
                 onClick={calcular}
-                onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(242,153,74,0.3)';
-                }}
-                onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                }}
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-3 px-6 rounded-full shadow-md shadow-orange-500/30 hover:scale-[1.01] transition duration-200 text-xs flex items-center justify-center space-x-2 border-0 cursor-pointer"
             >
-                <FaCalculator /> Calcular Préstamo para Auto
+                <FaCalculator />
+                <span>Calcular Monto Máximo de Auto</span>
             </button>
 
-            {/* Resultados */}
             {resultado && (
-                <div style={styles.resultadoContainer}>
-                    <div style={styles.resultadoTitle}>
-                        <FaCar style={{ color: '#F2994A', marginRight: '0.5rem' }} />
-                        Monto del Préstamo para Auto
-                    </div>
-
-                    <div style={styles.resultadoItem}>
-                        <div>
-                            <span style={styles.resultadoLabel}>Por 24 veces el sueldo mensual integrado</span>
-                            <span style={styles.resultadoLabelSmall}>Incluye 20% de prestaciones</span>
-                            <span style={styles.badge}>
-                                <FaCheckCircle style={{ marginRight: '0.2rem' }} /> Financiamiento
-                            </span>
-                        </div>
-                        <span style={styles.resultadoMonto}>{formatter.format(resultado)}</span>
-                    </div>
-
-                    <div style={styles.resultadoDetalle}>
-                        <div style={styles.detalleItem}>
-                            <span>Concepto 002 (quincenal)</span>
-                            <span>{formatter.format(parseFloat(c02) || 0)}</span>
-                        </div>
-                        <div style={styles.detalleItem}>
-                            <span>Concepto 011 (quincenal)</span>
-                            <span>{formatter.format(parseFloat(c11) || 0)}</span>
-                        </div>
-                        <div style={styles.detalleItem}>
-                            <span>Prestaciones (20%)</span>
-                            <span>Incluidas</span>
-                        </div>
-                        <div style={{ ...styles.detalleItem, ...styles.detalleItemLast }}>
-                            <span>Plazo de pago</span>
-                            <span>24 meses</span>
-                        </div>
-                    </div>
-
-                    <small style={styles.smallText}>
-                        <FaChartLine style={{ marginRight: '0.3rem' }} />
-                        El monto final depende de la evaluación crediticia y disponibilidad de recursos.
-                        Plazo de pago: hasta 24 meses.
-                    </small>
+                <div className="p-4 bg-orange-50 rounded-2xl border border-orange-200 text-center pt-2">
+                    <span className="text-[10px] font-extrabold text-orange-700 uppercase tracking-wider block mb-1">
+                        Monto Máximo Autorizado
+                    </span>
+                    <span className="text-2xl font-black text-orange-600 block">
+                        {formatter.format(resultado)}
+                    </span>
                 </div>
             )}
         </div>

@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
     FaUserAlt, FaLock, FaSignInAlt, FaEye, FaEyeSlash, 
-    FaExclamationTriangle, FaUserPlus, FaEnvelope, FaRocket, FaStar
+    FaExclamationTriangle, FaUserPlus, FaEnvelope, FaKey, FaShieldAlt
 } from 'react-icons/fa';
 import { apiUrl } from '../config';
 import { storeUserSession } from '../utils/roles';
@@ -17,7 +17,6 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [intentos, setIntentos] = useState(0);
     const [bloqueado, setBloqueado] = useState(false);
-    const matriculaRef = useRef(null);
     
     const [formData, setFormData] = useState({
         matricula: '',
@@ -48,7 +47,7 @@ const Login = () => {
                 title: '⚠️ Matrícula inválida',
                 text: 'La matrícula debe tener entre 8 y 9 dígitos numéricos.',
                 icon: 'warning',
-                confirmButtonColor: '#ffc107',
+                confirmButtonColor: '#486DAA',
                 confirmButtonText: 'Entendido',
             });
             setLoading(false);
@@ -60,7 +59,7 @@ const Login = () => {
                 title: '⚠️ Campo vacío',
                 text: 'La contraseña es obligatoria.',
                 icon: 'warning',
-                confirmButtonColor: '#ffc107',
+                confirmButtonColor: '#486DAA',
                 confirmButtonText: 'Entendido',
             });
             setLoading(false);
@@ -116,54 +115,30 @@ const Login = () => {
                 title: '✅ ¡Bienvenido!',
                 text: `Hola ${data.usuario.nombre || 'Usuario'}, has iniciado sesión correctamente.`,
                 icon: 'success',
-                confirmButtonColor: '#28a745',
+                confirmButtonColor: '#10B981',
                 confirmButtonText: 'Continuar',
                 timer: 2000,
                 timerProgressBar: true,
             });
 
-            // ✅ GUARDAR TODOS LOS DATOS DEL USUARIO
             const usuario = data.usuario;
 
-            // 🔥 DEBUG: Ver qué viene del backend
-            console.log('🔍 usuario completo:', usuario);
-            console.log('🔍 idSeccion:', usuario.idSeccion);
-            console.log('🔍 idTipo:', usuario.idTipo);
-            console.log('🔍 seccion_banner:', usuario.seccion_banner);
-            console.log('🔍 seccion_logo:', usuario.seccion_logo);
-
-            // ============================================
-            // ✅ 1. GUARDAR DATOS BÁSICOS
-            // ============================================
+            // Guardar en localStorage
             localStorage.setItem('matricula', usuario.matricula);
             localStorage.setItem('nombre', usuario.nombre || usuario.matricula);
             localStorage.setItem('correo', usuario.correo || '');
             localStorage.setItem('status', usuario.status || '2');
             localStorage.setItem('isLoggedIn', 'true');
 
-            // ============================================
-            // ✅ 2. GUARDAR idTipo y tipoUsuario
-            // ============================================
             if (usuario.idTipo) {
                 localStorage.setItem('idTipo', usuario.idTipo.toString());
-                const tipoMap = {
-                    1: 'activo',
-                    2: 'jubilado',
-                    3: 'confianza'
-                };
-                const tipoUsuario = tipoMap[usuario.idTipo] || 'activo';
-                localStorage.setItem('tipoUsuario', tipoUsuario);
-                console.log('✅ Tipo de usuario guardado:', tipoUsuario, '(ID:', usuario.idTipo, ')');
+                const tipoMap = { 1: 'activo', 2: 'jubilado', 3: 'confianza' };
+                localStorage.setItem('tipoUsuario', tipoMap[usuario.idTipo] || 'activo');
             } else {
-                // Si no viene idTipo, por defecto es activo
                 localStorage.setItem('idTipo', '1');
                 localStorage.setItem('tipoUsuario', 'activo');
-                console.warn('⚠️ idTipo no encontrado, se asignó "activo" por defecto');
             }
 
-            // ============================================
-            // ✅ 3. GUARDAR LA SECCIÓN
-            // ============================================
             if (usuario.idSeccion) {
                 const assets = getSectionAssets(usuario.idSeccion);
                 const seccionData = {
@@ -172,35 +147,18 @@ const Login = () => {
                     nombre: usuario.seccion_nombre || 'Sin sección',
                     slogan: usuario.seccion_slogan || null,
                     direccion: usuario.seccion_direccion || null,
-                    color: usuario.seccion_color || '#3EAEF4',
+                    color: usuario.seccion_color || '#486DAA',
                     logo: usuario.seccion_logo || assets.logo,
                     banner: usuario.seccion_banner || assets.banner,
                     redes: usuario.redes_sociales || {}
                 };
                 localStorage.setItem('seccionUsuario', JSON.stringify(seccionData));
-                console.log('✅ Sección guardada:', seccionData);
-            } else {
-                console.warn('⚠️ usuario.idSeccion es null o undefined, NO se guardó la sección');
             }
 
-            // ============================================
-            // ✅ 4. GUARDAR FOTO Y OTROS DATOS
-            // ============================================
-            if (usuario.foto_path) {
-                localStorage.setItem('foto', usuario.foto_path);
-            }
+            if (usuario.foto_path) localStorage.setItem('foto', usuario.foto_path);
+            if (usuario.userId) localStorage.setItem('userId', usuario.userId);
+            if (usuario.curp) localStorage.setItem('curp', usuario.curp);
 
-            if (usuario.userId) {
-                localStorage.setItem('userId', usuario.userId);
-            }
-
-            if (usuario.curp) {
-                localStorage.setItem('curp', usuario.curp);
-            }
-
-            // ============================================
-            // ✅ 5. GUARDAR ROLES
-            // ============================================
             if (usuario.roleIds && usuario.roleIds.length > 0) {
                 localStorage.setItem('roleIds', JSON.stringify(usuario.roleIds));
             }
@@ -208,9 +166,6 @@ const Login = () => {
                 localStorage.setItem('roleNames', JSON.stringify(usuario.roleNames));
             }
 
-            // ============================================
-            // ✅ 6. REDIRIGIR SEGÚN 2FA
-            // ============================================
             if (usuario.requires_2fa === true) {
                 storeUserSession(sessionStorage, usuario);
                 navigate('/verificar-2fa');
@@ -233,319 +188,121 @@ const Login = () => {
         }
     };
 
-    // ========== ESTILOS ==========
-    const styles = {
-        container: {
-            minHeight: 'calc(100vh - 200px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '2rem',
-            background: '#f0f4f8',
-        },
-        card: {
-            maxWidth: '450px',
-            width: '100%',
-            backgroundColor: 'rgba(255,255,255,0.95)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '20px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
-            overflow: 'hidden',
-            border: '1px solid rgba(255,255,255,0.5)',
-        },
-        header: {
-            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
-            padding: '2.5rem 2rem',
-            textAlign: 'center',
-            borderBottom: '4px solid #3EAEF4',
-            position: 'relative',
-            overflow: 'hidden',
-        },
-        headerGlow: {
-            position: 'absolute',
-            top: '-50%',
-            right: '-20%',
-            width: '300px',
-            height: '300px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(62,174,244,0.08) 0%, transparent 70%)',
-            pointerEvents: 'none',
-        },
-        title: {
-            fontSize: '2rem',
-            fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            marginBottom: '0.3rem',
-            position: 'relative',
-            zIndex: 2,
-        },
-        subtitle: {
-            color: '#aab',
-            fontSize: '0.9rem',
-            position: 'relative',
-            zIndex: 2,
-        },
-        badge: {
-            display: 'inline-block',
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
-            padding: '0.2rem 0.8rem',
-            borderRadius: '12px',
-            fontSize: '0.65rem',
-            fontWeight: 'bold',
-            marginTop: '0.5rem',
-            position: 'relative',
-            zIndex: 2,
-        },
-        body: {
-            padding: '2rem',
-        },
-        inputGroup: {
-            marginBottom: '1.5rem',
-        },
-        label: {
-            display: 'block',
-            marginBottom: '0.4rem',
-            fontWeight: '600',
-            color: '#0A0F1E',
-            fontSize: '0.85rem',
-        },
-        inputWrapper: {
-            position: 'relative',
-        },
-        inputIcon: {
-            position: 'absolute',
-            left: '12px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            color: '#999',
-            fontSize: '0.9rem',
-        },
-        input: {
-            width: '100%',
-            padding: '0.7rem 0.75rem 0.7rem 2.5rem',
-            fontSize: '0.95rem',
-            border: '1px solid #ddd',
-            borderRadius: '12px',
-            transition: 'all 0.3s ease',
-            outline: 'none',
-            backgroundColor: 'white',
-            boxSizing: 'border-box',
-            color: '#000',
-        },
-        passwordToggle: {
-            position: 'absolute',
-            right: '12px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            cursor: 'pointer',
-            color: '#999',
-            background: 'none',
-            border: 'none',
-            fontSize: '0.9rem',
-            padding: '0.25rem',
-        },
-        helperText: {
-            display: 'block',
-            color: '#6c757d',
-            fontSize: '0.7rem',
-            marginTop: '0.3rem',
-        },
-        button: {
-            width: '100%',
-            padding: '0.75rem',
-            fontSize: '1rem',
-            fontWeight: '600',
-            color: '#0A0F1E',
-            backgroundColor: '#3EAEF4',
-            border: 'none',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-        },
-        buttonDisabled: {
-            opacity: 0.6,
-            cursor: 'not-allowed',
-        },
-        errorAlert: {
-            backgroundColor: '#fee2e2',
-            color: '#dc2626',
-            padding: '0.75rem 1rem',
-            borderRadius: '10px',
-            marginBottom: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.85rem',
-        },
-        footer: {
-            textAlign: 'center',
-            marginTop: '1.5rem',
-            paddingTop: '1rem',
-            borderTop: '1px solid #e9ecef',
-        },
-        footerLink: {
-            color: '#3EAEF4',
-            textDecoration: 'none',
-            fontWeight: '500',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.9rem',
-            transition: 'color 0.3s ease',
-        },
-        footerSeparator: {
-            display: 'block',
-            height: '0.5rem',
-        },
-    };
-
     return (
-        <div style={styles.container}>
-            <div style={styles.card}>
-                <div style={styles.header}>
-                    <div style={styles.headerGlow} />
-                    <h2 style={styles.title}>
-                        <FaRocket style={{ color: '#3EAEF4', marginRight: '8px' }} /> Bienvenido
-                    </h2>
-                    <p style={styles.subtitle}>SNTSS Sección XXXIII</p>
-                    <span style={styles.badge}>
-                        <FaStar style={{ marginRight: '4px' }} /> Unidad y Fortaleza Sindical
-                    </span>
-                </div>
+        <div className="relative min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-10">
+            {/* Patrón de puntos flotante */}
+            <div className="absolute top-10 left-10 w-28 h-28 dot-matrix opacity-40 pointer-events-none"></div>
+            <div className="absolute bottom-10 right-10 w-32 h-32 dot-matrix opacity-40 pointer-events-none"></div>
+
+            {/* Card Principal de Login */}
+            <div className="relative z-10 w-full max-w-md bg-white rounded-[2.5rem] p-8 sm:p-10 ui-shadow border border-white">
                 
-                <div style={styles.body}>
-                    {errorMsg && (
-                        <div style={styles.errorAlert}>
-                            <FaExclamationTriangle />
-                            <span>{errorMsg}</span>
-                        </div>
-                    )}
-                    
-                    <form onSubmit={handleSubmit}>
-                        <div style={styles.inputGroup}>
-                            <label style={styles.label}>
-                                <FaUserAlt style={{ marginRight: '8px', color: '#3EAEF4' }} /> Matrícula
-                            </label>
-                            <div style={styles.inputWrapper}>
-                                <FaUserAlt style={styles.inputIcon} />
-                                <input
-                                    type="text"
-                                    style={styles.input}
-                                    placeholder="Ej. 97123456"
-                                    value={formData.matricula}
-                                    onChange={handleMatriculaChange}
-                                    onFocus={(e) => {
-                                        e.target.style.borderColor = '#3EAEF4';
-                                        e.target.style.boxShadow = '0 0 0 3px rgba(62,174,244,0.15)';
-                                    }}
-                                    onBlur={(e) => {
-                                        e.target.style.borderColor = '#ddd';
-                                        e.target.style.boxShadow = 'none';
-                                    }}
-                                    disabled={loading || bloqueado}
-                                    required
-                                />
-                            </div>
-                            <span style={styles.helperText}>
-                                <FaEnvelope style={{ marginRight: '4px', fontSize: '0.6rem' }} />
-                                8 o 9 dígitos numéricos
+                {/* Cabecera */}
+                <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-[#486DAA] rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-lg shadow-[#486DAA]/30">
+                        <FaSignInAlt />
+                    </div>
+                    <span className="inline-block bg-[#486DAA]/10 text-[#486DAA] text-[10px] font-extrabold px-3 py-1 rounded-full mb-2 border border-[#486DAA]/20">
+                        Portal de Acceso
+                    </span>
+                    <h2 className="text-2xl font-black text-[#486DAA] tracking-tight m-0">
+                        Iniciar Sesión
+                    </h2>
+                    <p className="text-xs text-slate-500 mt-1 font-medium m-0">
+                        Ingresa tu matrícula y contraseña sindical
+                    </p>
+                </div>
+
+                {/* Formulario */}
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Campo Matrícula */}
+                    <div>
+                        <label className="block text-xs font-bold text-[#486DAA] mb-1.5 pl-2">
+                            Matrícula Institucional
+                        </label>
+                        <div className="relative flex items-center">
+                            <span className="absolute left-4 text-slate-400 text-sm">
+                                <FaUserAlt />
                             </span>
+                            <input 
+                                type="text"
+                                value={formData.matricula}
+                                onChange={handleMatriculaChange}
+                                placeholder="Ej. 97158643"
+                                maxLength={9}
+                                required
+                                disabled={bloqueado || loading}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-full py-3 pl-11 pr-4 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA] focus:bg-white focus:ring-4 focus:ring-[#486DAA]/15 transition"
+                            />
                         </div>
-                        
-                        <div style={styles.inputGroup}>
-                            <label style={styles.label}>
-                                <FaLock style={{ marginRight: '8px', color: '#3EAEF4' }} /> Contraseña
-                            </label>
-                            <div style={styles.inputWrapper}>
-                                <FaLock style={styles.inputIcon} />
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    style={styles.input}
-                                    placeholder="Ingresa tu contraseña"
-                                    value={formData.password}
-                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    onFocus={(e) => {
-                                        e.target.style.borderColor = '#3EAEF4';
-                                        e.target.style.boxShadow = '0 0 0 3px rgba(62,174,244,0.15)';
-                                    }}
-                                    onBlur={(e) => {
-                                        e.target.style.borderColor = '#ddd';
-                                        e.target.style.boxShadow = 'none';
-                                    }}
-                                    disabled={loading || bloqueado}
-                                    required
-                                />
-                                <button
-                                    type="button"
-                                    style={styles.passwordToggle}
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
-                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                                </button>
-                            </div>
+                    </div>
+
+                    {/* Campo Contraseña */}
+                    <div>
+                        <label className="block text-xs font-bold text-[#486DAA] mb-1.5 pl-2">
+                            Contraseña
+                        </label>
+                        <div className="relative flex items-center">
+                            <span className="absolute left-4 text-slate-400 text-sm">
+                                <FaLock />
+                            </span>
+                            <input 
+                                type={showPassword ? "text" : "password"}
+                                value={formData.password}
+                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                placeholder="••••••••"
+                                required
+                                disabled={bloqueado || loading}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-full py-3 pl-11 pr-11 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA] focus:bg-white focus:ring-4 focus:ring-[#486DAA]/15 transition"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-4 text-slate-400 hover:text-[#486DAA] border-0 bg-transparent cursor-pointer text-sm p-0"
+                            >
+                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            </button>
                         </div>
-                        
-                        <button 
-                            type="submit" 
-                            style={{
-                                ...styles.button,
-                                ...((loading || bloqueado) ? styles.buttonDisabled : {})
-                            }}
-                            disabled={loading || bloqueado}
-                            onMouseEnter={(e) => {
-                                if (!loading && !bloqueado) {
-                                    e.currentTarget.style.transform = 'translateY(-2px)';
-                                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(62,174,244,0.3)';
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.boxShadow = 'none';
-                            }}
-                        >
-                            {loading ? (
-                                <>
-                                    <span className="spinner-border spinner-border-sm" role="status" style={{ width: '1rem', height: '1rem' }} />
-                                    Iniciando sesión...
-                                </>
-                            ) : bloqueado ? (
-                                'Cuenta bloqueada, intenta más tarde'
-                            ) : (
-                                <>
-                                    <FaSignInAlt /> Entrar
-                                </>
-                            )}
-                        </button>
-                    </form>
-                    
-                    <div style={styles.footer}>
-                        <Link 
-                            to="/registro" 
-                            style={styles.footerLink}
-                            onMouseEnter={(e) => e.currentTarget.style.color = '#2d8fd4'}
-                            onMouseLeave={(e) => e.currentTarget.style.color = '#3EAEF4'}
-                        >
-                            <FaUserPlus /> ¿No tienes cuenta? Regístrate aquí
-                        </Link>
-                        <span style={styles.footerSeparator} />
+                    </div>
+
+                    {/* Recuperar Contraseña */}
+                    <div className="flex justify-end pt-1">
                         <Link 
                             to="/RecuperarContraseña" 
-                            style={styles.footerLink}
-                            onMouseEnter={(e) => e.currentTarget.style.color = '#2d8fd4'}
-                            onMouseLeave={(e) => e.currentTarget.style.color = '#3EAEF4'}
+                            className="text-[11px] font-bold text-[#486DAA] hover:underline text-decoration-none"
                         >
-                            <FaEnvelope /> ¿Olvidaste tu contraseña?
+                            ¿Olvidaste tu contraseña?
                         </Link>
                     </div>
+
+                    {/* Mensaje de error si existe */}
+                    {errorMsg && (
+                        <div className="p-3 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-600 text-center font-medium">
+                            {errorMsg}
+                        </div>
+                    )}
+
+                    {/* Botón de Submit */}
+                    <button 
+                        type="submit"
+                        disabled={loading || bloqueado}
+                        className="w-full bg-gradient-to-r from-[#486DAA] to-[#355386] hover:from-[#3b598d] hover:to-[#2e4771] text-white font-bold py-3.5 px-6 rounded-full shadow-lg shadow-[#486DAA]/30 hover:scale-[1.02] active:scale-[0.98] transition duration-200 text-xs sm:text-sm flex items-center justify-center space-x-2 border-0 cursor-pointer mt-4"
+                    >
+                        <FaSignInAlt />
+                        <span>{loading ? 'Verificando...' : 'Acceder al Portal'}</span>
+                    </button>
+                </form>
+
+                {/* Footer de Registro */}
+                <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+                    <p className="text-xs text-slate-500 m-0">
+                        ¿Aún no tienes cuenta?{' '}
+                        <Link to="/registro" className="font-bold text-[#486DAA] hover:underline text-decoration-none">
+                            Regístrate aquí
+                        </Link>
+                    </p>
                 </div>
+
             </div>
         </div>
     );

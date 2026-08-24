@@ -3,325 +3,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { 
     FaUserAlt, FaIdCard, FaPhone, FaEnvelope, FaLock, FaFilePdf, 
     FaCamera, FaCheckCircle, FaExclamationTriangle, FaArrowLeft, 
-    FaArrowRight, FaEye, FaEyeSlash, FaUser, FaBuilding, FaCalendarAlt 
+    FaArrowRight, FaEye, FaEyeSlash, FaUser, FaBuilding, FaCalendarAlt,
+    FaUserPlus, FaUpload
 } from 'react-icons/fa';
 import { apiUrl } from '../config';
 import AvisoPrivacidad from '../components/AvisoPrivacidad';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
-
-// Estilos en línea para el componente
-const styles = {
-    container: {
-        maxWidth: '800px',
-        margin: '0 auto',
-        padding: '2rem 1rem',
-    },
-    card: {
-        backgroundColor: 'rgba(255,255,255,0.95)',
-        backdropFilter: 'blur(10px)',
-        borderRadius: '20px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06)',
-        overflow: 'hidden',
-        border: '1px solid rgba(255,255,255,0.5)',
-    },
-    cardHeader: {
-        background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 100%)',
-        padding: '1.8rem 2rem',
-        textAlign: 'center',
-        borderBottom: '4px solid #3EAEF4',
-    },
-    cardHeaderTitle: {
-        fontSize: '1.8rem',
-        fontWeight: 'bold',
-        background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text',
-        margin: 0,
-    },
-    cardHeaderSubtitle: {
-        color: '#aaa',
-        fontSize: '0.9rem',
-        margin: '0.3rem 0 0 0',
-    },
-    cardBody: {
-        padding: '2rem',
-    },
-    stepIndicator: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: '2rem',
-        position: 'relative',
-    },
-    stepItem: (active) => ({
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        flex: 1,
-        position: 'relative',
-    }),
-    stepCircle: (active, completed) => ({
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '1rem',
-        fontWeight: 'bold',
-        backgroundColor: active ? '#3EAEF4' : completed ? '#28a745' : '#e9ecef',
-        color: active || completed ? '#0A0F1E' : '#6c757d',
-        border: active ? '3px solid #3EAEF4' : completed ? '3px solid #28a745' : '3px solid #dee2e6',
-        transition: 'all 0.3s ease',
-        boxShadow: active ? '0 0 0 4px rgba(255,215,0,0.2)' : 'none',
-    }),
-    stepLabel: (active) => ({
-        fontSize: '0.7rem',
-        fontWeight: active ? 'bold' : 'normal',
-        color: active ? '#3EAEF4' : '#6c757d',
-        marginTop: '0.3rem',
-        textTransform: 'uppercase',
-        letterSpacing: '0.5px',
-    }),
-    stepLine: (active) => ({
-        position: 'absolute',
-        top: '20px',
-        left: '50%',
-        width: '100%',
-        height: '2px',
-        backgroundColor: active ? '#3EAEF4' : '#dee2e6',
-        zIndex: -1,
-    }),
-    userCard: {
-        backgroundColor: '#f8f9fa',
-        borderRadius: '16px',
-        padding: '1.5rem',
-        marginBottom: '1.5rem',
-        border: '1px solid #e9ecef',
-        position: 'relative',
-        overflow: 'hidden',
-    },
-    userCardHeader: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        marginBottom: '1rem',
-        paddingBottom: '0.5rem',
-        borderBottom: '2px solid #3EAEF4',
-    },
-    userCardTitle: {
-        fontSize: '1rem',
-        fontWeight: 'bold',
-        color: '#0A0F1E',
-        margin: 0,
-    },
-    userDataGrid: {
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '0.5rem 1.5rem',
-    },
-    userDataItem: {
-        display: 'flex',
-        flexDirection: 'column',
-    },
-    userDataLabel: {
-        fontSize: '0.7rem',
-        fontWeight: '600',
-        color: '#6c757d',
-        textTransform: 'uppercase',
-        letterSpacing: '0.3px',
-    },
-    userDataValue: {
-        fontSize: '0.95rem',
-        fontWeight: '600',
-        color: '#0A0F1E',
-        margin: 0,
-    },
-    inputGroup: {
-        marginBottom: '1.2rem',
-    },
-    label: {
-        display: 'block',
-        fontWeight: '600',
-        fontSize: '0.9rem',
-        color: '#333',
-        marginBottom: '0.3rem',
-    },
-    input: {
-        width: '100%',
-        padding: '0.6rem 1rem',
-        fontSize: '1rem',
-        border: '1px solid #ddd',
-        borderRadius: '12px',
-        transition: 'all 0.3s ease',
-        outline: 'none',
-        backgroundColor: 'white',
-        color: '#0A0F1E',
-    },
-    inputFocus: {
-        borderColor: '#3EAEF4',
-        boxShadow: '0 0 0 3px rgba(255,215,0,0.15)',
-    },
-    inputGroupWrapper: {
-        position: 'relative',
-    },
-    inputIcon: {
-        position: 'absolute',
-        left: '12px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        color: '#aaa',
-        fontSize: '1rem',
-    },
-    inputWithIcon: {
-        paddingLeft: '2.5rem',
-    },
-    btnPrimary: {
-        backgroundColor: '#3EAEF4',
-        color: '#0A0F1E',
-        border: 'none',
-        padding: '0.7rem 1.5rem',
-        borderRadius: '12px',
-        fontWeight: 'bold',
-        fontSize: '1rem',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.5rem',
-        width: '100%',
-    },
-    btnPrimaryHover: {
-        transform: 'translateY(-2px)',
-        boxShadow: '0 4px 12px rgba(255,215,0,0.3)',
-    },
-    btnSecondary: {
-        backgroundColor: '#e9ecef',
-        color: '#333',
-        border: 'none',
-        padding: '0.7rem 1.5rem',
-        borderRadius: '12px',
-        fontWeight: 'bold',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.5rem',
-    },
-    btnSuccess: {
-        backgroundColor: '#28a745',
-        color: 'white',
-        border: 'none',
-        padding: '0.7rem 1.5rem',
-        borderRadius: '12px',
-        fontWeight: 'bold',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.5rem',
-        width: '100%',
-    },
-    btnOutline: {
-        backgroundColor: 'transparent',
-        color: '#6c757d',
-        border: '1px solid #ddd',
-        padding: '0.7rem 1.5rem',
-        borderRadius: '12px',
-        fontWeight: 'bold',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.5rem',
-    },
-    fileInput: {
-        width: '100%',
-        padding: '0.6rem 1rem',
-        fontSize: '1rem',
-        border: '1px solid #ddd',
-        borderRadius: '12px',
-        transition: 'all 0.3s ease',
-        outline: 'none',
-        backgroundColor: 'white',
-        cursor: 'pointer',
-    },
-    fileInputHover: {
-        borderColor: '#3EAEF4',
-        boxShadow: '0 0 0 3px rgba(255,215,0,0.1)',
-    },
-    checkbox: {
-        marginRight: '0.5rem',
-        accentColor: '#3EAEF4',
-        width: '18px',
-        height: '18px',
-        cursor: 'pointer',
-    },
-    checkboxLabel: {
-        fontSize: '0.9rem',
-        color: '#333',
-        cursor: 'pointer',
-    },
-    fotoPreview: {
-        width: '120px',
-        height: '120px',
-        borderRadius: '50%',
-        objectFit: 'cover',
-        border: '3px solid #3EAEF4',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-        marginTop: '0.5rem',
-    },
-    alertError: {
-        backgroundColor: '#fee2e2',
-        color: '#dc2626',
-        padding: '0.75rem 1rem',
-        borderRadius: '12px',
-        marginBottom: '1.5rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        fontSize: '0.9rem',
-    },
-    alertSuccess: {
-        backgroundColor: '#d4edda',
-        color: '#155724',
-        padding: '0.75rem 1rem',
-        borderRadius: '12px',
-        marginBottom: '1.5rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        fontSize: '0.9rem',
-    },
-    link: {
-        color: '#3EAEF4',
-        textDecoration: 'none',
-        fontWeight: 'bold',
-        cursor: 'pointer',
-    },
-    linkHover: {
-        textDecoration: 'underline',
-    },
-    smallText: {
-        fontSize: '0.75rem',
-        color: '#6c757d',
-        marginTop: '0.2rem',
-        display: 'block',
-    },
-    flexRow: {
-        display: 'flex',
-        gap: '0.5rem',
-        marginTop: '1rem',
-    },
-    flexGrow: {
-        flex: 1,
-    },
-};
 
 const Registro = () => {
     const navigate = useNavigate();
@@ -356,9 +44,7 @@ const Registro = () => {
     const [fotoFile, setFotoFile] = useState(null);
     const [fotoPreview, setFotoPreview] = useState(null);
 
-    const validarMatricula = (matricula) => {
-        return /^\d{8,9}$/.test(matricula);
-    };
+    const validarMatricula = (matricula) => /^\d{8,9}$/.test(matricula);
 
     const validarCURP = (curp) => {
         const limpia = curp.toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -367,27 +53,21 @@ const Registro = () => {
         return regex.test(limpia);
     };
 
-    const validarPassword = (password) => password.length >= 8;
-
-    // ============================================
-    // ✅ handleBuscarUsuario
-    // ============================================
-    // ✅ handleBuscarUsuario con la corrección
+    // Paso 1: Buscar Usuario
     const handleBuscarUsuario = async (e) => {
         e.preventDefault();
         setErrorMsg('');
         setLoading(true);
 
         const matricula = formData.matricula.trim();
-        let curp = formData.curp.trim().toUpperCase();
-        curp = curp.replace(/[^A-Z0-9]/g, '');
+        let curp = formData.curp.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
 
         if (!validarMatricula(matricula)) {
             await Swal.fire({
                 title: '⚠️ Matrícula inválida',
                 text: 'La matrícula debe tener entre 8 y 9 dígitos numéricos.',
                 icon: 'warning',
-                confirmButtonColor: '#ffc107',
+                confirmButtonColor: '#486DAA',
                 confirmButtonText: 'Entendido',
             });
             setLoading(false);
@@ -397,9 +77,9 @@ const Registro = () => {
         if (!validarCURP(curp)) {
             await Swal.fire({
                 title: '⚠️ CURP inválida',
-                text: 'La CURP debe tener exactamente 18 caracteres con el formato correcto.',
+                text: 'La CURP debe tener exactamente 18 caracteres con el formato oficial.',
                 icon: 'warning',
-                confirmButtonColor: '#ffc107',
+                confirmButtonColor: '#486DAA',
                 confirmButtonText: 'Entendido',
             });
             setLoading(false);
@@ -407,11 +87,7 @@ const Registro = () => {
         }
 
         try {
-            const payload = {
-                matricula: matricula,
-                curp: curp
-            };
-
+            const payload = { matricula, curp };
             const response = await fetch(apiUrl('/buscar_usuario.php'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -424,20 +100,17 @@ const Registro = () => {
                 throw new Error(data.message || 'Error al validar tus datos.');
             }
 
-            // ✅ Guardamos la sección y actualizamos usuarioValidado
             if (data.usuario && data.usuario.idSeccion) {
                 const seccionData = {
                     id: data.usuario.idSeccion,
                     romano: data.usuario.seccion_romano || 'N/A',
                     nombre: data.usuario.seccion_nombre || 'Sin nombre',
-                    color: data.usuario.seccion_color || '#3EAEF4'
+                    color: data.usuario.seccion_color || '#486DAA'
                 };
                 setSeccionUsuario(seccionData);
-                
-                // ✅ NUEVO: Asignar idSeccion a usuarioValidado
                 setUsuarioValidado({
                     ...data.usuario,
-                    idSeccion: data.usuario.idSeccion  // Asegurar que tenga idSeccion
+                    idSeccion: data.usuario.idSeccion
                 });
             } else {
                 setUsuarioValidado(data.usuario);
@@ -448,7 +121,7 @@ const Registro = () => {
                     title: '⚠️ Usuario ya registrado',
                     text: 'Este usuario ya se encuentra registrado. Por favor, inicia sesión.',
                     icon: 'warning',
-                    confirmButtonColor: '#ffc107',
+                    confirmButtonColor: '#486DAA',
                     confirmButtonText: 'Ir a iniciar sesión',
                 });
                 navigate('/login');
@@ -471,9 +144,7 @@ const Registro = () => {
         }
     };
 
-    // ============================================
-    // ✅ handleCompletarRegistro
-    // ============================================
+    // Paso 2: Guardar Datos del Registro
     const handleCompletarRegistro = async (e) => {
         e.preventDefault();
         setErrorMsg('');
@@ -484,45 +155,21 @@ const Registro = () => {
         if (!antiguedad || !/^\d+$/.test(antiguedad)) {
             await Swal.fire({
                 title: '⚠️ Antigüedad inválida',
-                text: 'La antigüedad debe ser un número válido (ej: 5, 10, 15).',
+                text: 'La antigüedad debe ser un número entero (ej: 5, 10, 15).',
                 icon: 'warning',
-                confirmButtonColor: '#ffc107',
+                confirmButtonColor: '#486DAA',
                 confirmButtonText: 'Entendido',
             });
             setLoading(false);
             return;
         }
 
-        if (!telefono) {
-            await Swal.fire({
-                title: '⚠️ Teléfono requerido',
-                text: 'El teléfono es obligatorio.',
-                icon: 'warning',
-                confirmButtonColor: '#ffc107',
-                confirmButtonText: 'Entendido',
-            });
-            setLoading(false);
-            return;
-        }
-
-        if (!/^\d{10}$/.test(telefono)) {
+        if (!telefono || !/^\d{10}$/.test(telefono)) {
             await Swal.fire({
                 title: '⚠️ Teléfono inválido',
-                text: 'El teléfono debe tener exactamente 10 dígitos numéricos (ej: 5512345678).',
+                text: 'El teléfono debe tener exactamente 10 dígitos numéricos.',
                 icon: 'warning',
-                confirmButtonColor: '#ffc107',
-                confirmButtonText: 'Entendido',
-            });
-            setLoading(false);
-            return;
-        }
-
-        if (!correo) {
-            await Swal.fire({
-                title: '⚠️ Correo requerido',
-                text: 'El correo electrónico es obligatorio.',
-                icon: 'warning',
-                confirmButtonColor: '#ffc107',
+                confirmButtonColor: '#486DAA',
                 confirmButtonText: 'Entendido',
             });
             setLoading(false);
@@ -530,12 +177,12 @@ const Registro = () => {
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(correo)) {
+        if (!correo || !emailRegex.test(correo)) {
             await Swal.fire({
                 title: '⚠️ Correo inválido',
-                text: 'Ingresa un correo electrónico válido (ej: usuario@dominio.com).',
+                text: 'Ingresa un correo electrónico válido.',
                 icon: 'warning',
-                confirmButtonColor: '#ffc107',
+                confirmButtonColor: '#486DAA',
                 confirmButtonText: 'Entendido',
             });
             setLoading(false);
@@ -547,7 +194,7 @@ const Registro = () => {
                 title: '⚠️ Contraseña insegura',
                 text: 'La contraseña debe tener al menos 8 caracteres.',
                 icon: 'warning',
-                confirmButtonColor: '#ffc107',
+                confirmButtonColor: '#486DAA',
                 confirmButtonText: 'Entendido',
             });
             setLoading(false);
@@ -557,9 +204,9 @@ const Registro = () => {
         if (password !== confirmar_password) {
             await Swal.fire({
                 title: '⚠️ Contraseñas no coinciden',
-                text: 'Las contraseñas no coinciden. Por favor verifica.',
+                text: 'Las contraseñas ingresadas no coinciden.',
                 icon: 'warning',
-                confirmButtonColor: '#ffc107',
+                confirmButtonColor: '#486DAA',
                 confirmButtonText: 'Entendido',
             });
             setLoading(false);
@@ -571,7 +218,7 @@ const Registro = () => {
                 title: '⚠️ Aceptación requerida',
                 text: 'Debes aceptar la veracidad de la información y el aviso de privacidad.',
                 icon: 'warning',
-                confirmButtonColor: '#ffc107',
+                confirmButtonColor: '#486DAA',
                 confirmButtonText: 'Entendido',
             });
             setLoading(false);
@@ -599,7 +246,7 @@ const Registro = () => {
             try {
                 data = JSON.parse(textResponse);
             } catch (e) {
-                throw new Error('El servidor respondió con un formato inválido');
+                throw new Error('El servidor respondió con un formato no válido');
             }
 
             if (!response.ok || !data.success) {
@@ -621,100 +268,33 @@ const Registro = () => {
         }
     };
 
-    // ============================================
-    // ✅ handleSubirDocumentos (ÚNICA VERSIÓN)
-    // ============================================
+    // Paso 3: Subir Documentos
     const handleSubirDocumentos = async (e) => {
         e.preventDefault();
         setErrorMsg('');
         setLoading(true);
 
-        if (!tarjetonFile) {
+        if (!tarjetonFile || !fotoFile) {
             await Swal.fire({
-                title: '⚠️ Documento requerido',
-                text: 'Por favor, selecciona tu último tarjetón de pago (PDF).',
+                title: '⚠️ Archivos requeridos',
+                text: 'Por favor selecciona tu tarjetón de pago (PDF) y tu foto de perfil.',
                 icon: 'warning',
-                confirmButtonColor: '#ffc107',
+                confirmButtonColor: '#486DAA',
                 confirmButtonText: 'Entendido',
             });
             setLoading(false);
             return;
         }
-
-        if (!fotoFile) {
-            await Swal.fire({
-                title: '⚠️ Foto requerida',
-                text: 'Por favor, selecciona una foto de busto para tu perfil.',
-                icon: 'warning',
-                confirmButtonColor: '#ffc107',
-                confirmButtonText: 'Entendido',
-            });
-            setLoading(false);
-            return;
-        }
-
-        if (tarjetonFile.type !== 'application/pdf') {
-            await Swal.fire({
-                title: '⚠️ Formato incorrecto',
-                text: 'El tarjetón debe ser un archivo PDF.',
-                icon: 'warning',
-                confirmButtonColor: '#ffc107',
-                confirmButtonText: 'Entendido',
-            });
-            setLoading(false);
-            return;
-        }
-
-        if (tarjetonFile.size > 5 * 1024 * 1024) {
-            await Swal.fire({
-                title: '⚠️ Archivo muy grande',
-                text: 'El tarjetón no debe superar los 5MB.',
-                icon: 'warning',
-                confirmButtonColor: '#ffc107',
-                confirmButtonText: 'Entendido',
-            });
-            setLoading(false);
-            return;
-        }
-
-        const fotoTipos = ['image/jpeg', 'image/png', 'image/webp'];
-        if (!fotoTipos.includes(fotoFile.type)) {
-            await Swal.fire({
-                title: '⚠️ Formato incorrecto',
-                text: 'La foto debe ser JPG, PNG o WEBP.',
-                icon: 'warning',
-                confirmButtonColor: '#ffc107',
-                confirmButtonText: 'Entendido',
-            });
-            setLoading(false);
-            return;
-        }
-
-        if (fotoFile.size > 5 * 1024 * 1024) {
-            await Swal.fire({
-                title: '⚠️ Archivo muy grande',
-                text: 'La foto no debe superar los 5MB.',
-                icon: 'warning',
-                confirmButtonColor: '#ffc107',
-                confirmButtonText: 'Entendido',
-            });
-            setLoading(false);
-            return;
-        }
-
-        // ✅ FormData con idSeccion
-        const formData = new FormData();
-        formData.append('matricula', usuarioValidado.matricula);
-        formData.append('idSeccion', seccionUsuario.id);
-        formData.append('idTipo', usuarioValidado.idTipo || 1);
-        formData.append('tarjeton', tarjetonFile);
-        formData.append('foto', fotoFile);
-        formData.append('process', 'registro');
 
         try {
+            const formDataDocs = new FormData();
+            formDataDocs.append('matricula', usuarioValidado.matricula);
+            formDataDocs.append('tarjeton', tarjetonFile);
+            formDataDocs.append('foto', fotoFile);
+
             const response = await fetch(apiUrl('/subir_documentos.php'), {
                 method: 'POST',
-                body: formData
+                body: formDataDocs
             });
 
             const data = await response.json();
@@ -724,18 +304,17 @@ const Registro = () => {
             }
 
             await Swal.fire({
-                title: '✅ ¡Registro completado!',
-                text: 'Tu cuenta ha sido creada exitosamente. Ahora puedes iniciar sesión.',
+                title: '🎉 ¡Registro Completado!',
+                text: 'Tus datos y documentos han sido registrados exitosamente. Ya puedes iniciar sesión.',
                 icon: 'success',
-                confirmButtonColor: '#28a745',
-                confirmButtonText: 'Ir a iniciar sesión',
-                timer: 3000,
-                timerProgressBar: true,
+                confirmButtonColor: '#10B981',
+                confirmButtonText: 'Iniciar Sesión',
             });
+
             navigate('/login');
         } catch (err) {
             await Swal.fire({
-                title: '❌ Error',
+                title: '❌ Error al subir documentos',
                 text: err.message,
                 icon: 'error',
                 confirmButtonColor: '#dc3545',
@@ -755,392 +334,320 @@ const Registro = () => {
         }
     };
 
-    // ===== RENDER DE PASOS =====
-    
-    const renderStep1 = () => (
-        <form onSubmit={handleBuscarUsuario}>
-            <div style={styles.inputGroup}>
-                <label style={styles.label}>
-                    <FaUserAlt className="me-2" style={{ color: '#3EAEF4' }} /> Matrícula
-                </label>
-                <input
-                    type="text"
-                    style={styles.input}
-                    placeholder="Ej. 97123456"
-                    value={formData.matricula}
-                    onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, '');
-                        setFormData({ ...formData, matricula: value.slice(0, 9) });
-                    }}
-                    disabled={loading}
-                    required
-                />
-                <small style={styles.smallText}>8 o 9 dígitos numéricos</small>
-            </div>
-
-            <div style={styles.inputGroup}>
-                <label style={styles.label}>
-                    <FaIdCard className="me-2" style={{ color: '#3EAEF4' }} /> CURP
-                </label>
-                <input
-                    type="text"
-                    style={{ ...styles.input, textTransform: 'uppercase' }}
-                    placeholder="Ej. LOPA800101MDFRRN09"
-                    value={formData.curp}
-                    onChange={(e) => setFormData({ ...formData, curp: e.target.value.slice(0, 18).toUpperCase() })}
-                    disabled={loading}
-                    required
-                    maxLength="18"
-                />
-                <small style={styles.smallText}>18 caracteres (letras y números)</small>
-            </div>
-
-            <button 
-                type="submit" 
-                style={styles.btnPrimary}
-                disabled={loading}
-                onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 4px 12px rgba(255,215,0,0.3)'; }}
-                onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
-            >
-                {loading ? 'Validando...' : 'Siguiente'}
-                <FaArrowRight />
-            </button>
-        </form>
-    );
-
-    const renderStep2 = () => (
-        <>
-            <div style={styles.userCard}>
-                <div style={styles.userCardHeader}>
-                    <FaCheckCircle style={{ color: '#28a745' }} />
-                    <h5 style={styles.userCardTitle}>Datos verificados</h5>
-                </div>
-                <div style={styles.userDataGrid}>
-                    <div style={styles.userDataItem}>
-                        <span style={styles.userDataLabel}><FaIdCard className="me-1" /> Matrícula</span>
-                        <span style={styles.userDataValue}>{usuarioValidado?.matricula}</span>
-                    </div>
-                    <div style={styles.userDataItem}>
-                        <span style={styles.userDataLabel}><FaUser className="me-1" /> Nombre</span>
-                        <span style={styles.userDataValue}>{usuarioValidado?.nombre}</span>
-                    </div>
-                    <div style={styles.userDataItem}>
-                        <span style={styles.userDataLabel}><FaBuilding className="me-1" /> Adscripción</span>
-                        <span style={styles.userDataValue}>{usuarioValidado?.adscripcion || 'N/A'}</span>
-                    </div>
-                    <div style={styles.userDataItem}>
-                        <span style={styles.userDataLabel}><FaUserAlt className="me-1" /> Categoría</span>
-                        <span style={styles.userDataValue}>{usuarioValidado?.categoria || 'N/A'}</span>
-                    </div>
-                    <div style={styles.userDataItem}>
-                        <span style={styles.userDataLabel}><FaIdCard className="me-1" /> CURP</span>
-                        <span style={styles.userDataValue}>{usuarioValidado?.curp}</span>
-                    </div>
-                    <div style={styles.userDataItem}>
-                        <span style={styles.userDataLabel}><FaCalendarAlt className="me-1" /> Edad</span>
-                        <span style={styles.userDataValue}>{usuarioValidado?.edad || 'N/A'} años</span>
-                    </div>
-                    {seccionUsuario && (
-                        <div style={styles.userDataItem}>
-                            <span style={styles.userDataLabel}>
-                                <FaBuilding className="me-1" /> Sección Asignada
-                            </span>
-                            <span style={{
-                                ...styles.userDataValue,
-                                color: seccionUsuario.color || '#3EAEF4',
-                                fontWeight: 'bold'
-                            }}>
-                                {seccionUsuario.romano} - {seccionUsuario.nombre}
-                            </span>
-                        </div>
-                    )}
-                </div>
-                {seccionUsuario && (
-                    <div style={{ 
-                        marginTop: '0.8rem', 
-                        padding: '0.8rem', 
-                        backgroundColor: `${seccionUsuario.color || '#3EAEF4'}15`,
-                        borderLeft: `4px solid ${seccionUsuario.color || '#3EAEF4'}`,
-                        borderRadius: '8px'
-                    }}>
-                        <small style={{ color: '#333' }}>
-                            <FaCheckCircle style={{ color: seccionUsuario.color || '#3EAEF4', marginRight: '0.5rem' }} />
-                            Tu sección asignada en el padrón es: <strong style={{ color: seccionUsuario.color || '#3EAEF4' }}>
-                                {seccionUsuario.romano} - {seccionUsuario.nombre}
-                            </strong>
-                        </small>
-                    </div>
-                )}
-            </div>
-
-            <form onSubmit={handleCompletarRegistro}>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>Antigüedad (años)</label>
-                    <input
-                        type="text"
-                        style={styles.input}
-                        placeholder="Ej. 5, 10, 15, 20"
-                        value={registroData.antiguedad}
-                        onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, '');
-                            setRegistroData({ ...registroData, antiguedad: value });
-                        }}
-                        disabled={loading}
-                        required
-                    />
-                    <small style={styles.smallText}>Esta información viene en tu tarjetón de pago</small>
-                </div>
-
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>
-                        <FaPhone className="me-2" style={{ color: '#3EAEF4' }} /> Teléfono
-                    </label>
-                    <input
-                        type="text"
-                        style={styles.input}
-                        placeholder="10 dígitos numéricos"
-                        value={registroData.telefono}
-                        onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, '');
-                            setRegistroData({ ...registroData, telefono: value.slice(0, 10) });
-                        }}
-                        disabled={loading}
-                        required
-                        maxLength={10}
-                    />
-                    <small style={styles.smallText}>10 dígitos numéricos (ej: 5512345678)</small>
-                </div>
-
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>
-                        <FaEnvelope className="me-2" style={{ color: '#3EAEF4' }} /> Correo Electrónico
-                    </label>
-                    <input
-                        type="email"
-                        style={styles.input}
-                        placeholder="tu@email.com"
-                        value={registroData.correo}
-                        onChange={(e) => setRegistroData({ ...registroData, correo: e.target.value })}
-                        disabled={loading}
-                        required
-                    />
-                </div>
-
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>
-                        <FaLock className="me-2" style={{ color: '#3EAEF4' }} /> Contraseña
-                    </label>
-                    <div style={styles.inputGroupWrapper}>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            style={{ ...styles.input, ...styles.inputWithIcon }}
-                            placeholder="Mínimo 8 caracteres"
-                            value={registroData.password}
-                            onChange={(e) => setRegistroData({ ...registroData, password: e.target.value })}
-                            disabled={loading}
-                            required
-                        />
-                        <button
-                            type="button"
-                            style={{ ...styles.btnOutline, position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)', padding: '0.3rem 0.6rem', border: 'none' }}
-                            onClick={() => setShowPassword(!showPassword)}
-                        >
-                            {showPassword ? <FaEyeSlash /> : <FaEye />}
-                        </button>
-                    </div>
-                    <small style={styles.smallText}>Mínimo 8 caracteres</small>
-                </div>
-
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>
-                        <FaLock className="me-2" style={{ color: '#3EAEF4' }} /> Confirmar Contraseña
-                    </label>
-                    <div style={styles.inputGroupWrapper}>
-                        <input
-                            type={showConfirmPassword ? "text" : "password"}
-                            style={{ ...styles.input, ...styles.inputWithIcon }}
-                            placeholder="Repite tu contraseña"
-                            value={registroData.confirmar_password}
-                            onChange={(e) => setRegistroData({ ...registroData, confirmar_password: e.target.value })}
-                            disabled={loading}
-                            required
-                        />
-                        <button
-                            type="button"
-                            style={{ ...styles.btnOutline, position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)', padding: '0.3rem 0.6rem', border: 'none' }}
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        >
-                            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                        </button>
-                    </div>
-                </div>
-
-                <div style={styles.inputGroup}>
-                    <input
-                        type="checkbox"
-                        style={styles.checkbox}
-                        id="aceptaInformacion"
-                        checked={aceptaInformacion}
-                        onChange={(e) => setAceptaInformacion(e.target.checked)}
-                        required
-                    />
-                    <label style={styles.checkboxLabel} htmlFor="aceptaInformacion">
-                        <strong>Declaro que la información proporcionada es verdadera y completa.</strong>
-                    </label>
-                </div>
-
-                <div style={{ ...styles.inputGroup, marginBottom: '1.5rem' }}>
-                    <input
-                        type="checkbox"
-                        style={styles.checkbox}
-                        id="aceptaPrivacidad"
-                        checked={aceptaPrivacidad}
-                        onChange={(e) => setAceptaPrivacidad(e.target.checked)}
-                        required
-                    />
-                    <label style={styles.checkboxLabel} htmlFor="aceptaPrivacidad">
-                        He leído y acepto el <a href="#" style={styles.link} onClick={(e) => { e.preventDefault(); setShowAvisoPrivacidad(true); }}>Aviso de Privacidad</a>
-                    </label>
-                </div>
-
-                <div style={styles.flexRow}>
-                    <button 
-                        type="button" 
-                        style={styles.btnOutline} 
-                        onClick={() => setStep(1)} 
-                        disabled={loading}
-                    >
-                        <FaArrowLeft /> Atrás
-                    </button>
-                    <button 
-                        type="submit" 
-                        style={{ ...styles.btnPrimary, ...styles.flexGrow }}
-                        disabled={loading}
-                        onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 4px 12px rgba(255,215,0,0.3)'; }}
-                        onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
-                    >
-                        {loading ? 'Guardando...' : 'Siguiente'}
-                        <FaArrowRight />
-                    </button>
-                </div>
-            </form>
-        </>
-    );
-
-    const renderStep3 = () => (
-        <form onSubmit={handleSubirDocumentos}>
-            <div style={styles.inputGroup}>
-                <label style={styles.label}>
-                    <FaFilePdf className="me-2" style={{ color: '#dc3545' }} /> Último Tarjetón de Pago (PDF)
-                </label>
-                <input
-                    type="file"
-                    style={styles.fileInput}
-                    accept=".pdf"
-                    onChange={(e) => setTarjetonFile(e.target.files[0])}
-                    disabled={loading}
-                    required
-                />
-                <small style={styles.smallText}>Máximo 5MB. Solo PDF.</small>
-            </div>
-
-            <div style={styles.inputGroup}>
-                <label style={styles.label}>
-                    <FaCamera className="me-2" style={{ color: '#3EAEF4' }} /> Foto de Busto para Perfil
-                </label>
-                <input
-                    type="file"
-                    style={styles.fileInput}
-                    accept="image/jpeg,image/png,image/webp"
-                    onChange={handleFotoChange}
-                    disabled={loading}
-                    required
-                />
-                <small style={styles.smallText}>Máximo 5MB. JPG, PNG o WEBP.</small>
-                {fotoPreview && (
-                    <div className="text-center mt-2">
-                        <img src={fotoPreview} alt="Vista previa" style={styles.fotoPreview} />
-                    </div>
-                )}
-            </div>
-
-            <div style={styles.flexRow}>
-                <button 
-                    type="button" 
-                    style={styles.btnOutline} 
-                    onClick={() => setStep(2)} 
-                    disabled={loading}
-                >
-                    <FaArrowLeft /> Atrás
-                </button>
-                <button 
-                    type="submit" 
-                    style={{ ...styles.btnSuccess, ...styles.flexGrow }}
-                    disabled={loading}
-                    onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 4px 12px rgba(40,167,69,0.3)'; }}
-                    onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
-                >
-                    {loading ? 'Subiendo documentos...' : 'Completar Registro'}
-                    <FaCheckCircle />
-                </button>
-            </div>
-        </form>
-    );
-
-    const stepLabels = ['Validación', 'Datos', 'Documentos'];
-
     return (
-        <div style={styles.container}>
-            <div style={styles.card}>
-                <div style={styles.cardHeader}>
-                    <h2 style={styles.cardHeaderTitle}>Crear Cuenta</h2>
-                    <p style={styles.cardHeaderSubtitle}>SNTSS Sección XXXIII</p>
-                </div>
-                <div style={styles.cardBody}>
-                    <div style={styles.stepIndicator}>
-                        {[1, 2, 3].map((num) => {
-                            const active = step === num;
-                            const completed = step > num;
-                            return (
-                                <div key={num} style={{ ...styles.stepItem(active), position: 'relative' }}>
-                                    {num < 3 && (
-                                        <div style={{ ...styles.stepLine(active || completed), left: '50%', width: '100%' }} />
-                                    )}
-                                    <div style={styles.stepCircle(active, completed)}>
-                                        {completed ? <FaCheckCircle /> : num}
-                                    </div>
-                                    <span style={styles.stepLabel(active)}>{stepLabels[num - 1]}</span>
-                                </div>
-                            );
-                        })}
+        <div className="relative min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-10">
+            {/* Patrón de puntos flotante */}
+            <div className="absolute top-10 left-10 w-28 h-28 dot-matrix opacity-40 pointer-events-none"></div>
+            <div className="absolute bottom-10 right-10 w-32 h-32 dot-matrix opacity-40 pointer-events-none"></div>
+
+            {/* Contenedor Principal */}
+            <div className="relative z-10 w-full max-w-2xl bg-white rounded-[2.5rem] p-8 sm:p-10 ui-shadow border border-white">
+                
+                {/* Cabecera */}
+                <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-[#486DAA] rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-lg shadow-[#486DAA]/30">
+                        <FaUserPlus />
                     </div>
-
-                    {errorMsg && (
-                        <div style={styles.alertError}>
-                            <FaExclamationTriangle /> {errorMsg}
-                            <button type="button" style={{ background: 'none', border: 'none', marginLeft: 'auto', color: 'inherit' }} onClick={() => setErrorMsg('')}>✕</button>
-                        </div>
-                    )}
-                    {successMsg && (
-                        <div style={styles.alertSuccess}>
-                            <FaCheckCircle /> {successMsg}
-                        </div>
-                    )}
-
-                    {step === 1 && renderStep1()}
-                    {step === 2 && renderStep2()}
-                    {step === 3 && renderStep3()}
-
-                    {step === 1 && (
-                        <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-                            <p style={{ margin: 0, fontSize: '0.9rem' }}>
-                                ¿Ya tienes cuenta? <Link to="/login" style={styles.link}>Inicia sesión aquí</Link>
-                            </p>
-                        </div>
-                    )}
+                    <span className="inline-block bg-[#486DAA]/10 text-[#486DAA] text-[10px] font-extrabold px-3 py-1 rounded-full mb-2 border border-[#486DAA]/20">
+                        Afiliación y Registro
+                    </span>
+                    <h2 className="text-2xl font-black text-[#486DAA] tracking-tight m-0">
+                        Registro de Agremiado
+                    </h2>
+                    <p className="text-xs text-slate-500 mt-1 font-medium m-0">
+                        Sindicato Nacional de Trabajadores del Seguro Social
+                    </p>
                 </div>
+
+                {/* Indicador de Pasos (Pills) */}
+                <div className="flex items-center justify-between mb-8 px-4">
+                    {[
+                        { num: 1, label: 'Validar' },
+                        { num: 2, label: 'Datos' },
+                        { num: 3, label: 'Documentos' }
+                    ].map((s) => (
+                        <div key={s.num} className="flex flex-col items-center flex-1 relative">
+                            <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+                                step === s.num 
+                                    ? 'bg-[#486DAA] text-white shadow-md shadow-[#486DAA]/30 scale-110' 
+                                    : step > s.num 
+                                    ? 'bg-emerald-500 text-white' 
+                                    : 'bg-slate-100 text-slate-400'
+                            }`}>
+                                {step > s.num ? <FaCheckCircle /> : s.num}
+                            </div>
+                            <span className={`text-[10px] font-bold mt-1.5 uppercase ${
+                                step === s.num ? 'text-[#486DAA]' : step > s.num ? 'text-emerald-600' : 'text-slate-400'
+                            }`}>
+                                {s.label}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+
+                {/* PASO 1: BÚSQUEDA Y VALIDACIÓN DE MATRÍCULA Y CURP */}
+                {step === 1 && (
+                    <form onSubmit={handleBuscarUsuario} className="space-y-4">
+                        <div>
+                            <label className="block text-xs font-bold text-[#486DAA] mb-1.5 pl-2">
+                                Matrícula
+                            </label>
+                            <div className="relative flex items-center">
+                                <span className="absolute left-4 text-slate-400 text-sm">
+                                    <FaUserAlt />
+                                </span>
+                                <input 
+                                    type="text"
+                                    value={formData.matricula}
+                                    onChange={(e) => setFormData({ ...formData, matricula: e.target.value.replace(/\D/g, '').slice(0, 9) })}
+                                    placeholder="Ej. 97158643"
+                                    maxLength={9}
+                                    required
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-full py-3 pl-11 pr-4 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA] focus:bg-white focus:ring-4 focus:ring-[#486DAA]/15 transition"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-[#486DAA] mb-1.5 pl-2">
+                                Clave Única de Registro de Población (CURP)
+                            </label>
+                            <div className="relative flex items-center">
+                                <span className="absolute left-4 text-slate-400 text-sm">
+                                    <FaIdCard />
+                                </span>
+                                <input 
+                                    type="text"
+                                    value={formData.curp}
+                                    onChange={(e) => setFormData({ ...formData, curp: e.target.value.toUpperCase() })}
+                                    placeholder="18 caracteres alfanuméricos"
+                                    maxLength={18}
+                                    required
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-full py-3 pl-11 pr-4 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA] focus:bg-white focus:ring-4 focus:ring-[#486DAA]/15 transition uppercase"
+                                />
+                            </div>
+                        </div>
+
+                        <button 
+                            type="submit"
+                            disabled={loading}
+                            className="w-full bg-gradient-to-r from-[#486DAA] to-[#355386] hover:from-[#3b598d] hover:to-[#2e4771] text-white font-bold py-3.5 px-6 rounded-full shadow-lg shadow-[#486DAA]/30 hover:scale-[1.02] active:scale-[0.98] transition duration-200 text-xs sm:text-sm flex items-center justify-center space-x-2 border-0 cursor-pointer mt-6"
+                        >
+                            <span>{loading ? 'Buscando en padrón...' : 'Validar Datos y Continuar'}</span>
+                            <FaArrowRight />
+                        </button>
+                    </form>
+                )}
+
+                {/* PASO 2: COMPLETAR DATOS */}
+                {step === 2 && usuarioValidado && (
+                    <form onSubmit={handleCompletarRegistro} className="space-y-4">
+                        
+                        {/* Tarjeta con Datos Validados */}
+                        <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 text-xs">
+                            <div className="font-bold text-[#486DAA] mb-2 pb-2 border-b border-slate-200 flex items-center space-x-2">
+                                <FaCheckCircle className="text-emerald-500" />
+                                <span>Datos Encontrados en Padrón</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2 text-slate-600">
+                                <div><span className="font-bold">Nombre:</span> {usuarioValidado.nombre}</div>
+                                <div><span className="font-bold">Matrícula:</span> {usuarioValidado.matricula}</div>
+                                <div><span className="font-bold">Adscripción:</span> {usuarioValidado.adscripcion || 'N/A'}</div>
+                                <div><span className="font-bold">Categoría:</span> {usuarioValidado.categoria || 'N/A'}</div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-xs font-bold text-[#486DAA] mb-1.5 pl-2">Antigüedad (Años)</label>
+                                <input 
+                                    type="number"
+                                    value={registroData.antiguedad}
+                                    onChange={(e) => setRegistroData({ ...registroData, antiguedad: e.target.value })}
+                                    placeholder="Ej. 8"
+                                    required
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 px-4 text-xs text-slate-700 outline-none focus:border-[#486DAA]"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-[#486DAA] mb-1.5 pl-2">Teléfono (10 dígitos)</label>
+                                <input 
+                                    type="tel"
+                                    value={registroData.telefono}
+                                    onChange={(e) => setRegistroData({ ...registroData, telefono: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                                    placeholder="Ej. 5512345678"
+                                    required
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 px-4 text-xs text-slate-700 outline-none focus:border-[#486DAA]"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-[#486DAA] mb-1.5 pl-2">Correo Electrónico</label>
+                            <input 
+                                type="email"
+                                value={registroData.correo}
+                                onChange={(e) => setRegistroData({ ...registroData, correo: e.target.value })}
+                                placeholder="tu_correo@dominio.com"
+                                required
+                                className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 px-4 text-xs text-slate-700 outline-none focus:border-[#486DAA]"
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-xs font-bold text-[#486DAA] mb-1.5 pl-2">Contraseña (Mín. 8 caracteres)</label>
+                                <input 
+                                    type="password"
+                                    value={registroData.password}
+                                    onChange={(e) => setRegistroData({ ...registroData, password: e.target.value })}
+                                    placeholder="••••••••"
+                                    required
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 px-4 text-xs text-slate-700 outline-none focus:border-[#486DAA]"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-[#486DAA] mb-1.5 pl-2">Confirmar Contraseña</label>
+                                <input 
+                                    type="password"
+                                    value={registroData.confirmar_password}
+                                    onChange={(e) => setRegistroData({ ...registroData, confirmar_password: e.target.value })}
+                                    placeholder="••••••••"
+                                    required
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 px-4 text-xs text-slate-700 outline-none focus:border-[#486DAA]"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Checkboxes de Términos */}
+                        <div className="space-y-2 pt-2 text-xs">
+                            <label className="flex items-start space-x-2 cursor-pointer">
+                                <input 
+                                    type="checkbox"
+                                    checked={aceptaInformacion}
+                                    onChange={(e) => setAceptaInformacion(e.target.checked)}
+                                    className="mt-0.5"
+                                />
+                                <span>Confirmo bajo protesta de decir verdad que los datos proporcionados son correctos.</span>
+                            </label>
+
+                            <label className="flex items-start space-x-2 cursor-pointer">
+                                <input 
+                                    type="checkbox"
+                                    checked={aceptaPrivacidad}
+                                    onChange={(e) => setAceptaPrivacidad(e.target.checked)}
+                                    className="mt-0.5"
+                                />
+                                <span>
+                                    He leído y acepto el{' '}
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setShowAvisoPrivacidad(true)} 
+                                        className="text-[#486DAA] font-bold underline bg-transparent border-0 p-0 cursor-pointer"
+                                    >
+                                        Aviso de Privacidad
+                                    </button>.
+                                </span>
+                            </label>
+                        </div>
+
+                        <div className="flex space-x-3 pt-4">
+                            <button 
+                                type="button"
+                                onClick={() => setStep(1)}
+                                className="flex-1 bg-slate-100 text-slate-600 font-bold py-3 px-4 rounded-full text-xs hover:bg-slate-200 transition border-0 cursor-pointer"
+                            >
+                                <FaArrowLeft className="mr-1 inline" /> Regresar
+                            </button>
+
+                            <button 
+                                type="submit"
+                                disabled={loading}
+                                className="flex-2 bg-gradient-to-r from-[#486DAA] to-[#355386] text-white font-bold py-3 px-6 rounded-full text-xs shadow-md shadow-[#486DAA]/30 hover:scale-[1.02] transition border-0 cursor-pointer"
+                            >
+                                <span>{loading ? 'Guardando...' : 'Siguiente'}</span>
+                                <FaArrowRight className="ml-1 inline" />
+                            </button>
+                        </div>
+                    </form>
+                )}
+
+                {/* PASO 3: SUBIDA DE DOCUMENTOS */}
+                {step === 3 && (
+                    <form onSubmit={handleSubirDocumentos} className="space-y-6">
+                        <div className="text-center p-4 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs text-emerald-800 font-medium">
+                            Tus datos personales se han guardado. Ahora sube tus comprobantes para finalizar el alta.
+                        </div>
+
+                        {/* Tarjetón PDF */}
+                        <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200">
+                            <label className="block text-xs font-bold text-[#486DAA] mb-2 flex items-center space-x-2">
+                                <FaFilePdf className="text-red-500 text-base" />
+                                <span>Último Tarjetón de Pago (PDF, máx. 5MB)</span>
+                            </label>
+                            <input 
+                                type="file"
+                                accept=".pdf"
+                                onChange={(e) => setTarjetonFile(e.target.files[0])}
+                                required
+                                className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#486DAA] file:text-white hover:file:bg-[#355386] file:cursor-pointer"
+                            />
+                        </div>
+
+                        {/* Foto de Busto */}
+                        <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200">
+                            <label className="block text-xs font-bold text-[#486DAA] mb-2 flex items-center space-x-2">
+                                <FaCamera className="text-[#486DAA] text-base" />
+                                <span>Fotografía de Busto (JPG/PNG/WEBP, máx. 5MB)</span>
+                            </label>
+                            <input 
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFotoChange}
+                                required
+                                className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-emerald-500 file:text-white hover:file:bg-emerald-600 file:cursor-pointer mb-3"
+                            />
+                            {fotoPreview && (
+                                <div className="text-center mt-2">
+                                    <img 
+                                        src={fotoPreview} 
+                                        alt="Vista previa" 
+                                        className="w-24 h-24 rounded-full object-cover border-2 border-emerald-500 mx-auto shadow-md"
+                                    />
+                                    <p className="text-[10px] text-slate-500 mt-1">Vista previa</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <button 
+                            type="submit"
+                            disabled={loading}
+                            className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold py-3.5 px-6 rounded-full shadow-lg shadow-emerald-500/30 hover:scale-[1.02] transition duration-200 text-xs sm:text-sm flex items-center justify-center space-x-2 border-0 cursor-pointer"
+                        >
+                            <FaUpload />
+                            <span>{loading ? 'Subiendo archivos...' : 'Finalizar Registro Completo'}</span>
+                        </button>
+                    </form>
+                )}
+
+                {/* Footer Login */}
+                <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+                    <p className="text-xs text-slate-500 m-0">
+                        ¿Ya tienes una cuenta registrada?{' '}
+                        <Link to="/login" className="font-bold text-[#486DAA] hover:underline text-decoration-none">
+                            Inicia sesión aquí
+                        </Link>
+                    </p>
+                </div>
+
             </div>
-            <AvisoPrivacidad show={showAvisoPrivacidad} onHide={() => setShowAvisoPrivacidad(false)} />
+
+            <AvisoPrivacidad 
+                show={showAvisoPrivacidad} 
+                onHide={() => setShowAvisoPrivacidad(false)} 
+            />
         </div>
     );
 };

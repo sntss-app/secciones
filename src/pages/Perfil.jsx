@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { 
     FaUser, FaIdCard, FaBuilding, FaPhone, FaEnvelope, FaCamera, 
-    FaSave, FaKey, FaArrowLeft, FaEdit, FaRocket, FaStar,
-    FaShieldAlt, FaCheckCircle, FaExclamationTriangle, FaTimes
+    FaSave, FaKey, FaArrowLeft, FaEdit, FaShieldAlt, FaCheckCircle, 
+    FaFilePdf, FaTimes
 } from 'react-icons/fa';
 import { apiUrl } from '../config';
+import { Modal } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
@@ -23,21 +24,6 @@ const Perfil = () => {
         nueva_password: '',
         confirmar_password: ''
     });
-
-    const getImageUrl = (path) => {
-        if (!path) return null;
-        // Vista previa local creada con URL.createObjectURL al elegir una foto.
-        if (path.startsWith('blob:') || path.startsWith('data:')) {
-            return path;
-        }
-        if (path.startsWith('http://') || path.startsWith('https://')) {
-            return path;
-        }
-        if (path.startsWith('/api')) {
-            return apiUrl(path.replace('/api', ''));
-        }
-        return apiUrl(path);
-    };
 
     const [perfil, setPerfil] = useState({
         matricula: '',
@@ -59,6 +45,14 @@ const Perfil = () => {
 
     const [fotoFile, setFotoFile] = useState(null);
     const [fotoPreview, setFotoPreview] = useState(null);
+
+    const getImageUrl = (path) => {
+        if (!path) return null;
+        if (path.startsWith('blob:') || path.startsWith('data:')) return path;
+        if (path.startsWith('http://') || path.startsWith('https://')) return path;
+        if (path.startsWith('/api')) return apiUrl(path.replace('/api', ''));
+        return apiUrl(path);
+    };
 
     useEffect(() => {
         const matricula = localStorage.getItem('matricula');
@@ -82,8 +76,6 @@ const Perfil = () => {
                     correo: data.usuario.correo || ''
                 });
                 if (data.usuario.foto_path) {
-                    // La foto conserva el nombre 6.ext al reemplazarse. El
-                    // parámetro evita que el navegador muestre una copia en caché.
                     const separador = data.usuario.foto_path.includes('?') ? '&' : '?';
                     setFotoPreview(`${data.usuario.foto_path}${separador}v=${Date.now()}`);
                 }
@@ -178,7 +170,7 @@ const Perfil = () => {
                 title: '✅ ¡Perfil actualizado!',
                 text: 'Tus datos han sido guardados correctamente.',
                 icon: 'success',
-                confirmButtonColor: '#28a745',
+                confirmButtonColor: '#10B981',
                 timer: 3000,
                 timerProgressBar: true,
             });
@@ -212,7 +204,7 @@ const Perfil = () => {
                 title: '⚠️ Campos incompletos',
                 text: 'Todos los campos son obligatorios.',
                 icon: 'warning',
-                confirmButtonColor: '#ffc107',
+                confirmButtonColor: '#486DAA',
             });
             setPassLoading(false);
             return;
@@ -223,7 +215,7 @@ const Perfil = () => {
                 title: '⚠️ Contraseña corta',
                 text: 'La contraseña debe tener al menos 8 caracteres.',
                 icon: 'warning',
-                confirmButtonColor: '#ffc107',
+                confirmButtonColor: '#486DAA',
             });
             setPassLoading(false);
             return;
@@ -234,7 +226,7 @@ const Perfil = () => {
                 title: '⚠️ No coinciden',
                 text: 'Las contraseñas no coinciden.',
                 icon: 'warning',
-                confirmButtonColor: '#ffc107',
+                confirmButtonColor: '#486DAA',
             });
             setPassLoading(false);
             return;
@@ -260,17 +252,13 @@ const Perfil = () => {
                 title: '✅ ¡Contraseña actualizada!',
                 text: 'Tu contraseña ha sido cambiada exitosamente.',
                 icon: 'success',
-                confirmButtonColor: '#28a745',
+                confirmButtonColor: '#10B981',
                 timer: 3000,
                 timerProgressBar: true,
             });
 
-            setPassSuccess('Contraseña actualizada correctamente');
-            setTimeout(() => {
-                setShowPassModal(false);
-                setPassData({ nueva_password: '', confirmar_password: '' });
-                setPassSuccess('');
-            }, 1500);
+            setShowPassModal(false);
+            setPassData({ nueva_password: '', confirmar_password: '' });
         } catch (err) {
             await Swal.fire({
                 title: '❌ Error',
@@ -284,681 +272,185 @@ const Perfil = () => {
         }
     };
 
-    // ========== ESTILOS MODERNOS CON RESPONSIVE ==========
-    const styles = {
-        container: {
-            maxWidth: '1200px',
-            margin: '0 auto',
-            padding: '2rem 1.5rem',
-            background: '#f0f4f8',
-            minHeight: 'calc(100vh - 200px)',
-            '@media (max-width: 768px)': {
-                padding: '1rem 0.8rem',
-            },
-        },
-        // Header
-        header: {
-            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
-            borderRadius: '20px',
-            padding: '2.5rem 2rem',
-            marginBottom: '2rem',
-            borderBottom: '4px solid #3EAEF4',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
-            position: 'relative',
-            overflow: 'hidden',
-            '@media (max-width: 768px)': {
-                padding: '1.5rem 1.2rem',
-            },
-            '@media (max-width: 480px)': {
-                padding: '1.2rem 0.8rem',
-            },
-        },
-        headerGlow: {
-            position: 'absolute',
-            top: '-50%',
-            right: '-20%',
-            width: '400px',
-            height: '400px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(62,174,244,0.1) 0%, transparent 70%)',
-            pointerEvents: 'none',
-        },
-        headerContent: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '1rem',
-            position: 'relative',
-            zIndex: 2,
-            '@media (max-width: 768px)': {
-                flexDirection: 'column',
-                textAlign: 'center',
-                gap: '0.8rem',
-            },
-        },
-        headerLeft: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-            '@media (max-width: 768px)': {
-                flexDirection: 'column',
-                justifyContent: 'center',
-            },
-        },
-        backButton: {
-            color: 'white',
-            backgroundColor: 'rgba(255,255,255,0.1)',
-            padding: '0.7rem 1.2rem',
-            borderRadius: '12px',
-            transition: 'all 0.3s ease',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            textDecoration: 'none',
-            fontSize: '0.9rem',
-            fontWeight: '500',
-            border: 'none',
-            cursor: 'pointer',
-            '@media (max-width: 768px)': {
-                width: '100%',
-                justifyContent: 'center',
-            },
-        },
-        title: {
-            fontSize: '2rem',
-            fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            margin: 0,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.8rem',
-            '@media (max-width: 768px)': {
-                fontSize: '1.5rem',
-                justifyContent: 'center',
-            },
-            '@media (max-width: 480px)': {
-                fontSize: '1.2rem',
-            },
-        },
-        subtitle: {
-            color: '#aab',
-            fontSize: '0.95rem',
-            margin: 0,
-            '@media (max-width: 768px)': {
-                fontSize: '0.85rem',
-            },
-        },
-        headerBadge: {
-            display: 'inline-block',
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
-            padding: '0.3rem 1rem',
-            borderRadius: '20px',
-            fontSize: '0.75rem',
-            fontWeight: 'bold',
-        },
-        card: {
-            backgroundColor: 'rgba(255,255,255,0.95)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '20px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-            overflow: 'hidden',
-            border: '1px solid rgba(255,255,255,0.5)',
-        },
-        cardBody: {
-            padding: '2rem',
-            '@media (max-width: 480px)': {
-                padding: '1rem',
-            },
-        },
-        // Foto de perfil
-        fotoContainer: {
-            textAlign: 'center',
-            marginBottom: '1.5rem',
-        },
-        fotoWrapper: {
-            position: 'relative',
-            display: 'inline-block',
-        },
-        foto: {
-            width: '160px',
-            height: '160px',
-            borderRadius: '50%',
-            objectFit: 'cover',
-            border: '4px solid #3EAEF4',
-            boxShadow: '0 4px 20px rgba(62,174,244,0.3)',
-            transition: 'all 0.3s ease',
-            '@media (max-width: 480px)': {
-                width: '120px',
-                height: '120px',
-            },
-        },
-        fotoPlaceholder: {
-            width: '160px',
-            height: '160px',
-            borderRadius: '50%',
-            backgroundColor: '#e9ecef',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '4px solid #3EAEF4',
-            boxShadow: '0 4px 20px rgba(62,174,244,0.3)',
-            '@media (max-width: 480px)': {
-                width: '120px',
-                height: '120px',
-            },
-        },
-        fotoCamera: {
-            position: 'absolute',
-            bottom: '5px',
-            right: '5px',
-            backgroundColor: '#3EAEF4',
-            borderRadius: '50%',
-            padding: '10px',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            border: '2px solid white',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-            '@media (max-width: 480px)': {
-                padding: '8px',
-            },
-        },
-        fotoInput: {
-            display: 'none',
-        },
-        // ===== GRID RESPONSIVE CON FLEXBOX =====
-        grid2cols: {
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '1rem',
-        },
-        colCampo: {
-            flex: '1 1 calc(50% - 0.5rem)',
-            minWidth: '200px',
-            '@media (max-width: 768px)': {
-                flex: '1 1 100%',
-            },
-        },
-        colFull: {
-            flex: '1 1 100%',
-        },
-        campo: {
-            marginBottom: '0.5rem',
-        },
-        label: {
-            display: 'block',
-            fontSize: '0.75rem',
-            fontWeight: '600',
-            color: '#6c757d',
-            marginBottom: '0.2rem',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-        },
-        value: {
-            display: 'block',
-            fontSize: '1rem',
-            fontWeight: '500',
-            color: '#0A0F1E',
-            padding: '0.5rem 0.75rem',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            border: '1px solid #e9ecef',
-        },
-        input: {
-            width: '100%',
-            padding: '0.6rem 1rem',
-            fontSize: '0.95rem',
-            color: '#0A0F1E', // ← Color de texto visible
-            border: '1px solid #ddd',
-            borderRadius: '10px',
-            outline: 'none',
-            transition: 'all 0.3s ease',
-            backgroundColor: 'white',
-            '&::placeholder': {
-                color: '#adb5bd',
-            },
-        },
-        inputEditable: {
-            borderLeft: '3px solid #3EAEF4',
-        },
-        btnPrimary: {
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
-            border: 'none',
-            padding: '0.7rem 1.5rem',
-            borderRadius: '12px',
-            fontWeight: 'bold',
-            fontSize: '0.95rem',
-            transition: 'all 0.3s ease',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            '@media (max-width: 480px)': {
-                width: '100%',
-                fontSize: '0.85rem',
-                padding: '0.6rem 1rem',
-            },
-        },
-        btnSuccess: {
-            backgroundColor: '#28a745',
-            color: 'white',
-            border: 'none',
-            padding: '0.7rem 1.5rem',
-            borderRadius: '12px',
-            fontWeight: 'bold',
-            fontSize: '0.95rem',
-            transition: 'all 0.3s ease',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-        },
-        btnDanger: {
-            backgroundColor: 'transparent',
-            color: '#dc3545',
-            border: '2px solid #dc3545',
-            padding: '0.7rem 1.5rem',
-            borderRadius: '12px',
-            fontWeight: 'bold',
-            fontSize: '0.95rem',
-            transition: 'all 0.3s ease',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            '@media (max-width: 480px)': {
-                width: '100%',
-                justifyContent: 'center',
-                fontSize: '0.85rem',
-                padding: '0.6rem 1rem',
-            },
-        },
-        flexRow: {
-            display: 'flex',
-            gap: '1rem',
-            marginTop: '1.5rem',
-            flexWrap: 'wrap',
-            '@media (max-width: 480px)': {
-                flexDirection: 'column',
-                gap: '0.5rem',
-            },
-        },
-        // Modal
-        modalOverlay: {
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.6)',
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '2rem',
-            '@media (max-width: 480px)': {
-                padding: '1rem',
-            },
-        },
-        modalContent: {
-            backgroundColor: 'white',
-            borderRadius: '20px',
-            maxWidth: '500px',
-            width: '100%',
-            overflow: 'hidden',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-            '@media (max-width: 480px)': {
-                margin: '1rem',
-            },
-        },
-        modalHeader: {
-            background: 'linear-gradient(135deg, #0A0F1E, #1a1f2e)',
-            color: 'white',
-            padding: '1.5rem 2rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            borderBottom: '3px solid #3EAEF4',
-        },
-        modalBody: {
-            padding: '2rem',
-        },
-        modalClose: {
-            background: 'transparent',
-            border: 'none',
-            color: 'white',
-            fontSize: '1.5rem',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-        },
-        alertError: {
-            backgroundColor: '#fee2e2',
-            color: '#dc2626',
-            padding: '0.75rem 1rem',
-            borderRadius: '12px',
-            marginBottom: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.9rem',
-        },
-        alertSuccess: {
-            backgroundColor: '#d4edda',
-            color: '#155724',
-            padding: '0.75rem 1rem',
-            borderRadius: '12px',
-            marginBottom: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.9rem',
-        },
-        closeBtn: {
-            background: 'none',
-            border: 'none',
-            marginLeft: 'auto',
-            color: 'inherit',
-            fontSize: '1.2rem',
-            cursor: 'pointer',
-        },
-        loadingSpinner: {
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '4rem',
-            gap: '1rem',
-            color: '#6c757d',
-        },
-    };
-
-    if (loading && !perfil.matricula) {
-        return (
-            <div style={styles.container}>
-                <div style={styles.loadingSpinner}>
-                    <div className="spinner-border text-warning" role="status" style={{ width: '2.5rem', height: '2.5rem' }} />
-                    <span>Cargando perfil...</span>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div style={styles.container}>
-            {/* Header */}
-            <div style={styles.header}>
-                <div style={styles.headerGlow} />
-                <div style={styles.headerContent}>
-                    <div style={styles.headerLeft}>
-                        <button style={styles.backButton} onClick={() => navigate('/dashboard')}>
-                            <FaArrowLeft /> Volver
-                        </button>
-                        <div>
-                            <h1 style={styles.title}>
-                                <FaRocket style={{ color: '#3EAEF4' }} /> Mi Perfil
-                            </h1>
-                            <p style={styles.subtitle}>
-                                Gestiona tu información personal
-                            </p>
-                        </div>
-                    </div>
+        <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+            
+            {/* Header Perfil */}
+            <div className="bg-white rounded-[2.5rem] p-6 sm:p-8 ui-shadow border border-white mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center space-x-4">
+                    <Link to="/dashboard" className="w-10 h-10 rounded-full bg-slate-100 text-slate-600 hover:bg-[#486DAA] hover:text-white flex items-center justify-center transition text-decoration-none">
+                        <FaArrowLeft />
+                    </Link>
                     <div>
-                        <span style={styles.headerBadge}>
-                            <FaShieldAlt style={{ marginRight: '5px' }} /> Datos personales
+                        <span className="inline-block bg-[#486DAA]/10 text-[#486DAA] text-[10px] font-extrabold px-3 py-0.5 rounded-full mb-1 border border-[#486DAA]/20">
+                            Expediente Sindical
                         </span>
+                        <h2 className="text-xl sm:text-2xl font-black text-[#486DAA] tracking-tight m-0">
+                            Perfil de Agremiado
+                        </h2>
                     </div>
                 </div>
+
+                <button 
+                    onClick={() => setShowPassModal(true)}
+                    className="inline-flex items-center space-x-2 bg-slate-100 hover:bg-[#486DAA] hover:text-white text-slate-700 font-bold px-5 py-2.5 rounded-full text-xs transition duration-200 border border-slate-200 cursor-pointer"
+                >
+                    <FaKey />
+                    <span>Cambiar Contraseña</span>
+                </button>
             </div>
 
-            {/* Card Principal */}
-            <div style={styles.card}>
-                <div style={styles.cardBody}>
-                    {/* Foto de perfil */}
-                    <div style={styles.fotoContainer}>
-                        <div style={styles.fotoWrapper}>
-                            {fotoPreview ? (
-                                <img 
-                                    src={getImageUrl(fotoPreview)} 
-                                    alt="Foto de perfil" 
-                                    style={styles.foto}
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                    }}
-                                />
-                            ) : (
-                                <div style={styles.fotoPlaceholder}>
-                                    <FaUser style={{ fontSize: '60px', color: '#adb5bd' }} />
-                                </div>
-                            )}
-                            <label style={styles.fotoCamera}>
-                                <FaCamera size={18} color="white" />
-                                <input
-                                    type="file"
-                                    style={styles.fotoInput}
-                                    accept="image/jpeg,image/png,image/webp"
-                                    onChange={handleFotoChange}
-                                    disabled={loading}
-                                />
+            {/* Grid Principal: Foto/Resumen + Formulario */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                {/* Columna Izquierda: Tarjeta de Identidad */}
+                <div className="lg:col-span-4 space-y-6">
+                    <div className="bg-white rounded-[2.5rem] p-6 text-center ui-shadow border border-white relative overflow-hidden">
+                        <div className="absolute top-4 right-4 w-16 h-16 dot-matrix opacity-30 pointer-events-none"></div>
+                        
+                        {/* Foto de Perfil */}
+                        <div className="relative w-32 h-32 mx-auto mb-4">
+                            <img 
+                                src={fotoPreview ? getImageUrl(fotoPreview) : '/images/avatar-default.png'} 
+                                alt={perfil.nombre || 'Usuario'} 
+                                className="w-full h-full rounded-full object-cover border-4 border-emerald-500 shadow-md"
+                                onError={(e) => { e.target.src = '/images/avatar-default.png'; }}
+                            />
+                            <label className="absolute bottom-0 right-0 w-10 h-10 bg-[#486DAA] text-white rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:bg-[#355386] transition">
+                                <FaCamera className="text-sm" />
+                                <input type="file" accept="image/*" onChange={handleFotoChange} className="hidden" />
                             </label>
                         </div>
-                        <p style={{ fontSize: '0.8rem', color: '#6c757d', marginTop: '0.5rem' }}>
-                            <FaEdit style={{ marginRight: '5px' }} /> Haz clic en la cámara para cambiar tu foto y recuerda dar al boton de guardar cambios al finalizar.
-                        </p>
+
+                        <h3 className="text-base font-black text-[#486DAA] m-0">{perfil.nombre || 'Nombre no disponible'}</h3>
+                        <p className="text-xs text-slate-500 font-bold mt-1 mb-3">Matrícula: {perfil.matricula}</p>
+
+                        <div className="inline-flex items-center space-x-1.5 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-bold border border-emerald-200">
+                            <FaShieldAlt />
+                            <span>Agremiado Activo</span>
+                        </div>
+
+                        <div className="mt-6 pt-4 border-t border-slate-100 text-left text-xs space-y-2 text-slate-600">
+                            <div><span className="font-bold text-[#486DAA]">CURP:</span> {perfil.curp || 'N/A'}</div>
+                            <div><span className="font-bold text-[#486DAA]">Adscripción:</span> {perfil.adscripcion || 'N/A'}</div>
+                            <div><span className="font-bold text-[#486DAA]">Categoría:</span> {perfil.categoria || 'N/A'}</div>
+                        </div>
                     </div>
+                </div>
 
-                    {/* Formulario */}
-                    <form onSubmit={(e) => e.preventDefault()}>
-                        <div style={styles.grid2cols}>
-                            {/* Datos fijos */}
-                            <div style={styles.colCampo}>
-                                <div style={styles.campo}>
-                                    <label style={styles.label}><FaIdCard /> Matrícula</label>
-                                    <div style={styles.value}>{perfil.matricula || ''}</div>
-                                </div>
+                {/* Columna Derecha: Edición de Contacto */}
+                <div className="lg:col-span-8">
+                    <div className="bg-white rounded-[2.5rem] p-7 sm:p-8 ui-shadow border border-white">
+                        <div className="flex items-center space-x-2.5 mb-6 pb-3 border-b border-slate-100">
+                            <div className="w-8 h-8 rounded-xl bg-[#486DAA] text-white flex items-center justify-center text-xs">
+                                <FaEdit />
                             </div>
-                            <div style={styles.colCampo}>
-                                <div style={styles.campo}>
-                                    <label style={styles.label}><FaUser /> Nombre</label>
-                                    <div style={styles.value}>{perfil.nombre || ''}</div>
-                                </div>
-                            </div>
-                            <div style={styles.colCampo}>
-                                <div style={styles.campo}>
-                                    <label style={styles.label}><FaBuilding /> Adscripción</label>
-                                    <div style={styles.value}>{perfil.adscripcion || 'N/A'}</div>
-                                </div>
-                            </div>
-                            <div style={styles.colCampo}>
-                                <div style={styles.campo}>
-                                    <label style={styles.label}>Categoría</label>
-                                    <div style={styles.value}>{perfil.categoria || 'N/A'}</div>
-                                </div>
-                            </div>
-                            <div style={styles.colCampo}>
-                                <div style={styles.campo}>
-                                    <label style={styles.label}>CURP</label>
-                                    <div style={styles.value}>{perfil.curp || ''}</div>
-                                </div>
-                            </div>
-                            <div style={styles.colCampo}>
-                                <div style={styles.campo}>
-                                    <label style={styles.label}>Edad</label>
-                                    <div style={styles.value}>{perfil.edad ? `${perfil.edad} años` : 'N/A'}</div>
-                                </div>
-                            </div>
+                            <h3 className="text-base font-black text-[#486DAA] m-0">Información de Contacto</h3>
+                        </div>
 
-                            {/* Datos editables */}
-                            <div style={styles.colFull}>
-                                <div style={{ marginTop: '0.5rem' }}>
-                                    <p style={{ fontSize: '0.8rem', color: '#6c757d', borderBottom: '2px dashed #3EAEF4', paddingBottom: '0.5rem' }}>
-                                        <FaEdit style={{ color: '#3EAEF4' }} /> Campos editables
-                                    </p>
-                                </div>
-                            </div>
-                            <div style={styles.colCampo}>
-                                <div style={styles.campo}>
-                                    <label style={styles.label}><FaPhone /> Teléfono</label>
-                                    <input
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            <div>
+                                <label className="block text-xs font-bold text-[#486DAA] mb-1.5 pl-2">
+                                    Teléfono Móvil
+                                </label>
+                                <div className="relative flex items-center">
+                                    <span className="absolute left-4 text-slate-400 text-sm"><FaPhone /></span>
+                                    <input 
                                         type="tel"
-                                        style={{ ...styles.input, ...styles.inputEditable }}
-                                        placeholder="10 dígitos numéricos"
                                         value={editData.telefono}
-                                        onChange={(e) => setEditData({ ...editData, telefono: e.target.value })}
-                                        disabled={loading}
+                                        onChange={(e) => setEditData({ ...editData, telefono: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                                        placeholder="10 dígitos"
                                         required
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-full py-3 pl-11 pr-4 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA] focus:bg-white focus:ring-4 focus:ring-[#486DAA]/15 transition"
                                     />
                                 </div>
                             </div>
-                            <div style={styles.colCampo}>
-                                <div style={styles.campo}>
-                                    <label style={styles.label}><FaEnvelope /> Correo</label>
-                                    <input
+
+                            <div>
+                                <label className="block text-xs font-bold text-[#486DAA] mb-1.5 pl-2">
+                                    Correo Electrónico
+                                </label>
+                                <div className="relative flex items-center">
+                                    <span className="absolute left-4 text-slate-400 text-sm"><FaEnvelope /></span>
+                                    <input 
                                         type="email"
-                                        style={{ ...styles.input, ...styles.inputEditable }}
-                                        placeholder="tu@email.com"
                                         value={editData.correo}
                                         onChange={(e) => setEditData({ ...editData, correo: e.target.value })}
-                                        disabled={loading}
+                                        placeholder="usuario@dominio.com"
                                         required
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-full py-3 pl-11 pr-4 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA] focus:bg-white focus:ring-4 focus:ring-[#486DAA]/15 transition"
                                     />
                                 </div>
                             </div>
-                        </div>
 
-                        <div style={styles.flexRow}>
                             <button 
-                                type="button"
-                                style={styles.btnPrimary}
+                                type="submit"
                                 disabled={loading}
-                                onClick={handleSubmit}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-2px)';
-                                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(62,174,244,0.3)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = 'none';
-                                }}
+                                className="w-full sm:w-auto bg-gradient-to-r from-[#486DAA] to-[#355386] hover:from-[#3b598d] hover:to-[#2e4771] text-white font-bold py-3 px-8 rounded-full shadow-lg shadow-[#486DAA]/30 hover:scale-[1.02] transition duration-200 text-xs flex items-center justify-center space-x-2 border-0 cursor-pointer"
                             >
-                                {loading ? 'Guardando...' : <><FaSave /> Guardar Cambios</>}
+                                <FaSave />
+                                <span>{loading ? 'Guardando...' : 'Guardar Cambios'}</span>
                             </button>
-                            <button 
-                                type="button" 
-                                style={styles.btnDanger}
-                                onClick={() => setShowPassModal(true)}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = '#dc3545';
-                                    e.currentTarget.style.color = 'white';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.color = '#dc3545';
-                                }}
-                            >
-                                <FaKey /> Cambiar Contraseña
-                            </button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
+
             </div>
 
             {/* Modal Cambiar Contraseña */}
-            {showPassModal && (
-                <div style={styles.modalOverlay} onClick={(e) => {
-                    if (e.target === e.currentTarget) setShowPassModal(false);
-                }}>
-                    <div style={styles.modalContent}>
-                        <div style={styles.modalHeader}>
-                            <h5 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <FaKey /> Cambiar Contraseña
-                            </h5>
-                            <button style={styles.modalClose} onClick={() => setShowPassModal(false)}>
-                                <FaTimes />
+            <Modal show={showPassModal} onHide={() => setShowPassModal(false)} centered>
+                <Modal.Header closeButton className="border-0 pb-0">
+                    <Modal.Title className="font-bold text-[#486DAA] text-base flex items-center space-x-2">
+                        <FaKey />
+                        <span>Actualizar Contraseña</span>
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="pt-2">
+                    <form onSubmit={handleCambiarPass} className="space-y-4">
+                        <div>
+                            <label className="block text-xs font-bold text-[#486DAA] mb-1 pl-2">Nueva Contraseña</label>
+                            <input 
+                                type="password"
+                                value={passData.nueva_password}
+                                onChange={(e) => setPassData({ ...passData, nueva_password: e.target.value })}
+                                placeholder="Mínimo 8 caracteres"
+                                required
+                                className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 px-4 text-xs outline-none focus:border-[#486DAA]"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-[#486DAA] mb-1 pl-2">Confirmar Contraseña</label>
+                            <input 
+                                type="password"
+                                value={passData.confirmar_password}
+                                onChange={(e) => setPassData({ ...passData, confirmar_password: e.target.value })}
+                                placeholder="Repite la contraseña"
+                                required
+                                className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 px-4 text-xs outline-none focus:border-[#486DAA]"
+                            />
+                        </div>
+
+                        <div className="flex justify-end space-x-2 pt-3">
+                            <button 
+                                type="button" 
+                                onClick={() => setShowPassModal(false)}
+                                className="bg-slate-100 text-slate-600 font-bold px-5 py-2.5 rounded-full text-xs border-0 cursor-pointer hover:bg-slate-200"
+                            >
+                                Cancelar
+                            </button>
+                            <button 
+                                type="submit" 
+                                disabled={passLoading}
+                                className="bg-[#486DAA] text-white font-bold px-6 py-2.5 rounded-full text-xs border-0 cursor-pointer hover:bg-[#355386] shadow-sm"
+                            >
+                                {passLoading ? 'Actualizando...' : 'Guardar'}
                             </button>
                         </div>
-                        <div style={styles.modalBody}>
-                            {passError && (
-                                <div style={styles.alertError}>
-                                    <FaExclamationTriangle /> {passError}
-                                    <button style={styles.closeBtn} onClick={() => setPassError('')}>✕</button>
-                                </div>
-                            )}
-                            {passSuccess && (
-                                <div style={styles.alertSuccess}>
-                                    <FaCheckCircle /> {passSuccess}
-                                    <button style={styles.closeBtn} onClick={() => setPassSuccess('')}>✕</button>
-                                </div>
-                            )}
-                            <form onSubmit={handleCambiarPass}>
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <label style={styles.label}>Nueva Contraseña</label>
-                                    <input
-                                        type="password"
-                                        style={styles.input}
-                                        placeholder="Mínimo 8 caracteres"
-                                        value={passData.nueva_password}
-                                        onChange={(e) => setPassData({ ...passData, nueva_password: e.target.value })}
-                                        disabled={passLoading || passSuccess}
-                                        required
-                                    />
-                                </div>
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <label style={styles.label}>Confirmar Contraseña</label>
-                                    <input
-                                        type="password"
-                                        style={styles.input}
-                                        placeholder="Repite tu nueva contraseña"
-                                        value={passData.confirmar_password}
-                                        onChange={(e) => setPassData({ ...passData, confirmar_password: e.target.value })}
-                                        disabled={passLoading || passSuccess}
-                                        required
-                                    />
-                                </div>
-                                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                                    <button 
-                                        type="submit" 
-                                        style={styles.btnSuccess}
-                                        disabled={passLoading || passSuccess}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.transform = 'translateY(-2px)';
-                                            e.currentTarget.style.boxShadow = '0 4px 16px rgba(40,167,69,0.3)';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.transform = 'translateY(0)';
-                                            e.currentTarget.style.boxShadow = 'none';
-                                        }}
-                                    >
-                                        {passLoading ? 'Actualizando...' : 'Actualizar Contraseña'}
-                                    </button>
-                                    <button 
-                                        type="button" 
-                                        style={{ ...styles.btnDanger, padding: '0.7rem 1.5rem' }}
-                                        onClick={() => setShowPassModal(false)}
-                                        disabled={passLoading}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = '#6c757d';
-                                            e.currentTarget.style.color = 'white';
-                                            e.currentTarget.style.borderColor = '#6c757d';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'transparent';
-                                            e.currentTarget.style.color = '#dc3545';
-                                            e.currentTarget.style.borderColor = '#dc3545';
-                                        }}
-                                    >
-                                        Cancelar
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            )}
+                    </form>
+                </Modal.Body>
+            </Modal>
+
         </div>
     );
 };

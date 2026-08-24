@@ -24,14 +24,14 @@ const styles = {
             padding: '1rem 0.8rem',
         },
     },
-    // Header con glow
+    // Header Sección 5
     header: {
-        background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
-        borderRadius: '20px',
-        padding: '2.5rem 2rem',
+        background: 'white',
+        borderRadius: '2.5rem',
+        padding: '2rem 2.5rem',
         marginBottom: '2rem',
-        borderBottom: '4px solid #3EAEF4',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+        boxShadow: '0 20px 40px -15px rgba(72, 109, 170, 0.12), 0 8px 16px -6px rgba(0, 0, 0, 0.03)',
+        border: '1px solid white',
         position: 'relative',
         overflow: 'hidden',
         '@media (max-width: 768px)': {
@@ -48,7 +48,7 @@ const styles = {
         width: '400px',
         height: '400px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(62,174,244,0.1) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(72,109,170,0.08) 0%, transparent 70%)',
         pointerEvents: 'none',
     },
     headerContent: {
@@ -75,12 +75,9 @@ const styles = {
         },
     },
     headerTitle: {
-        fontSize: '2rem',
-        fontWeight: 'bold',
-        background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text',
+        fontSize: '1.8rem',
+        fontWeight: '900',
+        color: '#486DAA',
         margin: 0,
         display: 'flex',
         alignItems: 'center',

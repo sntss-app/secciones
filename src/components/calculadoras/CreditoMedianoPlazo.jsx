@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaCalculator, FaHouseUser, FaMoneyBillWave, FaInfoCircle, FaHome, FaChartLine } from 'react-icons/fa';
+import { FaHouseUser, FaInfoCircle, FaCheckCircle, FaCalculator } from 'react-icons/fa';
 
 const CreditoMedianoPlazo = () => {
     const [c02, setC02] = useState('');
@@ -10,8 +10,8 @@ const CreditoMedianoPlazo = () => {
         const c02Num = parseFloat(c02);
         const c11Num = parseFloat(c11);
         
-        if (isNaN(c02Num) || isNaN(c11Num)) {
-            alert('Por favor ingresa ambos conceptos (002 y 011).');
+        if (isNaN(c02Num) || isNaN(c11Num) || c02Num <= 0 || c11Num <= 0) {
+            alert('Por favor ingresa montos válidos para los conceptos 002 y 011.');
             return;
         }
 
@@ -20,7 +20,9 @@ const CreditoMedianoPlazo = () => {
         const prestaciones = mensualBase * 0.20;
         const totalMensual = mensualBase + prestaciones;
 
-        setResultado(totalMensual * 35);
+        setResultado({
+            monto: totalMensual * 18
+        });
     };
 
     const formatter = new Intl.NumberFormat('es-MX', {
@@ -29,255 +31,72 @@ const CreditoMedianoPlazo = () => {
         minimumFractionDigits: 2
     });
 
-    const styles = {
-        container: {
-            padding: '1.5rem',
-            background: 'rgba(255,255,255,0.9)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255,255,255,0.5)',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-        },
-        header: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.8rem',
-            marginBottom: '1.5rem',
-            paddingBottom: '0.5rem',
-            borderBottom: '3px solid #5B86E5',
-        },
-        headerIcon: {
-            fontSize: '2rem',
-            color: '#5B86E5',
-        },
-        headerTitle: {
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #0A0F1E, #5B86E5)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            margin: 0,
-        },
-        headerSubtitle: {
-            color: '#6c757d',
-            fontSize: '0.85rem',
-            marginTop: '0.2rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-        },
-        infoBox: {
-            backgroundColor: 'rgba(91,134,229,0.08)',
-            borderLeft: '4px solid #5B86E5',
-            padding: '0.8rem 1rem',
-            borderRadius: '8px',
-            marginBottom: '1.5rem',
-            fontSize: '0.85rem',
-            color: '#495057',
-        },
-        grid: {
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '1rem',
-            marginBottom: '1rem',
-        },
-        inputGroup: {
-            marginBottom: '1rem',
-        },
-        label: {
-            display: 'block',
-            fontWeight: '600',
-            fontSize: '0.85rem',
-            color: '#0A0F1E',
-            marginBottom: '0.3rem',
-        },
-        labelIcon: {
-            marginRight: '0.3rem',
-            color: '#5B86E5',
-        },
-        input: {
-            width: '100%',
-            padding: '0.6rem 1rem',
-            fontSize: '0.95rem',
-            border: '1px solid #ddd',
-            borderRadius: '10px',
-            outline: 'none',
-            transition: 'all 0.3s ease',
-            backgroundColor: 'white',
-        },
-        button: {
-            backgroundColor: '#5B86E5',
-            color: 'white',
-            border: 'none',
-            padding: '0.7rem 1.5rem',
-            borderRadius: '12px',
-            fontWeight: 'bold',
-            fontSize: '0.95rem',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            width: '100%',
-            marginTop: '0.5rem',
-        },
-        resultadoContainer: {
-            marginTop: '1.5rem',
-            padding: '1.25rem',
-            backgroundColor: '#f8fafc',
-            borderRadius: '12px',
-            border: '1px solid #e9ecef',
-        },
-        resultadoTitle: {
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginBottom: '1rem',
-            color: '#0A0F1E',
-            fontSize: '1rem',
-        },
-        resultadoItem: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '0.8rem 1rem',
-            borderRadius: '8px',
-            backgroundColor: 'rgba(91,134,229,0.08)',
-            borderLeft: '4px solid #5B86E5',
-        },
-        resultadoLabel: {
-            color: '#495057',
-            fontSize: '0.9rem',
-        },
-        resultadoLabelSmall: {
-            display: 'block',
-            fontSize: '0.75rem',
-            color: '#6c757d',
-            marginTop: '0.1rem',
-        },
-        resultadoMonto: {
-            fontWeight: 'bold',
-            fontSize: '1.3rem',
-            color: '#003c82',
-        },
-        smallText: {
-            display: 'block',
-            textAlign: 'center',
-            color: '#6c757d',
-            fontSize: '0.75rem',
-            marginTop: '0.8rem',
-            fontStyle: 'italic',
-        },
-        '@media (max-width: 480px)': {
-            grid: {
-                gridTemplateColumns: '1fr',
-            },
-        },
-    };
-
     return (
-        <div style={styles.container}>
-            {/* Header */}
-            <div style={styles.header}>
-                <FaHouseUser style={styles.headerIcon} />
+        <div className="space-y-4">
+            <div className="flex items-center space-x-3 pb-3 border-b border-slate-100">
+                <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white text-xl shadow-md shadow-emerald-500/30">
+                    <FaHouseUser />
+                </div>
                 <div>
-                    <h3 style={styles.headerTitle}>Crédito a Mediano Plazo</h3>
-                    <div style={styles.headerSubtitle}>
-                        <FaInfoCircle size={12} /> Trámite gestionado por la Secretaría de Fomento a la Habitación
-                    </div>
+                    <h3 className="text-lg font-black text-[#486DAA] m-0">Crédito a Mediano Plazo</h3>
+                    <p className="text-xs text-slate-500 m-0">Financiamiento para remodelación y mejoras de vivienda</p>
                 </div>
             </div>
 
-            {/* Info Box */}
-            <div style={styles.infoBox}>
-                <FaInfoCircle style={{ color: '#5B86E5', marginRight: '0.5rem' }} />
-                El crédito a mediano plazo se calcula con base en el Salario Mensual Integrado 
-                (Sueldo Base + 20% de prestaciones). Permite financiar hasta 35 veces el salario.
+            <div className="p-3.5 bg-emerald-50/80 rounded-2xl border border-emerald-200 text-xs text-emerald-900 flex items-start space-x-2.5">
+                <FaInfoCircle className="text-base text-emerald-600 flex-shrink-0 mt-0.5" />
+                <div className="leading-relaxed">
+                    Cálculo equivalente a <strong>18 meses de sueldo integrado</strong> basado en los conceptos 002 y 011.
+                </div>
             </div>
 
-            {/* Formulario */}
-            <div style={styles.grid}>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>
-                        <FaMoneyBillWave style={styles.labelIcon} /> Concepto 002 (quincenal)
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-xs font-bold text-[#486DAA] mb-1 pl-2">
+                        Concepto 002 (Sueldo Quincenal)
                     </label>
                     <input 
-                        type="number" 
+                        type="number"
                         step="0.01"
-                        style={styles.input} 
-                        value={c02} 
-                        onChange={(e) => setC02(e.target.value)} 
-                        placeholder="Ej: 2437.73"
-                        onFocus={(e) => {
-                            e.target.style.borderColor = '#5B86E5';
-                            e.target.style.boxShadow = '0 0 0 3px rgba(91,134,229,0.15)';
-                        }}
-                        onBlur={(e) => {
-                            e.target.style.borderColor = '#ddd';
-                            e.target.style.boxShadow = 'none';
-                        }}
+                        value={c02}
+                        onChange={(e) => setC02(e.target.value)}
+                        placeholder="Ej. 4500.50"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 px-4 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA] focus:bg-white transition"
                     />
                 </div>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>
-                        <FaMoneyBillWave style={styles.labelIcon} /> Concepto 011 (quincenal)
+
+                <div>
+                    <label className="block text-xs font-bold text-[#486DAA] mb-1 pl-2">
+                        Concepto 011 (Ayuda de Renta)
                     </label>
                     <input 
-                        type="number" 
+                        type="number"
                         step="0.01"
-                        style={styles.input} 
-                        value={c11} 
-                        onChange={(e) => setC11(e.target.value)} 
-                        placeholder="Ej: 2002.60"
-                        onFocus={(e) => {
-                            e.target.style.borderColor = '#5B86E5';
-                            e.target.style.boxShadow = '0 0 0 3px rgba(91,134,229,0.15)';
-                        }}
-                        onBlur={(e) => {
-                            e.target.style.borderColor = '#ddd';
-                            e.target.style.boxShadow = 'none';
-                        }}
+                        value={c11}
+                        onChange={(e) => setC11(e.target.value)}
+                        placeholder="Ej. 1200.00"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 px-4 text-xs font-medium text-slate-700 outline-none focus:border-[#486DAA] focus:bg-white transition"
                     />
                 </div>
             </div>
 
-            {/* Botón Calcular */}
             <button 
-                style={styles.button}
+                type="button"
                 onClick={calcular}
-                onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(91,134,229,0.3)';
-                }}
-                onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                }}
+                className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-full shadow-md shadow-emerald-500/30 hover:scale-[1.01] transition duration-200 text-xs flex items-center justify-center space-x-2 border-0 cursor-pointer"
             >
-                <FaCalculator /> Calcular Crédito a Mediano Plazo
+                <FaCalculator />
+                <span>Calcular Crédito Mediano Plazo</span>
             </button>
 
-            {/* Resultados */}
             {resultado && (
-                <div style={styles.resultadoContainer}>
-                    <div style={styles.resultadoTitle}>
-                        <FaHome style={{ color: '#5B86E5', marginRight: '0.5rem' }} />
-                        Monto del Crédito a Mediano Plazo
-                    </div>
-
-                    <div style={styles.resultadoItem}>
-                        <div>
-                            <span style={styles.resultadoLabel}>Por 35 veces el Salario Mensual Integrado</span>
-                            <span style={styles.resultadoLabelSmall}>Financiamiento para remodelación o mejora de vivienda</span>
-                        </div>
-                        <span style={styles.resultadoMonto}>{formatter.format(resultado)}</span>
-                    </div>
-
-                    <small style={styles.smallText}>
-                        <FaChartLine style={{ marginRight: '0.3rem' }} />
-                        El monto final depende de la evaluación crediticia y disponibilidad de recursos.
-                    </small>
+                <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 text-center pt-2">
+                    <span className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider block mb-1">
+                        Monto Máximo Estimado (18 Meses)
+                    </span>
+                    <span className="text-2xl font-black text-emerald-600 block">
+                        {formatter.format(resultado.monto)}
+                    </span>
                 </div>
             )}
         </div>

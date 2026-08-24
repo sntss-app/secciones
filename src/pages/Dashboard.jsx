@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
     FaCar, FaNewspaper, FaInfoCircle, FaCalculator, FaSignInAlt, 
@@ -6,11 +6,12 @@ import {
     FaThumbtack, FaEye, FaCalendarAlt, FaTools, FaStar, FaRocket,
     FaBuilding, FaHouseUser, FaPiggyBank, FaFileContract, FaClock,
     FaUmbrellaBeach, FaClipboardList, FaFilePdf, FaExternalLinkAlt, FaFileAlt,
-    FaQrcode, FaChartPie
+    FaQrcode, FaChartPie, FaArrowRight,
+    FaCity
 } from 'react-icons/fa';
 import { apiUrl } from '../config';
 import { Modal } from 'react-bootstrap';
-import { hasStoredRole, getStoredRoleIds } from '../utils/roles';
+import { getStoredRoleIds } from '../utils/roles';
 import { getSectionAssets } from '../utils/sectionAssets';
 
 // ===== IMPORTAR COMPONENTES DE CALCULADORAS =====
@@ -27,7 +28,7 @@ const Dashboard = () => {
     const [isLoggedIn] = useState(() => Boolean(localStorage.getItem('matricula')));
     const [userName] = useState(() => localStorage.getItem('nombre') || localStorage.getItem('matricula') || '');
     
-    // ✅ OBTENER LA SECCIÓN DEL USUARIO DESDE localStorage
+    // Obtener sección del usuario desde localStorage
     const [seccionUsuario, setSeccionUsuario] = useState(() => {
         try {
             const seccionData = localStorage.getItem('seccionUsuario');
@@ -42,7 +43,7 @@ const Dashboard = () => {
     
     const [noticias, setNoticias] = useState([]);
     const [loadingNoticias, setLoadingNoticias] = useState(true);
-    const [tabActiva, setTabActiva] = useState('cen'); // CAMBIADO: 'cen' por defecto
+    const [tabActiva, setTabActiva] = useState('calculadoras'); // 'calculadoras', 'proceso', 'cen'
     
     const [hasAutoValidatorRole, setHasAutoValidatorRole] = useState(() => {
         const roleIds = getStoredRoleIds();
@@ -52,17 +53,13 @@ const Dashboard = () => {
         const roleIds = getStoredRoleIds();
         return roleIds.includes(2);
     });
-    
-    const [showModal, setShowModal] = useState(false);
-    const [calculadoraActiva, setCalculadoraActiva] = useState(null);
-    const [c02, setC02] = useState('');
-    const [c11, setC11] = useState('');
-    const [montoAuto, setMontoAuto] = useState(null);
-    const [mostrarResultado, setMostrarResultado] = useState(false);
     const [hasClausula79BisValidatorRole, setHasClausula79BisValidatorRole] = useState(() => {
         const roleIds = getStoredRoleIds();
         return roleIds.includes(3);
     });
+    
+    const [showModal, setShowModal] = useState(false);
+    const [calculadoraActiva, setCalculadoraActiva] = useState(null);
 
     // ===== EFECTOS =====
     useEffect(() => {
@@ -83,9 +80,7 @@ const Dashboard = () => {
                     setHasNewsValidatorRole(roleIds.includes(2));
                     setHasClausula79BisValidatorRole(roleIds.includes(3));
                     
-                    // ✅ GUARDAR LA SECCIÓN EN localStorage CON TODOS LOS CAMPOS
                     if (data.usuario.idSeccion) {
-                        // Recuperar la sección guardada para conservar logo y banner
                         let seccionGuardada = null;
                         try {
                             seccionGuardada = JSON.parse(localStorage.getItem('seccionUsuario'));
@@ -100,7 +95,7 @@ const Dashboard = () => {
                             nombre: data.usuario.seccion_nombre || seccionGuardada?.nombre || 'Sin sección',
                             slogan: data.usuario.seccion_slogan || seccionGuardada?.slogan || null,
                             direccion: data.usuario.seccion_direccion || seccionGuardada?.direccion || null,
-                            color: data.usuario.seccion_color || seccionGuardada?.color || '#3EAEF4',
+                            color: data.usuario.seccion_color || seccionGuardada?.color || '#486DAA',
                             logo: data.usuario.seccion_logo || assets.logo,
                             banner: data.usuario.seccion_banner || assets.banner,
                             redes: data.usuario.redes_sociales ?? seccionGuardada?.redes ?? seccionGuardada?.redes_sociales ?? {}
@@ -134,37 +129,130 @@ const Dashboard = () => {
         cargarNoticias();
     }, []);
 
-    // ===== FUNCIONES =====
-    const formatter = new Intl.NumberFormat('es-MX', {
-        style: 'currency',
-        currency: 'MXN',
-        minimumFractionDigits: 2
-    });
+    // ===== CALCULADORAS DISPONIBLES =====
+    const calculadoras = [
+        { 
+            id: 'hipotecario', 
+            icon: <FaCity />, 
+            titulo: 'Crédito Hipotecario', 
+            descripcion: 'Calcula tu crédito para vivienda', 
+            theme: 'blue', 
+            iconBg: 'bg-[#486DAA]', 
+            btnBorder: 'border-[#486DAA]', 
+            btnColor: 'text-[#486DAA]', 
+            btnHover: 'hover:bg-[#486DAA]' 
+        },
+        { 
+            id: 'mediano-plazo', 
+            icon: <FaHouseUser />, 
+            titulo: 'Crédito a Mediano Plazo', 
+            descripcion: 'Financiamiento para remodelación', 
+            theme: 'emerald', 
+            iconBg: 'bg-emerald-500', 
+            btnBorder: 'border-emerald-500', 
+            btnColor: 'text-emerald-500', 
+            btnHover: 'hover:bg-emerald-500' 
+        },
+        { 
+            id: 'auto', 
+            icon: <FaCar />, 
+            titulo: 'Crédito Automotriz', 
+            descripcion: 'Calcula tu crédito para auto', 
+            theme: 'orange', 
+            iconBg: 'bg-orange-500', 
+            btnBorder: 'border-orange-500', 
+            btnColor: 'text-orange-500', 
+            btnHover: 'hover:bg-orange-500' 
+        },
+        { 
+            id: 'clausula97', 
+            icon: <FaFileContract />, 
+            titulo: 'Crédito Personal (Cl. 97)', 
+            descripcion: 'Obtén un crédito para lo que necesites', 
+            theme: 'blue', 
+            iconBg: 'bg-[#486DAA]', 
+            btnBorder: 'border-[#486DAA]', 
+            btnColor: 'text-[#486DAA]', 
+            btnHover: 'hover:bg-[#486DAA]' 
+        },
+        { 
+            id: 'fondo-ahorro', 
+            icon: <FaPiggyBank />, 
+            titulo: 'Fondo de Ahorro', 
+            descripcion: '2do de Julio - Invierte en tu futuro', 
+            theme: 'emerald', 
+            iconBg: 'bg-emerald-500', 
+            btnBorder: 'border-emerald-500', 
+            btnColor: 'text-emerald-500', 
+            btnHover: 'hover:bg-emerald-500' 
+        },
+        { 
+            id: 'aguinaldo', 
+            icon: <FaGift />, 
+            titulo: 'Aguinaldo Contractual', 
+            descripcion: 'Calcula el monto de tu aguinaldo anual', 
+            theme: 'orange', 
+            iconBg: 'bg-orange-500', 
+            btnBorder: 'border-orange-500', 
+            btnColor: 'text-orange-500', 
+            btnHover: 'hover:bg-orange-500' 
+        },
+        { 
+            id: 'horas-extras', 
+            icon: <FaClock />, 
+            titulo: 'Horas Extras', 
+            descripcion: 'Calcula el pago de horas extraordinarias', 
+            theme: 'blue', 
+            iconBg: 'bg-[#486DAA]', 
+            btnBorder: 'border-[#486DAA]', 
+            btnColor: 'text-[#486DAA]', 
+            btnHover: 'hover:bg-[#486DAA]' 
+        },
+    ];
 
-    const calcularAuto = () => {
-        const c02Num = parseFloat(c02);
-        const c11Num = parseFloat(c11);
-        
-        if (isNaN(c02Num) || isNaN(c11Num)) {
-            alert('Por favor ingresa ambos conceptos (002 y 011).');
-            return;
-        }
-        
-        const sumaQuincenal = c02Num + c11Num;
-        const mensualBase = sumaQuincenal * 2;
-        const mensualIntegrado = mensualBase * 1.20;
-        const monto = mensualIntegrado * 24;
-        setMontoAuto(monto);
-        setMostrarResultado(true);
-    };
-
-    const abrirModal = () => {
-        setC02('');
-        setC11('');
-        setMostrarResultado(false);
-        setMontoAuto(null);
-        setShowModal(true);
-    };
+    // ===== RECURSOS Y DOCUMENTOS =====
+    const recursos = [
+        { 
+            id: 'tarjeton-activo', 
+            icon: <FaFilePdf className="text-red-500" />, 
+            titulo: 'Tarjetón Activo', 
+            descripcion: 'Descarga tu tarjetón de pago IMSS', 
+            link: 'https://rh.imss.gob.mx/Personal/TarjetonDigital/',
+            externo: true
+        },
+        { 
+            id: 'tarjeton-jubilado', 
+            icon: <FaFilePdf className="text-red-500" />, 
+            titulo: 'Tarjetón Jubilado', 
+            descripcion: 'Descarga tu tarjetón de jubilado IMSS', 
+            link: 'https://rh.imss.gob.mx/Personal/tarjetonjubilados/(S(nhc3ujvy5iov2kxgmtpzwbe4))/default.aspx',
+            externo: true
+        },
+        { 
+            id: 'contrato-colectivo', 
+            icon: <FaFileAlt className="text-[#486DAA]" />, 
+            titulo: 'Contrato Colectivo', 
+            descripcion: 'Descarga el CCT completo vigente', 
+            link: '/recursos/Cct.pdf',
+            externo: true
+        },
+        { 
+            id: 'estatutos', 
+            icon: <FaFileAlt className="text-emerald-500" />, 
+            titulo: 'Estatutos SNTSS', 
+            descripcion: 'Descarga los Estatutos del SNTSS', 
+            link: '/recursos/Estatutos.pdf',
+            externo: true
+        },
+        { 
+            id: 'conceptos', 
+            icon: <FaFileContract className="text-orange-500" />, 
+            titulo: 'Conceptos del Tarjetón', 
+            descripcion: 'Explicación detallada de percepciones y deducciones', 
+            link: '/conceptos',
+            externo: false
+        },
+    ];
 
     const abrirCalculadora = (tipo) => {
         setCalculadoraActiva(tipo);
@@ -191,1322 +279,489 @@ const Dashboard = () => {
 
     const getImageUrl = (path) => {
         if (!path) return null;
-        if (path.startsWith('http://') || path.startsWith('https://')) {
-            return path;
-        }
-        if (path.startsWith('/api')) {
-            return apiUrl(path.replace('/api', ''));
-        }
+        if (path.startsWith('http://') || path.startsWith('https://')) return path;
+        if (path.startsWith('/api')) return apiUrl(path.replace('/api', ''));
         return apiUrl(path);
     };
 
-    const rolesDisponibles = [];
-    if (hasAutoValidatorRole) rolesDisponibles.push('Validador Auto');
-    if (hasNewsValidatorRole) rolesDisponibles.push('Editor Noticias');
-
-    // ===== CALCULADORAS =====
-    const calculadoras = [
-        { id: 'hipotecario', icon: <FaBuilding />, titulo: 'Crédito Hipotecario', descripcion: 'Calcula tu crédito para vivienda', color: '#4A90D9', bg: 'linear-gradient(135deg, #4A90D9 0%, #357ABD 100%)' },
-        { id: 'mediano-plazo', icon: <FaHouseUser />, titulo: 'Crédito a Mediano Plazo', descripcion: 'Financiamiento para remodelación', color: '#5B86E5', bg: 'linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%)' },
-        { id: 'auto', icon: <FaCar />, titulo: 'Préstamo de Auto', descripcion: 'Financiamiento para tu vehículo', color: '#F2994A', bg: 'linear-gradient(135deg, #F2994A 0%, #F2C94C 100%)' },
-        { id: 'fondo-ahorro', icon: <FaPiggyBank />, titulo: 'Fondo de Ahorro', descripcion: '2do de Julio - Calcula tu ahorro anual', color: '#27AE60', bg: 'linear-gradient(135deg, #27AE60 0%, #2ECC71 100%)' },
-        { id: 'aguinaldo', icon: <FaGift />, titulo: 'Aguinaldo', descripcion: 'Calcula el monto de tu aguinaldo', color: '#E74C3C', bg: 'linear-gradient(135deg, #E74C3C 0%, #F39C12 100%)' },
-        { id: 'clausula97', icon: <FaFileContract />, titulo: 'Cláusula 97 CCT', descripcion: 'Préstamo de hasta 4 meses de sueldo', color: '#8E44AD', bg: 'linear-gradient(135deg, #8E44AD 0%, #9B59B6 100%)' },
-        { id: 'horas-extras', icon: <FaClock />, titulo: 'Horas Extras', descripcion: 'Calcula el pago de horas extras', color: '#E67E22', bg: 'linear-gradient(135deg, #E67E22 0%, #F39C12 100%)' },
-    ];
-
-    // ===== RECURSOS =====
-    const recursos = [
-        { 
-            id: 'tarjeton-activo', 
-            icon: <FaFilePdf />, 
-            titulo: 'Tarjetón Activo', 
-            descripcion: 'Descarga tu tarjetón de pago', 
-            link: 'https://rh.imss.gob.mx/Personal/TarjetonDigital/',
-            externo: true
-        },
-        { 
-            id: 'tarjeton-jubilado', 
-            icon: <FaFilePdf />, 
-            titulo: 'Tarjetón Jubilado', 
-            descripcion: 'Descarga tu tarjetón de pago', 
-            link: 'https://rh.imss.gob.mx/Personal/tarjetonjubilados/(S(nhc3ujvy5iov2kxgmtpzwbe4))/default.aspx',
-            externo: true
-        },
-        { 
-            id: 'contrato-colectivo', 
-            icon: <FaFileAlt />, 
-            titulo: 'Contrato Colectivo', 
-            descripcion: 'Descarga el CCT completo', 
-            link: '/recursos/Cct.pdf',
-            externo: true
-        },
-        { 
-            id: 'estatutos', 
-            icon: <FaFileAlt />, 
-            titulo: 'Estatutos SNTSS', 
-            descripcion: 'Descarga los Estatutos del SNTSS', 
-            link: '/recursos/Estatutos.pdf',
-            externo: true
-        },
-        { 
-            id: 'conceptos', 
-            icon: <FaFileContract />, 
-            titulo: 'Conceptos del Tarjetón', 
-            descripcion: 'Explicación de los conceptos del tarjetón', 
-            link: '/conceptos',
-            externo: false
-        },
-    ];
-
-    // ===== RENDER DE PESTAÑA CEN (COMITÉ EJECUTIVO NACIONAL) =====
-    const renderTabCEN = () => (
-        <div>
-            <div style={styles.sectionTitle}>
-                <FaNewspaper style={{ color: '#E74C3C' }} /> Noticias del Comité Ejecutivo Nacional
-                <span style={styles.sectionTitleLine} />
-            </div>
-            
-            {/* Aviso importante */}
-            <div style={{
-                backgroundColor: '#FFF3CD',
-                borderLeft: '5px solid #FFC107',
-                padding: '1rem 1.5rem',
-                borderRadius: '12px',
-                marginBottom: '2rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem'
-            }}>
-                <FaInfoCircle style={{ fontSize: '1.5rem', color: '#FFC107' }} />
-                <div>
-                    <strong style={{ color: '#856404' }}>Información oficial del CEN</strong>
-                    <p style={{ margin: 0, color: '#856404', fontSize: '0.9rem' }}>
-                        Aquí encontrarás comunicados, convocatorias y noticias de carácter nacional emitidas por el Comité Ejecutivo Nacional.
-                    </p>
-                </div>
-            </div>
-
-            {/* Noticias del CEN */}
-            <div style={styles.gridNoticiasCEN}>
-                <div style={styles.cardNoticiaCEN}>
-                    <div style={styles.cardNoticiaCENIcon}>
-                        <FaRocket style={{ fontSize: '2.5rem', color: '#3EAEF4' }} />
-                    </div>
-                    <h3 style={styles.cardNoticiaCENTitle}>Próximos eventos nacionales</h3>
-                    <p style={styles.cardNoticiaCENDesc}>
-                        Mantente al tanto de los eventos y reuniones nacionales del SNTSS.
-                    </p>
-                    <div style={styles.cardNoticiaCENMeta}>
-                        <span>📅 Fecha por definir</span>
-                    </div>
-                </div>
-
-                <div style={styles.cardNoticiaCEN}>
-                    <div style={styles.cardNoticiaCENIcon}>
-                        <FaShieldAlt style={{ fontSize: '2.5rem', color: '#E74C3C' }} />
-                    </div>
-                    <h3 style={styles.cardNoticiaCENTitle}>Comunicados oficiales</h3>
-                    <p style={styles.cardNoticiaCENDesc}>
-                        Consulta los comunicados y circulares emitidos por la dirigencia nacional.
-                    </p>
-                    <div style={styles.cardNoticiaCENMeta}>
-                        <span>📄 Última actualización: 2026</span>
-                    </div>
-                </div>
-
-                <div style={styles.cardNoticiaCEN}>
-                    <div style={styles.cardNoticiaCENIcon}>
-                        <FaFileContract style={{ fontSize: '2.5rem', color: '#27AE60' }} />
-                    </div>
-                    <h3 style={styles.cardNoticiaCENTitle}>Convocatorias nacionales</h3>
-                    <p style={styles.cardNoticiaCENDesc}>
-                        Participa en las convocatorias y procesos a nivel nacional.
-                    </p>
-                    <div style={styles.cardNoticiaCENMeta}>
-                        <span>📌 Próximamente</span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Mensaje para usuarios no logueados */}
-            {!isLoggedIn && (
-                <div style={{
-                    marginTop: '2rem',
-                    padding: '1.5rem',
-                    backgroundColor: 'rgba(62,174,244,0.08)',
-                    borderRadius: '12px',
-                    textAlign: 'center',
-                    border: '1px dashed #3EAEF4'
-                }}>
-                    <p style={{ margin: 0, color: '#6c757d' }}>
-                        🔒 <Link to="/login" style={{ color: '#3EAEF4', fontWeight: 'bold', textDecoration: 'none' }}>
-                            Inicia sesión
-                        </Link> para ver las convocatorias y noticias de tu sección.
-                    </p>
-                </div>
-            )}
-        </div>
-    );
-
-    // ===== RENDER DE PESTAÑA CALCULADORAS =====
-    const renderTabCalculadoras = () => (
-        <div>
-            <div style={styles.sectionTitle}>
-                <FaCalculator style={{ color: '#3EAEF4' }} /> Calculadoras y Herramientas
-                <span style={styles.sectionTitleLine} />
-            </div>
-            <div style={styles.grid}>
-                {calculadoras.map((calc) => (
-                    <div 
-                        key={calc.id}
-                        style={styles.card}
-                        onClick={() => abrirCalculadora(calc.id)}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
-                            e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,0,0,0.12)';
-                            e.currentTarget.style.borderColor = '#3EAEF4';
-                            const glow = e.currentTarget.querySelector('.card-glow');
-                            if (glow) glow.style.opacity = '1';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                            e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.06)';
-                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)';
-                            const glow = e.currentTarget.querySelector('.card-glow');
-                            if (glow) glow.style.opacity = '0';
-                        }}
-                    >
-                        <div className="card-glow" style={styles.cardGlow} />
-                        <div style={{ ...styles.cardIconWrapper, background: calc.bg }}>
-                            {calc.icon}
-                        </div>
-                        <h3 style={styles.cardTitle}>{calc.titulo}</h3>
-                        <p style={styles.cardDescription}>{calc.descripcion}</p>
-                    </div>
-                ))}
-            </div>
-
-            <div style={{ ...styles.sectionTitle}}>
-                <FaFilePdf style={{ color: '#E74C3C' }} /> Recursos y Documentos
-                <span style={styles.sectionTitleLine} />
-            </div>
-            <div style={styles.grid}>
-                {recursos.map((recurso) => (
-                    <a
-                        key={recurso.id}
-                        href={recurso.link}
-                        target={recurso.externo ? '_blank' : '_self'}
-                        rel={recurso.externo ? 'noopener noreferrer' : ''}
-                        style={styles.linkCard}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-6px)';
-                            e.currentTarget.style.boxShadow = '0 12px 36px rgba(0,0,0,0.1)';
-                            e.currentTarget.style.borderColor = '#3EAEF4';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.06)';
-                            e.currentTarget.style.borderColor = '#e9ecef';
-                        }}
-                    >
-                        <span style={styles.linkIcon}>{recurso.icon}</span>
-                        <h3 style={styles.linkTitle}>{recurso.titulo}</h3>
-                        <p style={styles.linkDescription}>{recurso.descripcion}</p>
-                        {recurso.externo && (
-                            <span style={styles.linkExternal}>
-                                <FaExternalLinkAlt /> Abrir en nueva ventana
-                            </span>
-                        )}
-                    </a>
-                ))}
-            </div>
-        </div>
-    );
-
-    // ===== RENDER DE PESTAÑA PROCESO (SECCIÓN) =====
-    const renderTabProceso = () => (
-    <div>
-        {/* ===== GRID RESPONSIVE CON FLEXBOX (Noticias + Sidebar) ===== */}
-        <div style={styles.grid2cols}>
-            {/* Columna: Noticias */}
-            <div style={styles.colNoticias}>
-                <div style={styles.cardNoticias}>
-                    <div style={styles.cardTitleNoticias}>
-                        <FaNewspaper style={{ color: '#3EAEF4' }} /> Noticias y Avisos de tu Sección
-                    </div>
-                    <div style={styles.cardBody}>
-                        {loadingNoticias ? (
-                            <p className="text-muted">Cargando noticias...</p>
-                        ) : noticias.length > 0 ? (
-                            noticias.map((noticia, idx) => (
-                                <div key={idx} style={styles.noticiaCard}>
-                                    {noticia.imagen && (
-                                        <img 
-                                            src={getImageUrl(noticia.imagen)} 
-                                            alt={noticia.titulo} 
-                                            style={{
-                                                width: '100%',
-                                                height: '140px',
-                                                objectFit: 'cover',
-                                                borderRadius: '8px',
-                                                marginBottom: '0.5rem',
-                                                backgroundColor: '#e9ecef',
-                                            }}
-                                            onError={(e) => { 
-                                                e.target.style.display = 'none'; 
-                                            }}
-                                        />
-                                    )}
-                                    <div style={styles.noticiaTitulo}>{noticia.titulo}</div>
-                                    <div style={styles.noticiaResumen}>
-                                        {noticia.resumen?.substring(0, 100)}...
-                                    </div>
-                                    <div style={styles.noticiaMeta}>
-                                        <span><FaCalendarAlt /> {noticia.fecha}</span>
-                                        <span><FaEye /> {noticia.vistas} vistas</span>
-                                        {noticia.fijada && <span style={styles.noticiaBadge}>📌 Fijada</span>}
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="text-muted">No hay noticias disponibles para tu sección.</p>
-                        )}
-                    </div>
-                    <div style={styles.cardTitleNoticias}>
-                        <FaNewspaper style={{ color: '#3EAEF4' }} /> Las puedes visualizar en la sección de noticias y avisos
-                    </div>
-                </div>
-            </div>
-
-            {/* Columna: Sidebar */}
-            <div style={{ ...styles.colSidebar}}>
-                <div style={styles.sidebar}>
-                    <div style={styles.sidebarTitle}>
-                        <FaInfoCircle /> Convocatorias y Procesos de tu Sección
-                    </div>
-                    <p style={{ 
-                        fontSize: '0.85rem', 
-                        color: '#6c757d', 
-                        marginBottom: '1rem',
-                        lineHeight: '1.5'
-                    }}>
-                        En este espacio podrás consultar y descargar las convocatorias y los requisitos para participar en los procesos de tu sección.
-                    </p>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                        {[
-                            { titulo: 'Convocatoria al crédito hipotecario 2026-1', descripcion: 'Próximamente • Fecha por definir' },
-                            { titulo: 'Convocatoria al festejo de la clausula 78, Personal de enfermería 2026-2', descripcion: 'Próximamente • Fecha por definir' },
-                            { titulo: 'Registro para RIFA DE PROPUESTAS 2026', descripcion: 'Próximamente • Fecha por definir' },
-                        ].map((item, index) => (
-                            <div key={index} style={{
-                                backgroundColor: 'rgba(255,255,255,0.8)',
-                                borderRadius: '12px',
-                                padding: '0.7rem 1rem',
-                                border: '1px solid #e9ecef',
-                                transition: 'all 0.3s ease',
-                                opacity: 0.7,
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                            }}>
-                                <div>
-                                    <div style={{ fontWeight: '600', fontSize: '0.85rem', color: '#0A0F1E' }}>
-                                        {item.titulo}
-                                    </div>
-                                    <div style={{ fontSize: '0.7rem', color: '#6c757d' }}>
-                                        {item.descripcion}
-                                    </div>
-                                </div>
-                                <span style={{
-                                    backgroundColor: '#ffc107',
-                                    color: '#0A0F1E',
-                                    padding: '0.15rem 0.6rem',
-                                    borderRadius: '12px',
-                                    fontSize: '0.55rem',
-                                    fontWeight: 'bold',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.5px',
-                                }}>
-                                    🚀 Próximo
-                                </span>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div style={{
-                        marginTop: '0.8rem',
-                        padding: '0.5rem 1rem',
-                        backgroundColor: 'rgba(62,174,244,0.05)',
-                        borderRadius: '12px',
-                        border: '1px dashed #3EAEF4',
-                        textAlign: 'center',
-                    }}>
-                        <span style={{ fontSize: '0.7rem', color: '#6c757d' }}>
-                            🔔 <Link to="/contacto" style={{ color: '#3EAEF4', fontWeight: '600', textDecoration: 'none' }}>Contáctanos</Link> para más información
-                        </span>
-                    </div>
-
-                    <div style={styles.sidebarTitle, { marginTop: '1.5rem' }}>
-                        <FaInfoCircle /> ¿Cómo participar?
-                    </div>
-                    <ul style={styles.listaReglas}>
-                        <li style={styles.listaReglasItem}>
-                            <FaShieldAlt style={{ color: '#3EAEF4' }} /> Ser agremiado de base.
-                        </li>
-                        <li style={styles.listaReglasItem}>
-                            <FaChartLine style={{ color: '#3EAEF4' }} /> Se evalua la antiguedad segun el proceso.
-                        </li>
-                        <li style={styles.listaReglasItem}>
-                            <FaGift style={{ color: '#3EAEF4' }} /> Inscribirse en las rifas.
-                        </li>
-                    </ul>
-                    
-                    {!isLoggedIn ? (
-                        <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(62,174,244,0.12)', borderRadius: '12px', textAlign: 'center' }}>
-                            <p style={{ fontWeight: 'bold', marginBottom: '0.3rem', color: '#0A0F1E' }}>✨ Beneficios exclusivos ✨</p>
-                            <p style={{ fontSize: '0.85rem', color: '#6c757d' }}>Préstamos, rifas, sorteos y más</p>
-                            <Link to="/registro" style={{ ...styles.heroBtn, marginTop: '0.5rem', fontSize: '0.85rem', padding: '0.5rem 1.5rem' }}>
-                                Regístrate aquí
-                            </Link>
-                        </div>
-                    ) : (
-                        <div style={{ marginTop: '1rem' }}>
-                            <Link to="/registro-credito" style={styles.heroBtn}>
-                                Solicitar crédito
-                            </Link>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>  
-
-        {/* ===== CARDS DE ACCIÓN (DESPUÉS) ===== */}
-        <div style={{ ...styles.actionGrid, marginTop: '2rem' }}>
-            {/* ===== CRÉDITO AUTO ===== */}
-            <Link to="/registro-auto" style={styles.actionCard}>
-                <div style={{ ...styles.actionCardIcon, color: '#4A90D9' }}><FaCar /></div>
-                <h3 style={styles.actionCardTitle}>🚗 Preregistro a la rifa de auto</h3>
-                <p style={styles.actionCardDescription}>Participa en la rifa para obtener un crédito automotriz.</p>
-            </Link>
-
-            {/* ===== NOTICIAS ===== */}
-            <Link to="/noticias" style={styles.actionCard}>
-                <div style={{ ...styles.actionCardIcon, color: '#5B86E5' }}><FaNewspaper /></div>
-                <h3 style={styles.actionCardTitle}>📰 Noticias y avisos</h3>
-                <p style={styles.actionCardDescription}>Mantente informado con las últimas noticias.</p>
-            </Link>
-
-            {/* ===== CLÁUSULA 79BIS - Registro (Siempre visible) ===== */}
-            <Link to="/clausula79bis" style={styles.actionCard}>
-                <div style={{ ...styles.actionCardIcon, color: '#8E44AD' }}><FaGift /></div>
-                <h3 style={styles.actionCardTitle}>🎉 Cláusula 79Bis</h3>
-                <p style={styles.actionCardDescription}>Registro para el festejo de Intendencia y Limpieza.</p>
-            </Link>
-
-            {/* ===== VALIDADOR AUTO (solo rol auto) ===== */}
-            {hasAutoValidatorRole && (
-                <Link to="/validador-auto" style={{ ...styles.actionCard, borderColor: '#FFC107' }}>
-                    <div style={{ ...styles.actionCardIcon, color: '#FFC107' }}><FaCheckCircle /></div>
-                    <h3 style={styles.actionCardTitle}>🔍 Validador Auto</h3>
-                    <p style={styles.actionCardDescription}>Gestiona solicitudes de crédito.</p>
-                </Link>
-            )}
-
-            {/* ===== CREAR NOTICIA (solo rol noticias) ===== */}
-            {hasNewsValidatorRole && (
-                <Link to="/noticias/crear" style={{ ...styles.actionCard, borderColor: '#28a745' }}>
-                    <div style={{ ...styles.actionCardIcon, color: '#28a745' }}><FaNewspaper /></div>
-                    <h3 style={styles.actionCardTitle}>✍️ Crear Noticia</h3>
-                    <p style={styles.actionCardDescription}>Publica nuevas noticias.</p>
-                </Link>
-            )}
-
-            {/* ===== VALIDADOR 79BIS (solo rol clausula79bis) ===== */}
-            {hasClausula79BisValidatorRole && (
-                <>
-                    <Link to="/clausula79bis/validador" style={{ ...styles.actionCard, borderColor: '#8E44AD' }}>
-                        <div style={{ ...styles.actionCardIcon, color: '#8E44AD' }}><FaShieldAlt /></div>
-                        <h3 style={styles.actionCardTitle}>🔍 Validador 79Bis</h3>
-                        <p style={styles.actionCardDescription}>Gestiona los registros del festejo.</p>
-                    </Link>
-
-                    {/* ===== ENTRADA 79BIS (solo rol clausula79bis) ===== */}
-                    <Link to="/clausula79bis/entrada" style={{ ...styles.actionCard, borderColor: '#3EAEF4' }}>
-                        <div style={{ ...styles.actionCardIcon, color: '#3EAEF4' }}><FaQrcode /></div>
-                        <h3 style={styles.actionCardTitle}>🎟️ Entrada 79Bis</h3>
-                        <p style={styles.actionCardDescription}>Control de asistencia del evento.</p>
-                    </Link>
-
-                    {/* ===== ESTADÍSTICAS 79BIS (solo rol clausula79bis) ===== */}
-                    <Link to="/clausula79bis/estadisticas" style={{ ...styles.actionCard, borderColor: '#28a745' }}>
-                        <div style={{ ...styles.actionCardIcon, color: '#28a745' }}><FaChartPie /></div>
-                        <h3 style={styles.actionCardTitle}>📊 Estadísticas 79Bis</h3>
-                        <p style={styles.actionCardDescription}>Dashboard del evento con gráficas.</p>
-                    </Link>
-                </>
-            )}
-        </div>
-    </div>
-);
-
-    // ===== ESTILOS =====
-    const styles = {
-        container: {
-            maxWidth: '1400px',
-            margin: '0 auto',
-            padding: '2rem 1.5rem',
-            minHeight: 'calc(100vh - 200px)',
-            background: '#f0f4f8',
-            '@media (max-width: 768px)': {
-                padding: '1rem 0.8rem',
-            },
-        },
-        heroSection: {
-            background: 'linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%)',
-            borderRadius: '16px',
-            padding: '1.2rem 1.5rem',
-            marginBottom: '1.5rem',
-            borderBottom: '3px solid #3EAEF4',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-            position: 'relative',
-            overflow: 'hidden',
-            '@media (max-width: 768px)': {
-                padding: '1rem',
-                borderRadius: '12px',
-            },
-            '@media (max-width: 480px)': {
-                padding: '0.8rem',
-                marginBottom: '1rem',
-            },
-        },
-        heroGlow: {
-            position: 'absolute',
-            top: '-30%',
-            right: '-10%',
-            width: '200px',
-            height: '200px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(62,174,244,0.08) 0%, transparent 70%)',
-            pointerEvents: 'none',
-        },
-        heroContent: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '0.8rem',
-            position: 'relative',
-            zIndex: 2,
-            '@media (max-width: 768px)': {
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                gap: '0.5rem',
-            },
-            '@media (max-width: 480px)': {
-                gap: '0.3rem',
-            },
-        },
-        heroLeft: {
-            flex: 1,
-            minWidth: '150px',
-        },
-        heroRight: {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-end',
-            gap: '0.3rem',
-            '@media (max-width: 768px)': {
-                alignItems: 'flex-start',
-                width: '100%',
-            },
-        },
-        heroTitle: {
-            fontSize: '1.8rem',
-            fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #fff 30%, #3EAEF4 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            margin: 0,
-            letterSpacing: '-0.5px',
-            lineHeight: 1.2,
-            '@media (max-width: 768px)': {
-                fontSize: '1.4rem',
-            },
-            '@media (max-width: 480px)': {
-                fontSize: '1.1rem',
-            },
-        },
-        heroSubtitle: {
-            fontSize: '0.85rem',
-            color: '#aab',
-            margin: '0.1rem 0 0 0',
-            '@media (max-width: 768px)': {
-                fontSize: '0.75rem',
-            },
-            '@media (max-width: 480px)': {
-                fontSize: '0.7rem',
-            },
-        },
-        heroSeccion: {
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.6rem',
-            marginTop: '0.6rem',
-            padding: '0.4rem 1rem',
-            borderRadius: '8px',
-            transition: 'all 0.3s ease',
-        },
-        heroSeccionIcon: {
-            fontSize: '1rem',
-        },
-        heroSeccionText: {
-            fontSize: '0.85rem',
-            fontWeight: '600',
-        },
-        heroRoles: {
-            display: 'flex',
-            gap: '0.3rem',
-            flexWrap: 'wrap',
-        },
-        badgeRol: {
-            display: 'inline-block',
-            padding: '0.1rem 0.5rem',
-            borderRadius: '12px',
-            fontSize: '0.6rem',
-            fontWeight: 'bold',
-            backgroundColor: 'rgba(62,174,244,0.15)',
-            color: '#3EAEF4',
-            border: '1px solid rgba(62,174,244,0.2)',
-            '@media (max-width: 480px)': {
-                fontSize: '0.55rem',
-                padding: '0.05rem 0.4rem',
-            },
-        },
-        heroBtnContainer: {
-            display: 'flex',
-            gap: '0.4rem',
-            flexWrap: 'wrap',
-            '@media (max-width: 480px)': {
-                width: '100%',
-                gap: '0.3rem',
-            },
-        },
-        heroBtn: {
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
-            padding: '0.3rem 0.9rem',
-            borderRadius: '20px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-            textDecoration: 'none',
-            fontWeight: '600',
-            fontSize: '0.75rem',
-            transition: 'all 0.3s ease',
-            border: 'none',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-            '@media (max-width: 480px)': {
-                fontSize: '0.7rem',
-                padding: '0.25rem 0.7rem',
-                flex: 1,
-                justifyContent: 'center',
-            },
-        },
-        tabsContainer: {
-            display: 'flex',
-            gap: '0.5rem',
-            marginBottom: '2rem',
-            background: 'rgba(255,255,255,0.9)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            padding: '0.5rem',
-            border: '1px solid rgba(255,255,255,0.5)',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-            overflow: 'hidden',
-            flexWrap: 'wrap',
-            '@media (max-width: 768px)': {
-                flexDirection: 'column', // ← CAMBIADO: en móvil se apilan verticalmente
-                gap: '0.4rem',
-                padding: '0.4rem',
-            },
-        },
-        tab: (activa) => ({
-            flex: 1,
-            padding: '0.8rem 1.5rem',
-            borderRadius: '12px',
-            border: 'none',
-            fontSize: '0.95rem',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            background: activa ? 'linear-gradient(135deg, #3EAEF4, #2d8fd4)' : 'rgba(255,255,255,0.5)',
-            color: activa ? '#0A0F1E' : '#6c757d',
-            boxShadow: activa ? '0 4px 16px rgba(62,174,244,0.3)' : '0 2px 8px rgba(0,0,0,0.04)',
-            textAlign: 'center',
-            lineHeight: 1.3,
-            borderBottom: activa ? '3px solid #0A0F1E' : '3px solid transparent', // ← AGREGADO: indicador visual
-            position: 'relative',
-            '@media (max-width: 768px)': {
-                width: '100%',
-                justifyContent: 'center',
-                fontSize: '0.9rem',
-                padding: '0.7rem 1rem',
-                borderBottom: activa ? '3px solid #0A0F1E' : '1px solid #e9ecef', // ← Separador entre pestañas
-                borderRadius: '10px',
-                background: activa ? 'linear-gradient(135deg, #3EAEF4, #2d8fd4)' : 'rgba(255,255,255,0.6)',
-                boxShadow: activa ? '0 4px 16px rgba(62,174,244,0.3)' : '0 1px 4px rgba(0,0,0,0.04)',
-            },
-            '@media (max-width: 480px)': {
-                fontSize: '0.8rem',
-                padding: '0.6rem 0.8rem',
-            },
-            // Efecto hover
-            '&:hover': {
-                background: activa ? 'linear-gradient(135deg, #3EAEF4, #2d8fd4)' : 'rgba(62,174,244,0.08)',
-                transform: 'scale(1.02)',
-            }
-        }),
-        sectionTitle: {
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            color: '#0A0F1E',
-            marginBottom: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.8rem',
-            position: 'relative',
-        },
-        sectionTitleLine: {
-            flex: 1,
-            height: '2px',
-            background: 'linear-gradient(90deg, #3EAEF4, transparent)',
-            marginLeft: '1rem',
-        },
-        grid: {
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-            gap: '1.5rem',
-            marginBottom: '3rem',
-        },
-        gridNoticiasCEN: {
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '1.5rem',
-            marginBottom: '2rem',
-        },
-        cardNoticiaCEN: {
-            backgroundColor: 'rgba(255,255,255,0.9)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            padding: '1.8rem 1.5rem',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-            border: '1px solid rgba(255,255,255,0.5)',
-            textAlign: 'center',
-            transition: 'all 0.3s ease',
-        },
-        cardNoticiaCENIcon: {
-            marginBottom: '1rem',
-        },
-        cardNoticiaCENTitle: {
-            fontSize: '1.1rem',
-            fontWeight: 'bold',
-            color: '#0A0F1E',
-            marginBottom: '0.5rem',
-        },
-        cardNoticiaCENDesc: {
-            fontSize: '0.9rem',
-            color: '#6c757d',
-            lineHeight: 1.5,
-            marginBottom: '0.8rem',
-        },
-        cardNoticiaCENMeta: {
-            fontSize: '0.8rem',
-            color: '#adb5bd',
-            borderTop: '1px solid #e9ecef',
-            paddingTop: '0.8rem',
-        },
-        card: {
-            backgroundColor: 'rgba(255,255,255,0.9)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            padding: '1.8rem 1.5rem',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-            cursor: 'pointer',
-            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-            border: '1px solid rgba(255,255,255,0.5)',
-            textAlign: 'center',
-            position: 'relative',
-            overflow: 'hidden',
-        },
-        cardGlow: {
-            position: 'absolute',
-            top: '-50%',
-            left: '-50%',
-            width: '200%',
-            height: '200%',
-            background: 'radial-gradient(circle, rgba(62,174,244,0.05) 0%, transparent 70%)',
-            opacity: 0,
-            transition: 'opacity 0.4s ease',
-            pointerEvents: 'none',
-        },
-        cardIconWrapper: {
-            width: '70px',
-            height: '70px',
-            margin: '0 auto 1rem',
-            borderRadius: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '2rem',
-            color: 'white',
-            transition: 'all 0.3s ease',
-        },
-        cardTitle: {
-            fontSize: '1.05rem',
-            fontWeight: 'bold',
-            marginBottom: '0.3rem',
-            color: '#0A0F1E',
-        },
-        cardDescription: {
-            fontSize: '0.85rem',
-            color: '#6c757d',
-            lineHeight: 1.5,
-            margin: 0,
-        },
-        linkCard: {
-            backgroundColor: 'white',
-            borderRadius: '16px',
-            padding: '1.8rem 1.5rem',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-            border: '1px solid #e9ecef',
-            textAlign: 'center',
-            textDecoration: 'none',
-            color: 'inherit',
-            display: 'block',
-            position: 'relative',
-            overflow: 'hidden',
-        },
-        linkIcon: {
-            fontSize: '2.5rem',
-            color: '#3EAEF4',
-            marginBottom: '0.8rem',
-            display: 'block',
-        },
-        linkTitle: {
-            fontSize: '1rem',
-            fontWeight: 'bold',
-            marginBottom: '0.3rem',
-            color: '#0A0F1E',
-        },
-        linkDescription: {
-            fontSize: '0.85rem',
-            color: '#6c757d',
-            margin: 0,
-        },
-        linkExternal: {
-            color: '#3EAEF4',
-            fontSize: '0.7rem',
-            marginTop: '0.5rem',
-            display: 'inline-block',
-        },
-        actionGrid: {
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '1.5rem',
-            marginBottom: '2rem',
-            '@media (max-width: 480px)': {
-                gridTemplateColumns: '1fr',
-                gap: '1rem',
-            },
-        },
-        actionCard: {
-            backgroundColor: 'rgba(255,255,255,0.9)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            padding: '1.8rem 1.5rem',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-            textDecoration: 'none',
-            color: 'inherit',
-            display: 'block',
-            border: '1px solid rgba(255,255,255,0.5)',
-            position: 'relative',
-            overflow: 'hidden',
-            textAlign: 'center',
-            '@media (max-width: 480px)': {
-                padding: '1.2rem',
-            },
-        },
-        actionCardIcon: {
-            fontSize: '2.5rem',
-            marginBottom: '0.8rem',
-            display: 'block',
-        },
-        actionCardTitle: {
-            fontSize: '1rem',
-            fontWeight: 'bold',
-            marginBottom: '0.3rem',
-            color: '#0A0F1E',
-        },
-        actionCardDescription: {
-            fontSize: '0.85rem',
-            color: '#6c757d',
-            margin: 0,
-            lineHeight: 1.5,
-        },
-        grid2cols: {
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '2rem',
-            '@media (max-width: 768px)': {
-                gap: '1.5rem',
-            },
-        },
-        colNoticias: {
-            flex: '1 1 calc(66% - 1rem)',
-            minWidth: '280px',
-            order: 1,
-            '@media (max-width: 992px)': {
-                flex: '1 1 100%',
-                order: 1,
-            },
-        },
-        colSidebar: {
-            flex: '1 1 calc(34% - 1rem)',
-            minWidth: '220px',
-            order: 2,
-            '@media (max-width: 992px)': {
-                flex: '1 1 100%',
-                order: 2,
-            },
-        },
-        cardNoticias: {
-            backgroundColor: 'rgba(255,255,255,0.9)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            padding: '1.5rem',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-            border: '1px solid rgba(255,255,255,0.5)',
-            transition: 'all 0.3s ease',
-            height: '100%',
-            '@media (max-width: 480px)': {
-                padding: '1rem',
-            },
-        },
-        cardTitleNoticias: {
-            fontSize: '1.1rem',
-            fontWeight: 'bold',
-            marginBottom: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            color: '#0A0F1E',
-            borderBottom: '2px solid #3EAEF4',
-            paddingBottom: '0.5rem',
-            '@media (max-width: 480px)': {
-                fontSize: '1rem',
-            },
-        },
-        cardBody: {
-            color: '#495057',
-            lineHeight: '1.6',
-        },
-        noticiaCard: {
-            backgroundColor: '#f8f9fa',
-            borderRadius: '12px',
-            padding: '1rem',
-            marginBottom: '1rem',
-            transition: 'all 0.3s ease',
-            border: '1px solid #e9ecef',
-            '@media (max-width: 480px)': {
-                padding: '0.8rem',
-            },
-        },
-        noticiaTitulo: {
-            fontSize: '0.95rem',
-            fontWeight: 'bold',
-            marginBottom: '0.3rem',
-            color: '#0A0F1E',
-            '@media (max-width: 480px)': {
-                fontSize: '0.85rem',
-            },
-        },
-        noticiaResumen: {
-            color: '#6c757d',
-            fontSize: '0.8rem',
-            marginBottom: '0.3rem',
-        },
-        noticiaMeta: {
-            fontSize: '0.7rem',
-            color: '#adb5bd',
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '0.5rem 1rem',
-            alignItems: 'center',
-        },
-        noticiaBadge: {
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
-            fontSize: '0.6rem',
-            fontWeight: 'bold',
-            padding: '0.1rem 0.5rem',
-            borderRadius: '10px',
-        },
-        sidebar: {
-            backgroundColor: 'rgba(255,255,255,0.9)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            padding: '1.5rem',
-            border: '1px solid rgba(255,255,255,0.5)',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-            height: '100%',
-            '@media (max-width: 480px)': {
-                padding: '1rem',
-            },
-        },
-        sidebarTitle: {
-            fontSize: '1rem',
-            fontWeight: 'bold',
-            marginBottom: '1rem',
-            borderBottom: '2px solid #3EAEF4',
-            paddingBottom: '0.5rem',
-            color: '#0A0F1E',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-        },
-        listaReglas: {
-            listStyle: 'none',
-            padding: 0,
-            margin: 0,
-        },
-        listaReglasItem: {
-            padding: '0.5rem 0',
-            borderBottom: '1px solid #e9ecef',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.85rem',
-            '@media (max-width: 480px)': {
-                fontSize: '0.8rem',
-            },
-        },
-        modalHeader: {
-            background: 'linear-gradient(135deg, #282b34, #37383d)',
-            color: 'white',
-            borderBottom: '3px solid #3EAEF4',
-            borderRadius: '16px 16px 0 0',
-            padding: '1.5rem 2rem',
-        },
-        btnCalcular: {
-            backgroundColor: '#3EAEF4',
-            color: '#0A0F1E',
-            border: 'none',
-            padding: '0.6rem 1.2rem',
-            borderRadius: '10px',
-            fontWeight: 'bold',
-            width: '100%',
-            transition: 'all 0.3s ease',
-            cursor: 'pointer',
-            fontSize: '0.95rem',
-        },
-        resultadoContainer: {
-            backgroundColor: '#e9ecef',
-            borderRadius: '12px',
-            padding: '1.25rem',
-            textAlign: 'center',
-            marginTop: '1rem',
-            border: '1px solid #dee2e6',
-        },
-        resultadoMonto: {
-            fontSize: '2rem',
-            fontWeight: 'bold',
-            color: '#003c82',
-            '@media (max-width: 480px)': {
-                fontSize: '1.5rem',
-            },
-        },
-        bannerImage: {
-            width: '100%',
-            borderRadius: '16px',
-            overflow: 'hidden',
-            marginBottom: '1.5rem',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            transition: 'all 0.3s ease',
-        },
-        academicNote: {
-            fontSize: '16px',
-            color: '#FFF',
-            textAlign: 'center',
-            marginTop: '10px',
-            fontStyle: 'italic',
-            letterSpacing: '0.3px',
-        },
-        bannerImageContent: {
-            width: '100%',
-            height: 'auto',
-            display: 'block',
-            objectFit: 'cover',
-            maxHeight: '220px',
-            backgroundColor: '#0A0F1E',
-            '@media (max-width: 768px)': {
-                maxHeight: '130px',
-            },
-            '@media (max-width: 480px)': {
-                maxHeight: '90px',
-            },
-        },
-    };
-
-    // ✅ Determinar la URL del banner según la sesión
-    const getBannerUrl = () => {
-        if (seccionUsuario?.banner) {
-            console.log('📸 Banner de sección:', seccionUsuario.banner);
-            return seccionUsuario.banner;
-        }
-        console.log('📸 Banner por defecto');
-        return '/images/seccionesBanner/bannerD.jpg';
-    };
-
-    // ✅ Determinar el título del banner
-    const getBannerTitle = () => {
-        if (seccionUsuario?.romano) {
-            return `SNTSS Sección ${seccionUsuario.romano}`;
-        }
-        return 'SNTSS - CEN';
-    };
-
-    // ✅ Determinar el subtítulo del banner
-    const getBannerSubtitle = () => {
-        if (seccionUsuario?.nombre) {
-            return `"${seccionUsuario.nombre}"`;
-        }
-        return '"Todos Juntos, Todos Fuertes"';
-    };
-
-    // ✅ Determinar el color del banner
-    const getBannerColor = () => {
-        return seccionUsuario?.color || '#3EAEF4';
-    };
+    const bannerImg = seccionUsuario?.banner || '/images/seccionesBanner/bannerD.jpg';
 
     return (
-        <div style={styles.container}>
-            {/* ===== HERO SECTION ===== */}
-            <div style={styles.heroSection}>
-                <div style={styles.heroGlow} />
-                <div style={styles.heroContent}>
-                    <div style={styles.heroLeft}>
-                        <p style={styles.academicNote}>
-                            Este sitio es un proyecto didáctico desarrollado con fines exclusivamente académicos y escolares.
-                        </p>
-                        <h1 style={styles.heroTitle}>
-                            {isLoggedIn ? `¡Bienvenido, ${userName}!` : 'SNTSS'}
-                        </h1>
-                        <p style={styles.heroSubtitle}>
-                            Comité Ejecutivo Nacional al Servicio de los trabajadores
-                        </p>
-                        
-                        {/* ✅ MOSTRAR LA SECCIÓN DEL USUARIO DEBAJO DEL NOMBRE (solo si está logueado) */}
-                        {isLoggedIn && seccionUsuario && (
-                            <div style={{
-                                ...styles.heroSeccion,
-                                backgroundColor: `${seccionUsuario.color || '#3EAEF4'}15`,
-                                borderLeft: `4px solid ${seccionUsuario.color || '#3EAEF4'}`
-                            }}>
-                                <FaBuilding style={{ 
-                                    ...styles.heroSeccionIcon,
-                                    color: seccionUsuario.color || '#3EAEF4'
-                                }} />
-                                <span style={{
-                                    ...styles.heroSeccionText,
-                                    color: seccionUsuario.color || '#3EAEF4'
-                                }}>
-                                    Sección {seccionUsuario.romano} - {seccionUsuario.nombre}
-                                </span>
-                                <FaCheckCircle style={{ 
-                                    color: seccionUsuario.color || '#3EAEF4',
-                                    fontSize: '0.8rem',
-                                    opacity: 0.7
-                                }} />
-                            </div>
-                        )}
-                    </div>
+        <div className="relative min-h-screen">
+            
+            {/* ================= ONDAS Y FORMAS DECORATIVAS DE FONDO ================= */}
+            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
+                {/* Onda azul superior derecha */}
+                <svg className="absolute -top-10 -right-10 w-[600px] opacity-35 text-[#486DAA]/30" viewBox="0 0 500 500" fill="currentColor">
+                    <path d="M150,0 C300,150 400,50 500,200 L500,0 Z"></path>
+                </svg>
+
+                {/* Puntos decorativos esparcidos */}
+                <div className="absolute top-8 left-6 w-32 h-64 dot-matrix opacity-40"></div>
+                <div className="absolute top-[45%] left-2 w-20 h-40 dot-matrix opacity-50"></div>
+                <div className="absolute bottom-28 right-4 w-28 h-40 dot-matrix opacity-40"></div>
+
+                {/* Onda verde esmeralda inferior izquierda */}
+                <svg className="absolute -bottom-20 -left-20 w-[700px] opacity-25 text-emerald-400" viewBox="0 0 500 500" fill="currentColor">
+                    <path d="M0,500 C150,350 300,450 500,300 L500,500 Z"></path>
+                </svg>
+            </div>
+
+            {/* ================= CONTENEDOR PRINCIPAL ================= */}
+            <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-12">
+
+                {/* ================= BANNER TOP (2 CARDS: CTA + IMAGEN SECCIÓN) ================= */}
+                <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
                     
-                    <div style={styles.heroRight}>
-                        {isLoggedIn && rolesDisponibles.length > 0 && (
-                            <div style={styles.heroRoles}>
-                                {rolesDisponibles.map((rol, idx) => (
-                                    <span key={idx} style={styles.badgeRol}>
-                                        🛡️ {rol}
-                                    </span>
-                                ))}
-                            </div>
-                        )}
+                    {/* Card Izquierda: Ingresar al Portal / Bienvenida */}
+                    <div className="lg:col-span-5 bg-white rounded-[2.5rem] p-7 sm:p-8 flex flex-col justify-between relative overflow-hidden ui-shadow border border-white min-h-[260px] group">
+                        {/* Puntos decorativos integrados */}
+                        <div className="absolute top-4 right-4 w-24 h-24 dot-matrix opacity-30 pointer-events-none"></div>
                         
-                        <div style={styles.heroBtnContainer}>
-                            {isLoggedIn && (
-                                <Link to="/perfil" style={styles.heroBtn}>
-                                    <FaUser size={14} /> Perfil
+                        <div className="relative z-10">
+                            <span className="inline-block bg-[#486DAA]/10 text-[#486DAA] text-[10px] font-extrabold px-3 py-1 rounded-full mb-3 border border-[#486DAA]/20">
+                                {seccionUsuario?.nombre ? `Sección ${seccionUsuario.romano}` : 'Sección Sindical'}
+                            </span>
+                            <h2 className="text-2xl sm:text-3xl font-black text-[#486DAA] tracking-tight m-0">
+                                {seccionUsuario?.romano ? `SNTSS ${seccionUsuario.romano}` : 'SNTSS'}
+                            </h2>
+                            <p className="text-slate-600 font-medium text-xs sm:text-sm mt-2 leading-relaxed m-0">
+                                {seccionUsuario?.slogan || 'Comité Ejecutivo Seccional al Servicio de los trabajadores'}
+                            </p>
+                        </div>
+
+                        <div className="mt-6 relative z-10">
+                            {!isLoggedIn ? (
+                                <Link 
+                                    to="/login" 
+                                    className="inline-flex items-center space-x-2.5 bg-gradient-to-r from-[#486DAA] to-[#355386] hover:from-[#3b598d] hover:to-[#2e4771] text-white font-bold px-6 py-2.5 rounded-full shadow-lg shadow-[#486DAA]/30 hover:scale-105 transition duration-300 text-xs sm:text-sm text-decoration-none"
+                                >
+                                    <FaSignInAlt className="text-xs" />
+                                    <span>Ingresar al Portal</span>
                                 </Link>
-                            )}
-                            {!isLoggedIn && (
-                                <Link to="/login" style={styles.heroBtn}>
-                                    <FaSignInAlt size={14} /> Ingresar
-                                </Link>
+                            ) : (
+                                <div className="inline-flex items-center space-x-2 bg-emerald-50 text-emerald-700 font-bold px-4 py-2 rounded-full border border-emerald-200 text-xs">
+                                    <FaCheckCircle className="text-emerald-500" />
+                                    <span>Sesión activa: {userName}</span>
+                                </div>
                             )}
                         </div>
+
+                        {/* Matriz de puntitos decorativa inferior (4 azules + 4 verdes) */}
+                        <div className="absolute bottom-4 right-4 grid grid-cols-4 gap-1.5 opacity-40 pointer-events-none">
+                            <span className="w-1.5 h-1.5 bg-[#486DAA] rounded-full"></span>
+                            <span className="w-1.5 h-1.5 bg-[#486DAA] rounded-full"></span>
+                            <span className="w-1.5 h-1.5 bg-[#486DAA] rounded-full"></span>
+                            <span className="w-1.5 h-1.5 bg-[#486DAA] rounded-full"></span>
+                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                        </div>
+                    </div>
+
+                    {/* Card Derecha: Imagen Banner Dinámico */}
+                    <div className="lg:col-span-7 rounded-[2.5rem] overflow-hidden bg-white relative min-h-[260px] ui-shadow border border-white group">
+                        <img 
+                            src={bannerImg} 
+                            alt="Banner Seccional SNTSS" 
+                            className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                            onError={(e) => {
+                                e.target.src = '/images/seccionesBanner/bannerD.jpg';
+                            }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/35 via-transparent to-transparent pointer-events-none"></div>
+                    </div>
+
+                </section>
+
+                {/* ================= SELECTOR CENTRAL DE PESTAÑAS (Pills Sección 3/5) ================= */}
+                <div className="flex justify-center mb-10">
+                    <div className="bg-white/90 backdrop-blur-md p-1.5 rounded-full flex flex-wrap justify-center gap-1.5 sm:gap-2 ui-shadow border border-white">
+                        <button 
+                            onClick={() => setTabActiva('calculadoras')}
+                            className={`flex items-center space-x-2 px-6 sm:px-8 py-2.5 rounded-full font-bold text-xs transition duration-200 border-0 cursor-pointer ${
+                                tabActiva === 'calculadoras'
+                                    ? 'bg-[#486DAA] text-white shadow-md shadow-[#486DAA]/30'
+                                    : 'bg-transparent text-slate-600 hover:text-[#486DAA]'
+                            }`}
+                        >
+                            <FaCalculator className="text-xs" />
+                            <span>Calculadoras</span>
+                        </button>
+                        
+                        <button 
+                            onClick={() => setTabActiva('proceso')}
+                            className={`flex items-center space-x-2 px-6 sm:px-8 py-2.5 rounded-full font-bold text-xs transition duration-200 border-0 cursor-pointer ${
+                                tabActiva === 'proceso'
+                                    ? 'bg-[#486DAA] text-white shadow-md shadow-[#486DAA]/30'
+                                    : 'bg-transparent text-slate-600 hover:text-[#486DAA]'
+                            }`}
+                        >
+                            <FaNewspaper className="text-xs" />
+                            <span>Proceso y Noticias</span>
+                        </button>
+
+                        <button 
+                            onClick={() => setTabActiva('cen')}
+                            className={`flex items-center space-x-2 px-6 sm:px-8 py-2.5 rounded-full font-bold text-xs transition duration-200 border-0 cursor-pointer ${
+                                tabActiva === 'cen'
+                                    ? 'bg-[#486DAA] text-white shadow-md shadow-[#486DAA]/30'
+                                    : 'bg-transparent text-slate-600 hover:text-[#486DAA]'
+                            }`}
+                        >
+                            <FaBuilding className="text-xs" />
+                            <span>Comité Nacional (CEN)</span>
+                        </button>
                     </div>
                 </div>
-            </div>
 
-            {/* ===== BANNER CON IMAGEN ===== */}
-             <div style={styles.bannerImage}>
-                <img 
-                    src={getBannerUrl()}
-                    alt={getBannerTitle()}
-                    style={styles.bannerImageContent}
-                    onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = `
-                            <div style="
-                                width: 100%;
-                                height: 240px;
-                                background: linear-gradient(135deg, #0A0F1E 0%, #1a1f2e 50%, #0A0F1E 100%);
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                flex-direction: column;
-                                border-bottom: 4px solid ${getBannerColor()};
-                                padding: 1rem;
-                                text-align: center;
-                            ">
-                                <div style="font-size: 3.5rem;">🏛️</div>
-                                <h2 style="color: white; margin: 0.3rem 0 0 0; font-size: 1.3rem;">
-                                    ${getBannerTitle()}
-                                </h2>
-                                <p style="color: ${getBannerColor()}; margin: 0.2rem 0 0 0; font-size: 0.9rem; font-style: italic;">
-                                    ${getBannerSubtitle()}
-                                </p>
+                {/* ================= CONTENIDO DE PESTAÑA: CALCULADORAS ================= */}
+                {tabActiva === 'calculadoras' && (
+                    <div>
+                        {/* Encabezado con Icono, Barra Esmeralda y Puntos */}
+                        <div className="flex items-center space-x-3 mb-8">
+                            <div className="w-9 h-9 rounded-xl bg-[#486DAA] text-white flex items-center justify-center text-sm shadow-md shadow-[#486DAA]/30">
+                                <FaCalculator />
                             </div>
-                        `;
-                    }}
-                />
+                            <h3 className="text-xl font-black text-[#486DAA] m-0">Calculadoras Financieras</h3>
+                            <div className="w-10 h-1 bg-emerald-500 rounded-full"></div>
+                            <div className="w-16 h-4 dot-matrix opacity-60"></div>
+                        </div>
+
+                        {/* Grid de Tarjetas Blancas con Círculos de Color (Estilo Sección 5) */}
+                        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                            {calculadoras.map((calc) => (
+                                <div 
+                                    key={calc.id}
+                                    onClick={() => abrirCalculadora(calc.id)}
+                                    className="bg-white rounded-[2rem] p-7 flex flex-col items-center text-center relative ui-shadow ui-shadow-hover border border-slate-50 cursor-pointer group"
+                                >
+                                    {/* Patrón de puntos inferior izquierdo */}
+                                    <div className="absolute bottom-5 left-5 w-12 h-12 dot-matrix opacity-30 pointer-events-none"></div>
+                                    
+                                    {/* Círculo central con color dinámico */}
+                                    <div className={`w-16 h-16 ${calc.iconBg} rounded-full flex items-center justify-center text-white text-2xl mb-4 shadow-lg shadow-${calc.theme}-500/30 transition-transform group-hover:scale-110 duration-300`}>
+                                        {calc.icon}
+                                    </div>
+                                    
+                                    <h4 className="font-extrabold text-[#486DAA] text-sm m-0">{calc.titulo}</h4>
+                                    <p className="text-xs text-slate-400 mt-1.5 font-medium leading-relaxed mb-6">
+                                        {calc.descripcion}
+                                    </p>
+                                    
+                                    {/* Botón circular con flecha inferior derecho */}
+                                    <button 
+                                        type="button"
+                                        className={`absolute bottom-5 right-5 w-9 h-9 rounded-full border-2 ${calc.btnBorder} ${calc.btnColor} ${calc.btnHover} hover:text-white flex items-center justify-center transition duration-200 bg-transparent cursor-pointer`}
+                                        aria-label={calc.titulo}
+                                    >
+                                        <FaArrowRight className="text-xs" />
+                                    </button>
+                                </div>
+                            ))}
+                        </section>
+
+                        {/* Encabezado Recursos y Documentos */}
+                        <div className="flex items-center space-x-3 mb-8">
+                            <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center text-sm shadow-md shadow-red-500/30">
+                                <FaFilePdf />
+                            </div>
+                            <h3 className="text-xl font-black text-[#486DAA] m-0">Recursos y Documentos Oficiales</h3>
+                            <div className="w-10 h-1 bg-emerald-500 rounded-full"></div>
+                        </div>
+
+                        {/* Grid de Recursos */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {recursos.map((rec) => (
+                                <a
+                                    key={rec.id}
+                                    href={rec.link}
+                                    target={rec.externo ? '_blank' : '_self'}
+                                    rel={rec.externo ? 'noopener noreferrer' : ''}
+                                    className="bg-white rounded-[2rem] p-6 flex flex-col justify-between relative ui-shadow ui-shadow-hover border border-slate-50 text-decoration-none group"
+                                >
+                                    <div>
+                                        <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-xl mb-3 group-hover:scale-105 transition">
+                                            {rec.icon}
+                                        </div>
+                                        <h4 className="font-extrabold text-[#486DAA] text-sm mb-1">{rec.titulo}</h4>
+                                        <p className="text-xs text-slate-500 font-medium m-0">{rec.descripcion}</p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-[#486DAA] font-bold">
+                                        <span>{rec.externo ? 'Abrir recurso' : 'Consultar'}</span>
+                                        <FaArrowRight className="text-xs transition-transform group-hover:translate-x-1" />
+                                    </div>
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* ================= CONTENIDO DE PESTAÑA: PROCESO Y NOTICIAS ================= */}
+                {tabActiva === 'proceso' && (
+                    <div>
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                            
+                            {/* Columna Noticias Seccionales */}
+                            <div className="lg:col-span-7">
+                                <div className="bg-white rounded-[2.5rem] p-7 ui-shadow border border-white">
+                                    <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-100">
+                                        <div className="flex items-center space-x-2.5">
+                                            <div className="w-8 h-8 rounded-xl bg-[#486DAA] text-white flex items-center justify-center text-xs">
+                                                <FaNewspaper />
+                                            </div>
+                                            <h3 className="text-base font-black text-[#486DAA] m-0">Avisos y Noticias de tu Sección</h3>
+                                        </div>
+                                        <Link to="/noticias" className="text-xs font-bold text-[#486DAA] hover:underline text-decoration-none">
+                                            Ver todas →
+                                        </Link>
+                                    </div>
+
+                                    {loadingNoticias ? (
+                                        <div className="text-center py-8 text-slate-400 text-xs font-medium">
+                                            Cargando comunicados...
+                                        </div>
+                                    ) : noticias.length > 0 ? (
+                                        <div className="space-y-4">
+                                            {noticias.map((noticia, idx) => (
+                                                <div key={idx} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 hover:bg-slate-100/80 transition flex flex-col sm:flex-row gap-4">
+                                                    {noticia.imagen && (
+                                                        <img 
+                                                            src={getImageUrl(noticia.imagen)} 
+                                                            alt={noticia.titulo} 
+                                                            className="w-full sm:w-28 h-24 object-cover rounded-xl flex-shrink-0"
+                                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                                        />
+                                                    )}
+                                                    <div className="flex-1 flex flex-col justify-between">
+                                                        <div>
+                                                            <div className="flex items-center space-x-2 text-[10px] text-slate-400 font-bold mb-1">
+                                                                <span><FaCalendarAlt className="inline mr-1" />{noticia.fecha}</span>
+                                                                <span>•</span>
+                                                                <span><FaEye className="inline mr-1" />{noticia.vistas || 0}</span>
+                                                                {noticia.fijada && (
+                                                                    <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[9px]">
+                                                                        📌 Fijada
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <h5 className="font-bold text-[#486DAA] text-xs sm:text-sm m-0 leading-snug">
+                                                                {noticia.titulo}
+                                                            </h5>
+                                                            <p className="text-xs text-slate-600 mt-1 line-clamp-2 m-0">
+                                                                {noticia.resumen}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="text-center py-8 text-slate-400 text-xs font-medium">
+                                            No hay noticias recientes para esta sección.
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Columna Convocatorias y Requisitos */}
+                            <div className="lg:col-span-5">
+                                <div className="bg-white rounded-[2.5rem] p-7 ui-shadow border border-white">
+                                    <div className="flex items-center space-x-2.5 mb-4">
+                                        <div className="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-xs">
+                                            <FaInfoCircle />
+                                        </div>
+                                        <h3 className="text-base font-black text-[#486DAA] m-0">Convocatorias y Procesos</h3>
+                                    </div>
+                                    
+                                    <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+                                        Consulta los requisitos y calendarios para participar en los procesos sindicales activos de tu sección.
+                                    </p>
+
+                                    <div className="space-y-3">
+                                        {[
+                                            { titulo: 'Crédito hipotecario 2026-1', desc: 'Próxima convocatoria' },
+                                            { titulo: 'Festejo Cláusula 78 - Enfermería', desc: 'Registro en preparación' },
+                                            { titulo: 'Rifa de Propuestas 2026', desc: 'Próximamente' }
+                                        ].map((item, i) => (
+                                            <div key={i} className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                                                <div>
+                                                    <div className="font-bold text-xs text-slate-800">{item.titulo}</div>
+                                                    <div className="text-[10px] text-slate-500">{item.desc}</div>
+                                                </div>
+                                                <span className="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-[9px] font-bold">
+                                                    Próximo
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Cómo participar */}
+                                    <div className="mt-6 pt-4 border-t border-slate-100">
+                                        <div className="font-bold text-xs text-[#486DAA] mb-2 flex items-center space-x-1.5">
+                                            <FaShieldAlt className="text-emerald-500" />
+                                            <span>Requisitos generales:</span>
+                                        </div>
+                                        <ul className="text-xs text-slate-600 space-y-1.5 pl-4 m-0">
+                                            <li>Ser trabajador agremiado de base.</li>
+                                            <li>Antigüedad sujeta a los términos de la convocatoria.</li>
+                                            <li>Estar al corriente con tus cuotas sindicales.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        {/* Tarjetas de Acciones Rápidas y Roles */}
+                        <div className="mt-8">
+                            <div className="flex items-center space-x-3 mb-6">
+                                <div className="w-8 h-8 rounded-xl bg-[#486DAA] text-white flex items-center justify-center text-xs">
+                                    <FaRocket />
+                                </div>
+                                <h3 className="text-lg font-black text-[#486DAA] m-0">Trámites y Accesos Rápidos</h3>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {/* Crédito Auto */}
+                                <Link to="/registro-auto" className="bg-white rounded-[2rem] p-6 ui-shadow ui-shadow-hover border border-slate-50 text-decoration-none group">
+                                    <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#486DAA] flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition">
+                                        <FaCar />
+                                    </div>
+                                    <h4 className="font-extrabold text-[#486DAA] text-sm mb-1">Preregistro Rifa de Auto</h4>
+                                    <p className="text-xs text-slate-500 m-0">Participa en la rifa para obtener tu crédito automotriz.</p>
+                                </Link>
+
+                                {/* Noticias */}
+                                <Link to="/noticias" className="bg-white rounded-[2rem] p-6 ui-shadow ui-shadow-hover border border-slate-50 text-decoration-none group">
+                                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition">
+                                        <FaNewspaper />
+                                    </div>
+                                    <h4 className="font-extrabold text-[#486DAA] text-sm mb-1">Noticias y Avisos</h4>
+                                    <p className="text-xs text-slate-500 m-0">Mantente al tanto de comunicados oficiales.</p>
+                                </Link>
+
+                                {/* Cláusula 79Bis */}
+                                <Link to="/clausula79bis" className="bg-white rounded-[2rem] p-6 ui-shadow ui-shadow-hover border border-slate-50 text-decoration-none group">
+                                    <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition">
+                                        <FaGift />
+                                    </div>
+                                    <h4 className="font-extrabold text-[#486DAA] text-sm mb-1">Cláusula 79Bis</h4>
+                                    <p className="text-xs text-slate-500 m-0">Registro al festejo de Intendencia y Limpieza.</p>
+                                </Link>
+
+                                {/* Validador Auto (Rol 1) */}
+                                {hasAutoValidatorRole && (
+                                    <Link to="/validador-auto" className="bg-white rounded-[2rem] p-6 ui-shadow ui-shadow-hover border border-amber-200 text-decoration-none group">
+                                        <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition">
+                                            <FaCheckCircle />
+                                        </div>
+                                        <h4 className="font-extrabold text-amber-700 text-sm mb-1">Validador Auto</h4>
+                                        <p className="text-xs text-slate-500 m-0">Panel de revisión y dictamen de solicitudes.</p>
+                                    </Link>
+                                )}
+
+                                {/* Editor de Noticias (Rol 2) */}
+                                {hasNewsValidatorRole && (
+                                    <Link to="/noticias/crear" className="bg-white rounded-[2rem] p-6 ui-shadow ui-shadow-hover border border-emerald-200 text-decoration-none group">
+                                        <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition">
+                                            <FaNewspaper />
+                                        </div>
+                                        <h4 className="font-extrabold text-emerald-700 text-sm mb-1">Crear Noticia</h4>
+                                        <p className="text-xs text-slate-500 m-0">Publicar comunicados para tu sección.</p>
+                                    </Link>
+                                )}
+
+                                {/* Validador 79Bis (Rol 3) */}
+                                {hasClausula79BisValidatorRole && (
+                                    <>
+                                        <Link to="/clausula79bis/validador" className="bg-white rounded-[2rem] p-6 ui-shadow ui-shadow-hover border border-purple-200 text-decoration-none group">
+                                            <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition">
+                                                <FaShieldAlt />
+                                            </div>
+                                            <h4 className="font-extrabold text-purple-700 text-sm mb-1">Validador 79Bis</h4>
+                                            <p className="text-xs text-slate-500 m-0">Gestión de registros del festejo.</p>
+                                        </Link>
+
+                                        <Link to="/clausula79bis/entrada" className="bg-white rounded-[2rem] p-6 ui-shadow ui-shadow-hover border border-blue-200 text-decoration-none group">
+                                            <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#486DAA] flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition">
+                                                <FaQrcode />
+                                            </div>
+                                            <h4 className="font-extrabold text-[#486DAA] text-sm mb-1">Entrada 79Bis</h4>
+                                            <p className="text-xs text-slate-500 m-0">Lector y control de acceso con código QR.</p>
+                                        </Link>
+
+                                        <Link to="/clausula79bis/estadisticas" className="bg-white rounded-[2rem] p-6 ui-shadow ui-shadow-hover border border-emerald-200 text-decoration-none group">
+                                            <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition">
+                                                <FaChartPie />
+                                            </div>
+                                            <h4 className="font-extrabold text-emerald-700 text-sm mb-1">Estadísticas 79Bis</h4>
+                                            <p className="text-xs text-slate-500 m-0">Métricas y gráficas de asistencia.</p>
+                                        </Link>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* ================= CONTENIDO DE PESTAÑA: CEN ================= */}
+                {tabActiva === 'cen' && (
+                    <div className="bg-white rounded-[2.5rem] p-8 ui-shadow border border-white">
+                        <div className="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-100">
+                            <div className="w-10 h-10 rounded-2xl bg-red-500 text-white flex items-center justify-center text-base">
+                                <FaBuilding />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-black text-[#486DAA] m-0">Comité Ejecutivo Nacional (CEN)</h3>
+                                <p className="text-xs text-slate-500 m-0">Información, circulares y comunicados de carácter nacional.</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100">
+                                <FaRocket className="text-2xl text-[#486DAA] mb-3" />
+                                <h4 className="font-bold text-sm text-[#486DAA] mb-2">Próximos Eventos Nacionales</h4>
+                                <p className="text-xs text-slate-600 mb-0">Mantente al tanto de asambleas y reuniones nacionales del SNTSS.</p>
+                            </div>
+
+                            <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100">
+                                <FaShieldAlt className="text-2xl text-red-500 mb-3" />
+                                <h4 className="font-bold text-sm text-[#486DAA] mb-2">Comunicados Oficiales</h4>
+                                <p className="text-xs text-slate-600 mb-0">Circulares emitidas por la dirigencia nacional sindical.</p>
+                            </div>
+
+                            <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100">
+                                <FaFileContract className="text-2xl text-emerald-500 mb-3" />
+                                <h4 className="font-bold text-sm text-[#486DAA] mb-2">Convocatorias Nacionales</h4>
+                                <p className="text-xs text-slate-600 mb-0">Procesos electorales y comisiones a nivel federal.</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
             </div>
 
-            {/* ===== TABS ===== */}
-            <div style={styles.tabsContainer}>
-                <button 
-                    style={styles.tab(tabActiva === 'cen')}
-                    onClick={() => setTabActiva('cen')}
-                    onMouseEnter={(e) => {
-                        if (tabActiva !== 'cen') {
-                            e.currentTarget.style.background = 'rgba(62,174,244,0.08)';
-                            e.currentTarget.style.transform = 'scale(1.02)';
-                        }
-                    }}
-                    onMouseLeave={(e) => {
-                        if (tabActiva !== 'cen') {
-                            e.currentTarget.style.background = 'rgba(255,255,255,0.5)';
-                            e.currentTarget.style.transform = 'scale(1)';
-                        }
-                    }}
-                >
-                    <FaNewspaper style={{ 
-                        fontSize: '1.3rem', 
-                        flexShrink: 0,
-                        color: tabActiva === 'cen' ? '#0A0F1E' : '#3EAEF4'
-                    }} /> 
-                    <span style={{ display: 'inline-block' }}>
-                        Noticias relevantes del<br /> Comité Ejecutivo Nacional
-                    </span>
-                </button>
-                
-                <button 
-                    style={styles.tab(tabActiva === 'calculadoras')}
-                    onClick={() => setTabActiva('calculadoras')}
-                    onMouseEnter={(e) => {
-                        if (tabActiva !== 'calculadoras') {
-                            e.currentTarget.style.background = 'rgba(62,174,244,0.08)';
-                            e.currentTarget.style.transform = 'scale(1.02)';
-                        }
-                    }}
-                    onMouseLeave={(e) => {
-                        if (tabActiva !== 'calculadoras') {
-                            e.currentTarget.style.background = 'rgba(255,255,255,0.5)';
-                            e.currentTarget.style.transform = 'scale(1)';
-                        }
-                    }}
-                >
-                    <FaCalculator style={{ 
-                        fontSize: '1.3rem', 
-                        flexShrink: 0,
-                        color: tabActiva === 'calculadoras' ? '#0A0F1E' : '#3EAEF4'
-                    }} /> 
-                    <span style={{ display: 'inline-block' }}>
-                        Calculadoras y <br /> Herramientas
-                    </span>
-                </button>
-                
-                <button 
-                    style={styles.tab(tabActiva === 'proceso')}
-                    onClick={() => {
-                        if (!isLoggedIn) {
-                            window.location.href = '/login';
-                            return;
-                        }
-                        setTabActiva('proceso');
-                    }}
-                    onMouseEnter={(e) => {
-                        if (tabActiva !== 'proceso') {
-                            e.currentTarget.style.background = 'rgba(62,174,244,0.08)';
-                            e.currentTarget.style.transform = 'scale(1.02)';
-                        }
-                    }}
-                    onMouseLeave={(e) => {
-                        if (tabActiva !== 'proceso') {
-                            e.currentTarget.style.background = 'rgba(255,255,255,0.5)';
-                            e.currentTarget.style.transform = 'scale(1)';
-                        }
-                    }}
-                >
-                    <FaClipboardList style={{ 
-                        fontSize: '1.3rem', 
-                        flexShrink: 0,
-                        color: tabActiva === 'proceso' ? '#0A0F1E' : '#3EAEF4'
-                    }} /> 
-                    <span style={{ display: 'inline-block' }}>
-                        Convocatorias y <br /> Noticias de tu sección
-                    </span>
-                </button>
-            </div>
-
-            {/* ===== CONTENIDO DE LAS TABS ===== */}
-            {tabActiva === 'cen' ? renderTabCEN() : 
-             tabActiva === 'calculadoras' ? renderTabCalculadoras() : 
-             renderTabProceso()}
-
-            {/* ===== MODAL DE CALCULADORA ===== */}
-            <Modal show={showModal} onHide={cerrarCalculadora} centered size="lg">
-                <Modal.Header closeButton style={styles.modalHeader}>
-                    <Modal.Title>
-                        <FaCalculator style={{ marginRight: '10px', color: '#3EAEF4' }} /> 
-                        {calculadoraActiva && calculadoras.find(c => c.id === calculadoraActiva)?.titulo || 'Calculadora'}
+            {/* ================= MODAL DE CALCULADORAS ================= */}
+            <Modal 
+                show={showModal} 
+                onHide={cerrarCalculadora} 
+                size="lg" 
+                centered
+                dialogClassName="custom-calculator-modal"
+            >
+                <Modal.Header closeButton className="border-0 pb-0">
+                    <Modal.Title className="font-bold text-[#486DAA] text-lg flex items-center space-x-2">
+                        <FaCalculator className="text-[#486DAA]" />
+                        <span>Calculadora Sindical</span>
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body style={{ padding: '2rem', background: '#f8fafc' }}>
+                <Modal.Body className="pt-2">
                     {renderCalculadora()}
                 </Modal.Body>
             </Modal>
+
         </div>
     );
 };
