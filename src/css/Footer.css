@@ -1,0 +1,222 @@
+/* ============================================
+   FOOTER - DISEÑO MODERNO (SECCIÓN 5)
+   ============================================ */
+
+.footer-wrapper {
+    width: 100%;
+    max-width: 1380px;
+    margin: 2.5rem auto 1.75rem auto;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+.footer-container {
+    background: linear-gradient(135deg, #486DAA 0%, #355386 100%);
+    color: #ffffff;
+    border-radius: 2.4rem;
+    padding: 2.5rem 3.2rem 1.5rem 3.2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 40px -15px rgba(72, 109, 170, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Rejilla Principal */
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 0.9fr;
+    gap: 2.5rem;
+    align-items: center;
+    padding-bottom: 1.8rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Columna Izquierda */
+.footer-col-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.footer-title {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.footer-slogan {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #6EE7B7;
+    margin: 0 0 0.75rem 0;
+}
+
+.footer-contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    font-size: 0.8rem;
+    color: #dbeafe;
+    font-weight: 500;
+}
+
+.footer-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    line-height: 1.4;
+}
+
+.footer-contact-icon {
+    color: #6EE7B7;
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+    font-size: 0.85rem;
+}
+
+/* Columna Derecha */
+.footer-col-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.9rem;
+}
+
+.footer-social-heading {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #e0f2fe;
+    margin: 0;
+}
+
+.footer-socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.footer-social-link {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.footer-social-link:hover {
+    background: #ffffff;
+    color: #486DAA;
+    transform: translateY(-3px) scale(1.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.footer-links-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.72rem;
+    color: rgba(219, 234, 254, 0.85);
+    font-weight: 600;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.footer-link {
+    color: rgba(219, 234, 254, 0.85);
+    text-decoration: none;
+    transition: color 0.2s;
+    cursor: pointer;
+}
+
+.footer-link:hover {
+    color: #ffffff !important;
+    text-decoration: underline;
+}
+
+.footer-separator {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* Barra Inferior */
+.footer-bottom-bar {
+    padding-top: 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.72rem;
+    color: rgba(219, 234, 254, 0.75);
+}
+
+.footer-copy {
+    margin: 0;
+    font-weight: 500;
+}
+
+.footer-legend {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.footer-academic-note {
+    margin: 0;
+    font-size: 1rem;
+    color: #ffffff;
+    font-style: italic;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 1.8rem;
+    }
+    .footer-col-side {
+        align-items: flex-start;
+    }
+    .footer-socials {
+        justify-content: flex-start;
+    }
+    .footer-links-row {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        border-radius: 1.6rem;
+        padding: 1.6rem 1.4rem 1.2rem 1.4rem;
+    }
+    .footer-title {
+        font-size: 1.6rem;
+    }
+    .footer-bottom-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-title {
+        font-size: 1.35rem;
+    }
+    .footer-contact-list {
+        font-size: 0.75rem;
+    }
+    .footer-social-link {
+        width: 32px;
+        height: 32px;
+    }
+}

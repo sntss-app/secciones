@@ -1,0 +1,169 @@
+:root {
+  --font-primary: 'Montserrat', sans-serif;
+  --bg-gradient: linear-gradient(180deg, #eef3f9 0%, #e2eaf4 50%, #d8e3f0 100%);
+  --brand-blue: #486DAA;
+  --brand-blue-dark: #355386;
+  --brand-blue-gradient: linear-gradient(135deg, #486DAA 0%, #355386 100%);
+  --brand-blue-hover: linear-gradient(135deg, #3b598d 0%, #2e4771 100%);
+  --brand-emerald: #10B981;
+  --brand-emerald-light: #34D399;
+  --brand-orange: #F97316;
+  --brand-amber: #F59E0B;
+  --text-heading: #1E293B;
+  --text-body: #334155;
+  --text-muted: #64748B;
+  --text-light: #94A3B8;
+  --card-bg: #FFFFFF;
+  --card-glass: rgba(255, 255, 255, 0.92);
+  --ui-shadow: 0 20px 40px -15px rgba(72, 109, 170, 0.12), 0 8px 16px -6px rgba(0, 0, 0, 0.03);
+  --ui-shadow-hover: 0 25px 50px -12px rgba(72, 109, 170, 0.25);
+
+  font-family: var(--font-primary);
+  color-scheme: light;
+  color: var(--text-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-primary);
+  background: var(--bg-gradient);
+  color: var(--text-body);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   UTILIDADES DE DISEÑO - SECCIÓN 5
+   ============================================ */
+
+/* Sombras flotantes */
+.ui-shadow {
+  box-shadow: var(--ui-shadow);
+}
+
+.ui-shadow-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ui-shadow-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ui-shadow-hover);
+}
+
+/* Patrón de puntos (Dot Matrix) */
+.dot-matrix {
+  background-image: radial-gradient(#9db4cf 1.5px, transparent 1.5px);
+  background-size: 10px 10px;
+}
+
+.dot-matrix-white {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.25) 1.5px, transparent 1.5px);
+  background-size: 10px 10px;
+}
+
+/* Colores y Gradientes de Marca */
+.bg-brand-blue {
+  background: var(--brand-blue-gradient);
+}
+
+.border-brand-blue {
+  border-color: var(--brand-blue);
+}
+
+.text-brand-blue {
+  color: var(--brand-blue);
+}
+
+.text-brand-emerald {
+  color: var(--brand-emerald);
+}
+
+/* Tipografía */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
+  color: var(--text-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+p {
+  margin: 0;
+}
+
+/* ============================================
+   FORMAS Y ONDAS DE FONDO AMBIENTAL
+   ============================================ */
+.app-bg-decorations {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  user-select: none;
+}
+
+.bg-wave-top-right {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 600px;
+  max-width: 80vw;
+  color: rgba(72, 109, 170, 0.12);
+  pointer-events: none;
+}
+
+.bg-wave-bottom-left {
+  position: absolute;
+  bottom: -60px;
+  left: -60px;
+  width: 700px;
+  max-width: 85vw;
+  color: rgba(16, 185, 129, 0.08);
+  pointer-events: none;
+}
+
+.bg-dots-top-left {
+  position: absolute;
+  top: 2rem;
+  left: 1.5rem;
+  width: 8rem;
+  height: 16rem;
+  opacity: 0.35;
+}
+
+.bg-dots-center-left {
+  position: absolute;
+  top: 45%;
+  left: 0.5rem;
+  width: 5rem;
+  height: 10rem;
+  opacity: 0.4;
+}
+
+.bg-dots-bottom-right {
+  position: absolute;
+  bottom: 7rem;
+  right: 1rem;
+  width: 7rem;
+  height: 10rem;
+  opacity: 0.35;
+}
+

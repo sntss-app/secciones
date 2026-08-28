@@ -1,0 +1,616 @@
+/* Contenedor principal */
+.registro-wrapper, .registro-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* Tarjeta */
+.registro-card {
+    background-color: #ffffff;
+    border-radius: 2.2rem;
+    overflow: hidden;
+    border: 1px solid rgba(241, 245, 249, 0.9);
+}
+
+/* Header Banner Sección 5 */
+.registro-card-header {
+    background: #ffffff;
+    padding: 2.5rem 2rem 1.2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.registro-header-dots {
+    position: absolute;
+    top: 1rem;
+    right: 1.2rem;
+    width: 60px;
+    height: 40px;
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.registro-header-badge {
+    display: inline-block;
+    background: rgba(72, 109, 170, 0.1);
+    color: #486DAA;
+    padding: 0.25rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    margin-bottom: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(72, 109, 170, 0.2);
+}
+
+.registro-card-header-title {
+    font-size: 1.85rem;
+    font-weight: 900;
+    color: #486DAA;
+    margin: 0;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+}
+
+.registro-card-header-subtitle {
+    color: #64748B;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 0.35rem 0 0 0;
+    line-height: 1.4;
+}
+
+/* Body */
+.registro-card-body {
+    padding: 1.5rem 2rem 2.2rem 2rem;
+}
+
+/* Step Indicator */
+.registro-step-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.registro-step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+}
+
+.registro-step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 800;
+    transition: all 0.3s ease;
+    border: 2px solid #E2E8F0;
+}
+
+.registro-step-circle-active {
+    background-color: #486DAA;
+    color: #ffffff;
+    border-color: #486DAA;
+    box-shadow: 0 0 0 4px rgba(72, 109, 170, 0.15);
+}
+
+.registro-step-circle-completed {
+    background-color: #10B981;
+    color: #ffffff;
+    border-color: #10B981;
+}
+
+.registro-step-circle-inactive {
+    background-color: #F8FAFC;
+    color: #94A3B8;
+    border-color: #E2E8F0;
+}
+
+.registro-step-label {
+    font-size: 0.72rem;
+    margin-top: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.registro-step-label-active {
+    font-weight: 800;
+    color: #486DAA;
+}
+
+.registro-step-label-inactive {
+    font-weight: 600;
+    color: #94A3B8;
+}
+
+.registro-step-line {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    z-index: -1;
+}
+
+.registro-step-line-active {
+    background-color: #486DAA;
+}
+
+.registro-step-line-inactive {
+    background-color: #E2E8F0;
+}
+
+/* User Card */
+.registro-user-card {
+    background-color: #f8f9fa;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
+    position: relative;
+    overflow: hidden;
+}
+
+.registro-user-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3EAEF4;
+}
+
+.registro-user-card-title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #0A0F1E;
+    margin: 0;
+}
+
+.registro-user-data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 1.5rem;
+}
+
+@media (max-width: 480px) {
+    .registro-user-data-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.registro-user-data-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.registro-user-data-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.registro-user-data-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0A0F1E;
+    margin: 0;
+}
+
+/* Inputs */
+.registro-input-group {
+    margin-bottom: 1.2rem;
+}
+
+.registro-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 0.3rem;
+}
+
+.registro-input-wrapper {
+    position: relative;
+}
+
+.registro-input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    font-size: 1rem;
+}
+
+.registro-input {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    outline: none;
+    background-color: white;
+    color: #0A0F1E;
+    box-sizing: border-box;
+}
+
+.registro-input:focus {
+    border-color: #3EAEF4;
+    box-shadow: 0 0 0 3px rgba(62, 174, 244, 0.15);
+}
+
+.registro-input-with-icon {
+    padding-left: 2.5rem;
+}
+
+.registro-input-error {
+    border-color: #dc2626;
+}
+
+.registro-input-error:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.registro-small-text {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 0.2rem;
+    display: block;
+}
+
+.registro-error-text {
+    color: #dc2626;
+    font-size: 0.75rem;
+    margin-top: 0.2rem;
+    display: block;
+}
+
+/* File Input */
+.registro-file-input {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    outline: none;
+    background-color: white;
+    cursor: pointer;
+}
+
+.registro-file-input:hover {
+    border-color: #3EAEF4;
+    box-shadow: 0 0 0 3px rgba(62, 174, 244, 0.1);
+}
+
+/* Foto Preview */
+.registro-foto-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #3EAEF4;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 0.5rem;
+}
+
+/* Checkbox */
+.registro-checkbox {
+    margin-right: 0.5rem;
+    accent-color: #3EAEF4;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.registro-checkbox-label {
+    font-size: 0.9rem;
+    color: #333;
+    cursor: pointer;
+}
+
+/* Botones */
+.registro-btn-primary {
+    background-color: #3EAEF4;
+    color: #0A0F1E;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.registro-btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(62, 174, 244, 0.3);
+}
+
+.registro-btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.registro-btn-secondary {
+    background-color: #e9ecef;
+    color: #333;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.registro-btn-secondary:hover {
+    background-color: #dee2e6;
+}
+
+.registro-btn-success {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.registro-btn-success:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.registro-btn-success:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.registro-btn-outline {
+    background-color: transparent;
+    color: #6c757d;
+    border: 1px solid #ddd;
+    padding: 0.7rem 1.5rem;
+    border-radius: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.registro-btn-outline:hover {
+    background-color: #f8f9fa;
+    border-color: #3EAEF4;
+}
+
+/* Alerts */
+.registro-alert-error {
+    background-color: #fee2e2;
+    color: #dc2626;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.registro-alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Links */
+.registro-link {
+    color: #3EAEF4;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.registro-link:hover {
+    text-decoration: underline;
+}
+
+/* Botones */
+.registro-btn-primary {
+    background: linear-gradient(135deg, #486DAA, #3b5998);
+    color: #ffffff;
+    border: none;
+    border-radius: 9999px;
+    padding: 0.75rem 1.4rem;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 8px 18px -4px rgba(72, 109, 170, 0.4);
+}
+
+.registro-btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -4px rgba(72, 109, 170, 0.5);
+}
+
+.registro-btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.registro-btn-outline {
+    background: rgba(72, 109, 170, 0.08);
+    color: #486DAA;
+    border: 1px solid rgba(72, 109, 170, 0.2);
+    border-radius: 9999px;
+    padding: 0.75rem 1.4rem;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.registro-btn-outline:hover:not(:disabled) {
+    background: #486DAA;
+    color: #ffffff;
+}
+
+.registro-btn-success {
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: #ffffff;
+    border: none;
+    border-radius: 9999px;
+    padding: 0.75rem 1.4rem;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 8px 18px -4px rgba(16, 185, 129, 0.4);
+}
+
+.registro-btn-success:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -4px rgba(16, 185, 129, 0.5);
+}
+
+.registro-btn-success:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Flex */
+.registro-flex-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.2rem;
+}
+
+.registro-flex-grow {
+    flex: 1;
+}
+
+.registro-text-center {
+    text-align: center;
+}
+
+.registro-mt-1 {
+    margin-top: 1rem;
+}
+
+.registro-mt-2 {
+    margin-top: 2rem;
+}
+
+.registro-mb-1 {
+    margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .registro-container {
+        padding: 1rem 0.8rem;
+    }
+
+    .registro-card-header {
+        padding: 1.2rem 1rem;
+    }
+
+    .registro-card-header-title {
+        font-size: 1.4rem;
+    }
+
+    .registro-card-body {
+        padding: 1.2rem;
+    }
+
+    .registro-step-label {
+        font-size: 0.55rem;
+    }
+
+    .registro-step-circle {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+
+    .registro-step-line {
+        top: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .registro-step-label {
+        font-size: 0.5rem;
+    }
+
+    .registro-step-circle {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
+    }
+
+    .registro-step-line {
+        top: 14px;
+    }
+
+    .registro-user-data-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .registro-foto-preview {
+        width: 80px;
+        height: 80px;
+    }
+}
