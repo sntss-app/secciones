@@ -1,0 +1,266 @@
+/* ============================================
+   CLAUSULA 97 - ESTILOS SECCIÓN 5
+   ============================================ */
+
+.clausula97-container {
+    padding: 1.5rem;
+    background: #ffffff;
+    border-radius: 1.8rem;
+    border: 1px solid rgba(241, 245, 249, 0.9);
+    box-shadow: 0 8px 24px rgba(72, 109, 170, 0.06);
+}
+
+@media (max-width: 480px) {
+    .clausula97-container {
+        padding: 1rem;
+    }
+}
+
+/* ===== HEADER ===== */
+.clausula97-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid #F1F5F9;
+}
+
+.clausula97-header-icon {
+    font-size: 2rem;
+    color: #486DAA;
+}
+
+.clausula97-header-title {
+    font-size: 1.45rem;
+    font-weight: 900;
+    color: #486DAA;
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+
+@media (max-width: 480px) {
+    .clausula97-header-title {
+        font-size: 1.2rem;
+    }
+}
+
+.clausula97-header-subtitle {
+    color: #64748B;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+@media (max-width: 480px) {
+    .clausula97-header-subtitle {
+        font-size: 0.75rem;
+    }
+}
+
+/* ===== INFO BOX ===== */
+.clausula97-info-box {
+    background-color: rgba(72, 109, 170, 0.06);
+    border-left: 4px solid #486DAA;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #334155;
+    font-weight: 500;
+}
+
+.clausula97-info-box svg {
+    color: #486DAA;
+    margin-right: 0.5rem;
+}
+
+.clausula97-info-box p {
+    margin: 0.3rem 0 0 0;
+    font-size: 0.85rem;
+}
+
+.clausula97-info-box strong {
+    display: block;
+    margin-top: 0.3rem;
+    color: #1E293B;
+}
+
+/* ===== GRID ===== */
+.clausula97-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 480px) {
+    .clausula97-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== INPUTS ===== */
+.clausula97-input-group {
+    margin-bottom: 1rem;
+}
+
+.clausula97-label {
+    display: block;
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: #334155;
+    margin-bottom: 0.4rem;
+}
+
+.clausula97-label-icon {
+    margin-right: 0.3rem;
+    color: #486DAA;
+}
+
+.clausula97-input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.2s ease;
+    background-color: #F8FAFC;
+    color: #1E293B;
+    font-weight: 500;
+    box-sizing: border-box;
+}
+
+.clausula97-input:focus {
+    background-color: #ffffff;
+    border-color: #486DAA;
+    box-shadow: 0 0 0 4px rgba(72, 109, 170, 0.12);
+}
+
+/* ===== BOTON ===== */
+.clausula97-btn {
+    background: linear-gradient(135deg, #486DAA, #3b5998);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 9999px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 0.5rem;
+    box-shadow: 0 8px 18px -4px rgba(72, 109, 170, 0.4);
+}
+
+.clausula97-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -4px rgba(72, 109, 170, 0.5);
+}
+
+/* ===== RESULTADOS ===== */
+.clausula97-resultado-container {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background-color: #F8FAFC;
+    border-radius: 16px;
+    border: 1px solid #E2E8F0;
+}
+
+@media (max-width: 480px) {
+    .clausula97-resultado-container {
+        padding: 1rem;
+    }
+}
+
+.clausula97-resultado-title {
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #486DAA;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.clausula97-resultado-title svg {
+    color: #486DAA;
+}
+
+.clausula97-resultado-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px dashed #E2E8F0;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 480px) {
+    .clausula97-resultado-item {
+        font-size: 0.8rem;
+    }
+}
+
+.clausula97-resultado-item:last-child {
+    border-bottom: none;
+}
+
+.clausula97-resultado-label {
+    color: #64748B;
+    font-weight: 600;
+}
+
+.clausula97-resultado-monto {
+    font-weight: 800;
+    color: #1E293B;
+}
+
+.clausula97-resultado-total {
+    margin-top: 1rem;
+    padding: 0.85rem 1rem;
+    background-color: #ffffff;
+    border-radius: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1.5px solid #10B981;
+}
+
+@media (max-width: 480px) {
+    .clausula97-resultado-total {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.4rem;
+    }
+}
+
+.clausula97-resultado-total-label {
+    font-weight: 800;
+    color: #065F46;
+    font-size: 0.95rem;
+}
+
+.clausula97-resultado-total-monto {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #065F46;
+}
+
+.clausula97-small-text {
+    font-size: 0.72rem;
+    color: #94A3B8;
+    margin-top: 0.8rem;
+    text-align: center;
+    font-weight: 500;
+}
