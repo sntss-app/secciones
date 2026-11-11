@@ -26,6 +26,11 @@ import Vacaciones from '../components/calculadoras/Vacaciones';
 // ✅ IMPORTAR CSS EXTERNO
 import '../css/Dashboard.css';
 
+// ============================================================
+// ⚠️ RESTRICCIÓN DE ACCESO AL CHATBOT (SOLO PARA PRUEBAS)
+// ============================================================
+const MATRICULAS_PERMITIDAS = ['97158643', '95152483', '96159549', '96372526'];
+
 const Dashboard = () => {
     // ===== ESTADOS =====
     const [isLoggedIn] = useState(() => Boolean(localStorage.getItem('matricula')));
@@ -67,6 +72,10 @@ const Dashboard = () => {
         return roleIds.includes(3);
     });
 
+    // ===== OBTENER MATRÍCULA ACTUAL PARA VALIDAR CHATBOT =====
+    const matriculaActual = localStorage.getItem('matricula');
+    const puedeUsarChatbot = isLoggedIn && MATRICULAS_PERMITIDAS.includes(matriculaActual);
+
     // ===== EFECTOS =====
     useEffect(() => {
         const matricula = localStorage.getItem('matricula');
@@ -101,6 +110,10 @@ const Dashboard = () => {
                             nombre: data.usuario.seccion_nombre || seccionGuardada?.nombre || 'Sin sección',
                             slogan: data.usuario.seccion_slogan || seccionGuardada?.slogan || null,
                             direccion: data.usuario.seccion_direccion || seccionGuardada?.direccion || null,
+                            correo: data.usuario.seccion_correo || seccionGuardada?.correo || null,   
+                            telefono: data.usuario.seccion_telefono || seccionGuardada?.telefono || null, 
+                            latitud: data.usuario.seccion_latitud || seccionGuardada?.latitud || null,     
+                            longitud: data.usuario.seccion_longitud || null,   
                             color: data.usuario.seccion_color || seccionGuardada?.color || '#3EAEF4',
                             logo: data.usuario.seccion_logo || assets.logo,
                             banner: data.usuario.seccion_banner || assets.banner,
@@ -216,7 +229,6 @@ const Dashboard = () => {
         { id: 'aguinaldo', icon: <FaGift />, titulo: 'Aguinaldo', descripcion: 'Calcula el monto de tu aguinaldo', color: '#E74C3C', bg: 'linear-gradient(135deg, #E74C3C 0%, #F39C12 100%)' },
         { id: 'clausula97', icon: <FaFileContract />, titulo: 'Cláusula 97 CCT', descripcion: 'Préstamo de hasta 4 meses de sueldo', color: '#8E44AD', bg: 'linear-gradient(135deg, #8E44AD 0%, #9B59B6 100%)' },
         { id: 'horas-extras', icon: <FaClock />, titulo: 'Horas Extras', descripcion: 'Calcula el pago de horas extras', color: '#E67E22', bg: 'linear-gradient(135deg, #E67E22 0%, #F39C12 100%)' }
-        // { id: 'vacaciones', icon: <FaUmbrellaBeach />, titulo: 'Vacaciones', descripcion: 'Calcula tu pago de vacaciones y prima', color: '#1ABC9C', bg: 'linear-gradient(135deg, #1ABC9C 0%, #16A085 100%)' },
     ];
 
     // ===== RECURSOS =====
@@ -339,33 +351,35 @@ const Dashboard = () => {
     // ===== RENDER DE PESTAÑA CALCULADORAS =====
     const renderTabCalculadoras = () => (
         <div className="dashboard-tab-content">
-            {/* ✅ NUEVA CARD: CHATBOT DELEGADO VIRTUAL */}
-            <div className="dashboard-chatbot-card ui-shadow ui-shadow-hover">
-                <div className="dashboard-chatbot-card-dots dot-matrix"></div>
-                <div className="dashboard-chatbot-card-content">
-                    <div className="dashboard-chatbot-card-icon-wrapper">
-                        <div className="dashboard-chatbot-card-icon">
-                            <span role="img" aria-label="robot">🤖</span>
+            {/* ✅ NUEVA CARD: CHATBOT DELEGADO VIRTUAL (Solo si puedeUsarChatbot) */}
+            {puedeUsarChatbot && (
+                <div className="dashboard-chatbot-card ui-shadow ui-shadow-hover">
+                    <div className="dashboard-chatbot-card-dots dot-matrix"></div>
+                    <div className="dashboard-chatbot-card-content">
+                        <div className="dashboard-chatbot-card-icon-wrapper">
+                            <div className="dashboard-chatbot-card-icon">
+                                <span role="img" aria-label="robot">🤖</span>
+                            </div>
                         </div>
-                    </div>
-                    <div className="dashboard-chatbot-card-text">
-                        <h3 className="dashboard-chatbot-card-title">Dele-Bot SNTSS</h3>
-                        <p className="dashboard-chatbot-card-desc">
-                            Consulta los Estatutos del Sindicato de forma rápida e inteligente. 
-                            Resuelve tus dudas sobre derechos, obligaciones y estructura sindical.
-                        </p>
-                        <div className="dashboard-chatbot-card-tags">
-                            <span className="dashboard-chatbot-tag">📜 Estatutos</span>
-                            <span className="dashboard-chatbot-tag">⚖️ Derechos</span>
-                            <span className="dashboard-chatbot-tag">🏛️ Estructura</span>
+                        <div className="dashboard-chatbot-card-text">
+                            <h3 className="dashboard-chatbot-card-title">Dele-Bot SNTSS</h3>
+                            <p className="dashboard-chatbot-card-desc">
+                                Consulta los Estatutos del Sindicato de forma rápida e inteligente. 
+                                Resuelve tus dudas sobre derechos, obligaciones y estructura sindical.
+                            </p>
+                            <div className="dashboard-chatbot-card-tags">
+                                <span className="dashboard-chatbot-tag">📜 Estatutos</span>
+                                <span className="dashboard-chatbot-tag">⚖️ Derechos</span>
+                                <span className="dashboard-chatbot-tag">🏛️ Estructura</span>
+                            </div>
                         </div>
+                        <Link to="/chatbot" className="dashboard-chatbot-card-btn">
+                            <span>Hablar con el Delegado</span>
+                            <FaArrowRight />
+                        </Link>
                     </div>
-                    <Link to="/chatbot" className="dashboard-chatbot-card-btn">
-                        <span>Hablar con el Delegado</span>
-                        <FaArrowRight />
-                    </Link>
                 </div>
-            </div>
+            )}
 
             {/* Encabezado Calculadoras */}
             <div className="dashboard-section-header">
@@ -639,9 +653,6 @@ const Dashboard = () => {
                     <div className="dashboard-top-card-dots dot-matrix"></div>
                     
                     <div className="dashboard-top-card-header-block">
-                        {/* <span className="dashboard-top-badge">
-                            {isLoggedIn && seccionUsuario ? `Sección ${seccionUsuario.romano || ''}` : 'Sección Sindical'}
-                        </span> */}
                         <h2 className="dashboard-top-title">
                             {isLoggedIn && seccionUsuario?.romano ? `SNTSS Sección ${seccionUsuario.romano}` : 'SNTSS'}
                         </h2>

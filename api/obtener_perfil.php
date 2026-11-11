@@ -202,7 +202,11 @@ try {
             romano AS seccion_romano,
             nombre AS seccion_nombre,
             slogan AS seccion_slogan,
-            direccion AS seccion_direccion, 
+            direccion AS seccion_direccion,
+            correo AS seccion_correo,
+            telefono AS seccion_telefono,  
+            latitud AS seccion_latitud,
+            longitud AS seccion_longitud,
             color_principal AS seccion_color,
             logo_url AS seccion_logo,
             banner_url AS seccion_banner

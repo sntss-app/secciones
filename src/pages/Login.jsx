@@ -133,6 +133,8 @@ const Login = () => {
             console.log('🔍 idTipo:', usuario.idTipo);
             console.log('🔍 seccion_banner:', usuario.seccion_banner);
             console.log('🔍 seccion_logo:', usuario.seccion_logo);
+            console.log('🔍 seccion_correo:', usuario.seccion_correo);
+            console.log('🔍 seccion_telefono:', usuario.seccion_telefono);
 
             // ============================================
             // ✅ 1. GUARDAR DATOS BÁSICOS
@@ -173,6 +175,10 @@ const Login = () => {
                     nombre: usuario.seccion_nombre || 'Sin sección',
                     slogan: usuario.seccion_slogan || null,
                     direccion: usuario.seccion_direccion || null,
+                    correo: usuario.seccion_correo || null,   
+                    telefono: usuario.seccion_telefono || null, 
+                    latitud: usuario.seccion_latitud || null,     
+                    longitud: usuario.seccion_longitud || null,   
                     color: usuario.seccion_color || '#3EAEF4',
                     logo: usuario.seccion_logo || assets.logo,
                     banner: usuario.seccion_banner || assets.banner,
@@ -180,6 +186,10 @@ const Login = () => {
                 };
                 localStorage.setItem('seccionUsuario', JSON.stringify(seccionData));
                 console.log('✅ Sección guardada:', seccionData);
+                console.log('✅ Verificación localStorage:', JSON.parse(localStorage.getItem('seccionUsuario')));
+                
+                // ✅ DISPARAR EVENTO PARA QUE FOOTER SE ACTUALICE
+                window.dispatchEvent(new Event('seccionActualizada'));
             } else {
                 console.warn('⚠️ usuario.idSeccion es null o undefined, NO se guardó la sección');
             }

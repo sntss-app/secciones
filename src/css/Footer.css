@@ -220,3 +220,123 @@
         height: 32px;
     }
 }
+
+/* ===== BOTÓN Y MAPA EN EL FOOTER ===== */
+.footer-address-item {
+    position: relative;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.footer-map-btn {
+    background: linear-gradient(135deg, #3EAEF4 0%, #2A8BC4 100%);
+    color: white;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.25s ease;
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.footer-map-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px -4px rgba(62, 174, 244, 0.5);
+}
+
+.footer-map-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.footer-map-container {
+    margin-top: 15px;
+    animation: fadeInMap 0.4s ease;
+}
+
+@keyframes fadeInMap {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.footer-map-attribution {
+    font-size: 0.6rem;
+    color: #94A3B8;
+    text-align: right;
+    margin: 5px 0 0 0;
+    font-style: italic;
+}
+
+/* Fix para el z-index de Leaflet dentro del footer */
+.footer-map-container .leaflet-container {
+    z-index: 1;
+    border: 2px solid rgba(62, 174, 244, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footer-map-btn {
+        width: 100%;
+        justify-content: center;
+        margin-left: 0;
+    }
+}
+
+/* ===== GRUPO DE BOTONES DE MAPA ===== */
+.footer-map-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+    flex-wrap: wrap;
+}
+
+/* Botón de contorno (para Google Maps) */
+.footer-map-btn-outline {
+    background: transparent !important;
+    border: 2px solid #3EAEF4 !important;
+    color: #3EAEF4 !important;
+    text-decoration: none;
+}
+
+.footer-map-btn-outline:hover {
+    background: #3EAEF4 !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px -4px rgba(62, 174, 244, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footer-map-actions {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 8px;
+    }
+    
+    .footer-map-actions .footer-map-btn,
+    .footer-map-actions .footer-map-btn-outline {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
+/* ===== BOTÓN DE WAZE ===== */
+.footer-map-btn-waze {
+    background: transparent !important;
+    border: 2px solid #33CCFF !important;
+    color: #33CCFF !important;
+    text-decoration: none;
+}
+
+.footer-map-btn-waze:hover {
+    background: #33CCFF !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px -4px rgba(51, 204, 255, 0.5);
+}

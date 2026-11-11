@@ -53,43 +53,35 @@ const ChatBot = () => {
     }, []);
 
     // 📌 NUEVA FUNCIÓN DE FORMATEO CON LISTAS PERFECTAS
-    const formatearTexto = (texto) => {
-        if (!texto) return '';
+        const formatearTexto = (texto) => {
+            if (!texto) return '';
 
-        let html = texto.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        const lineas = html.split('\n');
+            // 1. Convertir **texto** a <strong>texto</strong>
+            let html = texto.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-        const esLista = lineas.some(linea => /^\s*(\d+\.|I\.|II\.|III\.|IV\.|V\.|VI\.|VII\.|VIII\.|IX\.|X\.|[-•*])/.test(linea));
+            // 2. Dividir el texto en líneas
+            const lineas = html.split('\n');
 
-        if (esLista) {
-            let enLista = false;
-            let htmlFinal = '';
+            // 3. Detectar si las líneas son incisos (empiezan con I., II., III., etc.)
+            const esListaRomanos = lineas.some(linea => /^\s*(I\.|II\.|III\.|IV\.|V\.|VI\.|VII\.|VIII\.|IX\.|X\.|XI\.)/.test(linea));
 
-            lineas.forEach((linea) => {
-                const esItemLista = /^\s*(\d+\.|I\.|II\.|III\.|IV\.|V\.|VI\.|VII\.|VIII\.|IX\.|X\.|[-•*])/.test(linea);
+            if (esListaRomanos) {
+                let htmlFinal = '';
+                lineas.forEach((linea) => {
+                    // Si la línea empieza con número romano, la ponemos como un párrafo con margen
+                    if (/^\s*(I\.|II\.|III\.|IV\.|V\.|VI\.|VII\.|VIII\.|IX\.|X\.|XI\.)/.test(linea)) {
+                        htmlFinal += `<div style="margin-left: 20px; margin-bottom: 8px;">${linea}</div>`;
+                    } else {
+                        // Si no, respetamos el salto de línea normal
+                        htmlFinal += linea + '<br />';
+                    }
+                });
+                return htmlFinal;
+            }
 
-                if (esItemLista && !enLista) {
-                    htmlFinal += '<ol style="padding-left: 20px; margin: 10px 0;">';
-                    enLista = true;
-                } else if (!esItemLista && enLista) {
-                    htmlFinal += '</ol>';
-                    enLista = false;
-                }
-
-                if (esItemLista) {
-                    const contenido = linea.replace(/^\s*(\d+\.|I\.|II\.|III\.|IV\.|V\.|VI\.|VII\.|VIII\.|IX\.|X\.|[-•*])\s*/, '');
-                    htmlFinal += `<li>${contenido}</li>`;
-                } else {
-                    htmlFinal += linea + '<br />';
-                }
-            });
-
-            if (enLista) htmlFinal += '</ol>';
-            return htmlFinal;
-        }
-
-        return html.replace(/\n/g, '<br />');
-    };
+            // 4. Si no son romanos, usar la lógica normal con saltos de línea
+            return html.replace(/\n/g, '<br />');
+        };
 
     const enviarMensaje = async (texto) => {
         if (!texto || !texto.trim()) return;
